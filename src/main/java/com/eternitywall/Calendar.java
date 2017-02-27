@@ -56,7 +56,7 @@ public class Calendar {
             while (current != -1) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
-                Utils.ArraysConcat(byteArray,buffer);
+                Utils.arraysConcat(byteArray,buffer);
             }
 
             // Response Hanlder
@@ -108,7 +108,7 @@ public class Calendar {
             while (current != -1) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
-                Utils.ArraysConcat(byteArray,buffer);
+                Utils.arraysConcat(byteArray,buffer);
             }
 
             // Response Hanlder

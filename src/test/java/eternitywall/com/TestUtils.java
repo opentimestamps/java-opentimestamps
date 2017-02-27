@@ -3,6 +3,8 @@ package eternitywall.com;
 import com.eternitywall.Utils;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -15,7 +17,8 @@ public class TestUtils {
         byte[] array = "foo".getBytes();
         byte[] array2 = "bar".getBytes();
         byte[] array3 = Utils.arraysConcat(array,array2);
-        assertTrue("foobar".equals(array3.toString()));
+        String str = new String(array3, StandardCharsets.UTF_8);
+        assertTrue("foobar".equals(str));
 
     }
 
