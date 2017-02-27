@@ -1,10 +1,7 @@
 package com.eternitywall;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * com.eternitywall.OpenTimestamps module.
@@ -211,11 +208,96 @@ public class OpenTimestamps {
 
     /** Upgrade a timestamp.
      * @param {byte[]} ots - The ots array buffer containing the proof to verify.
-     * @return {Promise} resolve(changed) : changed = True if the timestamp has changed, False otherwise.
      */
-    public static void upgrade(byte[] ots) {
+    public static byte[] upgrade(byte[] ots) {
 
+        // Read OTS
+        DetachedTimestampFile detachedTimestamp = null;
+        try {
+            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
+            detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
+        } catch (Exception e) {
+            System.err.print("com.eternitywall.StreamDeserializationContext error");
+        }
+
+        // Upgrade timestamp
+        boolean changed = OpenTimestamps.upgradeTimestamp(detachedTimestamp.timestamp);
+
+        if (changed) {
+            System.out.print("Timestamp upgraded");
+        }
+
+        if (detachedTimestamp.timestamp.isTimestampComplete()) {
+            System.out.print("Timestamp complete");
+        } else {
+            System.out.print("Timestamp not complete");
+        }
+
+
+        StreamSerializationContext css = new StreamSerializationContext();
+        detachedTimestamp.serialize(css);
+        return css.getOutput();
+    }
+
+
+    /** Attempt to upgrade an incomplete timestamp to make it verifiable.
+     * Note that this means if the timestamp that is already complete, False will be returned as nothing has changed.
+     * @param {Timestamp} timestamp - The timestamp.
+     */
+    public static boolean upgradeTimestamp(Timestamp timestamp) {
+        // Check remote calendars for upgrades.
+        // This time we only check PendingAttestations - we can't be as agressive.
+
+        List<String> calendarUrls = new ArrayList<String>();
+        calendarUrls.add("https://alice.btc.calendar.opentimestamps.org");
+        // calendarUrls.append('https://b.pool.opentimestamps.org');
+        calendarUrls.add("https://ots.eternitywall.it");
+
+        boolean upgraded = false;
+
+        Set<TimeAttestation> existingAttestations = timestamp.getAttestations();
+        for (Timestamp subStamp : timestamp.directlyVerified()) {
+            for (TimeAttestation attestation : subStamp.attestations) {
+                if (attestation instanceof PendingAttestation) {
+                    String calendarUrl = Utils.bytesToString(((PendingAttestation) attestation).uri);
+                    // var calendarUrl = calendarUrls[0];
+                    byte[] commitment = subStamp.msg;
+
+                    Calendar calendar = new Calendar(calendarUrl);
+                    Timestamp upgradedStamp = OpenTimestamps.upgradeStamp(subStamp, calendar, commitment, existingAttestations);
+                    subStamp.merge(upgradedStamp);
+                    upgraded = true;
+                }
+            }
+        }
+        return upgraded;
+    }
+
+    public static Timestamp upgradeStamp(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
+        Timestamp upgradedStamp = calendar.getTimestamp(commitment);
+        Set<TimeAttestation> attsFromRemote = upgradedStamp.getAttestations();
+        if (attsFromRemote.size() > 0) {
+            // console.log(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+        }
+
+        // Set difference from remote attestations & existing attestations
+        Set<TimeAttestation> newAttestations = attsFromRemote;
+        newAttestations.removeAll(existingAttestations);
+
+        if (newAttestations.size() > 0) {
+            // changed & found_new_attestations
+            // foundNewAttestations = true;
+            // console.log(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+
+            // Set union of existingAttestations & newAttestations
+            existingAttestations.addAll(newAttestations);
+
+            return upgradedStamp;
+            // subStamp.merge(upgradedStamp);
+            // args.cache.merge(upgraded_stamp)
+            // sub_stamp.merge(upgraded_stamp)
+        } else {
+            return null;
+        }
     }
 }
-
-

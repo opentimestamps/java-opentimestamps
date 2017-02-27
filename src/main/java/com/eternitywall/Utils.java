@@ -56,6 +56,13 @@ public class Utils {
         return reversedArray;
     }
 
+    public static String bytesToString(byte[] bytes){
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("c", b));
+        }
+        return sb.toString();
+    }
     public static byte[] hexToBytes(String hexString){
         //byte[] yourBytes = new BigInteger(hexString, 16).toByteArray();
         //return yourBytes;

@@ -33,15 +33,24 @@ public class OtsCli {
         }*/
 
         /* VERIFY */
-        try {
+        /*try {
             byte[] bytesPlain = Files.readAllBytes(pathPlain);
             byte[] bytesOts = Files.readAllBytes(pathOts);
             String result = OpenTimestamps.verify(bytesOts,bytesPlain,false);
             System.out.print(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
+        /* UPGRADE */
+        try {
+            byte[] bytesPlain = Files.readAllBytes(pathPlain);
+            byte[] bytesOts = Files.readAllBytes(pathOts);
+            byte[] ots = OpenTimestamps.upgrade(bytesOts);
+            System.out.print(com.eternitywall.Utils.bytesToHex(ots));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }
