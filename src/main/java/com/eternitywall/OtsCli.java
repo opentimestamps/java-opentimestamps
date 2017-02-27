@@ -14,20 +14,18 @@ public class OtsCli {
         Path pathPlain = Paths.get("./examples/hello-world.txt");
         Path pathOts = Paths.get("./examples/hello-world.txt.ots");
 
-        /* INFO
-        Path path = Paths.get("./examples/hello-world.txt.ots");
-        try {
-            byte[] data = Files.readAllBytes(path);
+         //INFO
+        /*try {
+            byte[] data = Files.readAllBytes(pathOts);
             String res = com.eternitywall.OpenTimestamps.info(data);
             System.out.print(res);
         } catch (IOException e) {
             e.printStackTrace();
         }*/
 
-        /* STAMP
-        Path path = Paths.get("./examples/hello-world.txt");
-        try {
-            byte[] data = Files.readAllBytes(path);
+        // STAMP
+        /*try {
+            byte[] data = Files.readAllBytes(pathPlain);
             byte[] ots = com.eternitywall.OpenTimestamps.stamp(data,true);
             System.out.print(com.eternitywall.Utils.bytesToHex(ots));
         } catch (IOException e) {

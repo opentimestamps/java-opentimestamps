@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by luca on 27/02/2017.
  */
@@ -15,6 +17,12 @@ public class InsightResponse {
 
     public String getTime() {
         return time;
+    }
+
+    public String getFormattedTime(){
+        String formatted = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Long.valueOf(time)*1000);
+        return formatted;
+
     }
 
     public String getMerkleroot() {

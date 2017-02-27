@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by luca on 26/02/2017.
@@ -47,14 +48,24 @@ public class Utils {
         return bytes;
     }
 
-    public static byte[] arrayReverse(byte[] array){
-        byte[] tmp = array.clone();
-        Collections.reverse(Arrays.asList(tmp));
-        return tmp;
+    public static byte[] arrayReverse(byte[] array) {
+        byte[] reversedArray = new byte[array.length];
+        for (int i = array.length - 1, j = 0; i >= 0; i--, j++) {
+            reversedArray[j] = array[i];
+        }
+        return reversedArray;
     }
 
     public static byte[] hexToBytes(String hexString){
-        byte[] yourBytes = new BigInteger(hexString, 16).toByteArray();
-        return yourBytes;
+        //byte[] yourBytes = new BigInteger(hexString, 16).toByteArray();
+        //return yourBytes;
+
+        int len = hexString.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
+                    + Character.digit(hexString.charAt(i+1), 16));
+        }
+        return data;
     }
 }

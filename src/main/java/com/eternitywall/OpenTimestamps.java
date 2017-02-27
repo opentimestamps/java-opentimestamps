@@ -183,7 +183,7 @@ public class OpenTimestamps {
                     // console.log('Request to insight ');
                     Insight insight = new Insight("https://insight.bitpay.com/api");
 
-                    String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).height&0xff);
+                    String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).height);
                     InsightResponse blockHash = insight.blockhash(height);
                     InsightResponse blockInfo = insight.block(blockHash.getBlockHash());
 
@@ -196,7 +196,7 @@ public class OpenTimestamps {
 
                     // One Bitcoin attestation is enought
                     if (Arrays.equals(merkle, message)) {
-                        return blockInfo.getTime();
+                        return blockInfo.getFormattedTime();
                     } else {
                         return "";
                     }
