@@ -26,7 +26,7 @@ class OpAppend extends OpBinary {
 
     @Override
     public byte[] call(byte[] msg) {
-        return Utils.ArraysConcat(msg,this.arg);
+        return Utils.arraysConcat(msg,this.arg);
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {

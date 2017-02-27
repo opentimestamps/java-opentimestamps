@@ -1,7 +1,5 @@
 package com.eternitywall;
 
-import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
@@ -16,14 +14,14 @@ import java.util.List;
 public class Utils {
 
 
-    public static byte[] ArraysConcat(byte[] array1, byte[] array2){
+    public static byte[] arraysConcat(byte[] array1, byte[] array2){
         byte[] array1and2 = new byte[array1.length + array2.length];
         System.arraycopy(array1, 0, array1and2, 0, array1.length);
         System.arraycopy(array2, 0, array1and2, array1.length, array2.length);
         return array1and2;
     }
 
-    public static String bytesToHex(byte[]bytes){
+    public static String bytesToHex(byte[] bytes){
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02X ", b));

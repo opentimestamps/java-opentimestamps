@@ -26,7 +26,7 @@ class OpPrepend extends OpBinary {
 
     @Override
     public byte[] call(byte[] msg) {
-        return Utils.ArraysConcat(this.arg,msg);
+        return Utils.arraysConcat(this.arg,msg);
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
