@@ -9,7 +9,7 @@ It is a based on the python implementation at https://github.com/opentimestamps/
 
 ## Compatibility
 
-Java 1.7+
+Java 1.8
 
 ## License
 
