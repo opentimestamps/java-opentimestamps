@@ -25,12 +25,12 @@ public class Utils {
     public static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
-            sb.append(String.format("%02X ", b));
+            sb.append(String.format("%02x", b));
         }
         return sb.toString();
     }
 
-    public static byte[] randBytes(int length) throws IOException {
+    public static byte[] randBytes(int length) throws NoSuchAlgorithmException {
         //Java 6 & 7:
         /*SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[20];
@@ -38,12 +38,8 @@ public class Utils {
 
         //Java 8 (even more secure):
         byte[] bytes = new byte[length];
-        try {
-            SecureRandom.getInstanceStrong().nextBytes(bytes);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw new IOException();
-        }
+        SecureRandom.getInstanceStrong().nextBytes(bytes);
+
         return bytes;
     }
 
@@ -55,20 +51,19 @@ public class Utils {
         return reversedArray;
     }
 
-    public static String bytesToString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%c", b));
-        }
-        return sb.toString();
-    }
-
     public static byte[] hexToBytes(String hexString) {
         int len = hexString.length();
+        if(len%2!=0)
+            throw new IllegalArgumentException();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
-                    + Character.digit(hexString.charAt(i + 1), 16));
+
+            int hi = Character.digit(hexString.charAt(i), 16);
+            int lo = Character.digit(hexString.charAt(i + 1), 16);
+            if ((hi < 0) || (lo < 0))
+                throw new IllegalArgumentException();
+            data[i / 2] = (byte) ((hi << 4)
+                    + lo);
         }
         return data;
     }
