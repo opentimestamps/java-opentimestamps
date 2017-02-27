@@ -65,7 +65,7 @@ class OpCrypto extends OpUnary {
         try {
             MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
             byte[] chunk = ctx.read(1048576);
-            while (chunk.length>0){
+            while (chunk!=null && chunk.length>0){
                 digest.update(chunk);
                 chunk = ctx.read(1048576);
             }

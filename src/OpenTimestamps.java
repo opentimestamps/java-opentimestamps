@@ -130,7 +130,7 @@ public class OpenTimestamps {
             StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
-
+            System.err.print("StreamDeserializationContext error");
         }
 
         byte[] actualFileDigest = new byte[0];
@@ -140,14 +140,14 @@ public class OpenTimestamps {
                 StreamDeserializationContext ctxHashfd = new StreamDeserializationContext(plain);
                 actualFileDigest = ((OpCrypto)(detachedTimestamp.fileHashOp)).hashFd(ctxHashfd);
             } catch (Exception e) {
-
+                System.err.print("StreamDeserializationContext : file stream error");
             }
         } else {
             // Read Hash
             try {
                 actualFileDigest = plain.clone();
             } catch (Exception e) {
-
+                System.err.print("StreamDeserializationContext : file hash error");
             }
         }
 
