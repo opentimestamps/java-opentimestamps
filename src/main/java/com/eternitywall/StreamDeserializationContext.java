@@ -9,11 +9,11 @@ import java.util.Arrays;
 public class StreamDeserializationContext {
 
     byte[] buffer;
-    int counter=0;
+    int counter = 0;
 
-    public StreamDeserializationContext(byte [] stream){
-        this.buffer=stream;
-        this.counter=0;
+    public StreamDeserializationContext(byte[] stream) {
+        this.buffer = stream;
+        this.counter = 0;
     }
 
     public byte[] getOutput() {
@@ -33,10 +33,11 @@ public class StreamDeserializationContext {
         }
 
         // const uint8Array = new Uint8Array(this.buffer,this.counter,l);
-        byte[] uint8Array = Arrays.copyOfRange(this.buffer, this.counter, this.counter+l);
+        byte[] uint8Array = Arrays.copyOfRange(this.buffer, this.counter, this.counter + l);
         this.counter += l;
         return uint8Array;
     }
+
     public boolean readBool() {
         byte b = this.read(1)[0];
         if (b == 0xff) {
@@ -46,6 +47,7 @@ public class StreamDeserializationContext {
         }
         return false;
     }
+
     public int readVaruint() {
         int value = 0;
         byte shift = 0;
@@ -54,34 +56,39 @@ public class StreamDeserializationContext {
             b = this.read(1)[0];
             value |= (b & 0b01111111) << shift;
             shift += 7;
-        } while ( (b & 0b10000000)==0b10000000);
+        } while ((b & 0b10000000) == 0b10000000);
         return value;
     }
+
     public byte[] readBytes(int expectedLength) {
         if (expectedLength == 0) {
-            return this.readVarbytes(1024,0);
+            return this.readVarbytes(1024, 0);
         }
         return this.read(expectedLength);
     }
-    public byte[] readVarbytes(int maxLen ) {
-        return readVarbytes(maxLen, 0 );
+
+    public byte[] readVarbytes(int maxLen) {
+        return readVarbytes(maxLen, 0);
     }
-    public byte[] readVarbytes(int maxLen, int minLen ) {
+
+    public byte[] readVarbytes(int maxLen, int minLen) {
         int l = this.readVaruint();
-        if ((l&0xff) > maxLen) {
+        if ((l & 0xff) > maxLen) {
             System.err.println("varbytes max length exceeded;");
             return null;
-        } else if ((l&0xff) < minLen) {
+        } else if ((l & 0xff) < minLen) {
             System.err.println("varbytes min length not met;");
             return null;
         }
-        return this.read((l&0xff));
+        return this.read((l & 0xff));
     }
+
     public boolean assertMagic(byte[] expectedMagic) {
         byte[] actualMagic = this.read(expectedMagic.length);
 
         return Arrays.equals(expectedMagic, actualMagic);
     }
+
     public boolean assertEof() {
         byte[] excess = this.read(1);
         return excess != null;

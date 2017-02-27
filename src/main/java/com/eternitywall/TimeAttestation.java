@@ -1,6 +1,7 @@
 package com.eternitywall;
 /**
  * com.eternitywall.TimeAttestation module.
+ *
  * @module com.eternitywall.TimeAttestation
  * @author EternityWall
  * @license LPGL3
@@ -18,6 +19,7 @@ class TimeAttestation {
 
 
     public byte[] _TAG;
+
     public byte[] _TAG() {
         return new byte[]{};
     }
@@ -54,14 +56,14 @@ class TimeAttestation {
      * Serialize a a general Time Attestation to the specific subclass Attestation.
      * @param {com.eternitywall.StreamSerializationContext} ctx - The output stream serialization context.
      */
-    public void serialize( StreamSerializationContext ctx) {
+    public void serialize(StreamSerializationContext ctx) {
         ctx.writeBytes(this._TAG());
         StreamSerializationContext ctxPayload = new StreamSerializationContext();
         serializePayload(ctxPayload);
         ctx.writeVarbytes(ctxPayload.getOutput());
     }
 
-    public void serializePayload(StreamSerializationContext ctxPayload){
+    public void serializePayload(StreamSerializationContext ctxPayload) {
 
     }
 }

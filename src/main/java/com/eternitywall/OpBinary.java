@@ -1,7 +1,10 @@
 package com.eternitywall;
 
+import com.oracle.tools.packager.Log;
+
 /**
  * Operations that act on a message and a single argument.
+ *
  * @extends com.eternitywall.OpUnary
  */
 class OpBinary extends Op {
@@ -17,6 +20,7 @@ class OpBinary extends Op {
         super();
         this.arg = new byte[]{};
     }
+
     OpBinary(byte[] arg_) {
         super();
         this.arg = arg_;
@@ -24,18 +28,18 @@ class OpBinary extends Op {
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         byte[] arg = ctx.readVarbytes(_MAX_RESULT_LENGTH, 1);
-        if (tag == OpAppend._TAG){
+        if (tag == OpAppend._TAG) {
             return new OpAppend(arg);
-        }else if (tag == OpPrepend._TAG){
+        } else if (tag == OpPrepend._TAG) {
             return new OpPrepend(arg);
-        }else if (tag == OpSHA1._TAG){
+        } else if (tag == OpSHA1._TAG) {
             return new OpSHA1(arg);
-        }else if (tag == OpSHA256._TAG){
+        } else if (tag == OpSHA256._TAG) {
             return new OpSHA256(arg);
-        }else if (tag == OpRIPEMD160._TAG){
+        } else if (tag == OpRIPEMD160._TAG) {
             return new OpRIPEMD160(arg);
-        }else {
-            System.err.print("Unknown operation tag: " + tag);
+        } else {
+            Log.debug("Unknown operation tag: " + tag);
             return null;
         }
     }

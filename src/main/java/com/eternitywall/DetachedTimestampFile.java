@@ -1,6 +1,7 @@
 package com.eternitywall;
 /**
  * Detached com.eternitywall.Timestamp File module.
+ *
  * @module com.eternitywall.DetachedTimestampFile
  * @author EternityWall
  * @license LPGL3
@@ -19,9 +20,9 @@ class DetachedTimestampFile {
      * @type {int[]}
      * @default \x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94
      */
-    static byte[] HEADER_MAGIC = {(byte)0x00, (byte)0x4f, (byte)0x70, (byte)0x65, (byte)0x6e, (byte)0x54, (byte)0x69,(byte)0x6d, (byte)0x65, (byte)0x73,
-            (byte)0x74, (byte)0x61, (byte)0x6d, (byte)0x70, (byte)0x73, (byte)0x00, (byte)0x00, (byte)0x50, (byte)0x72, (byte)0x6f, (byte)0x6f, (byte)0x66, (byte)0x00,
-            (byte)0xbf, (byte)0x89, (byte)0xe2, (byte)0xe8, (byte)0x84, (byte)0xe8, (byte)0x92, (byte)0x94};
+    static byte[] HEADER_MAGIC = {(byte) 0x00, (byte) 0x4f, (byte) 0x70, (byte) 0x65, (byte) 0x6e, (byte) 0x54, (byte) 0x69, (byte) 0x6d, (byte) 0x65, (byte) 0x73,
+            (byte) 0x74, (byte) 0x61, (byte) 0x6d, (byte) 0x70, (byte) 0x73, (byte) 0x00, (byte) 0x00, (byte) 0x50, (byte) 0x72, (byte) 0x6f, (byte) 0x6f, (byte) 0x66, (byte) 0x00,
+            (byte) 0xbf, (byte) 0x89, (byte) 0xe2, (byte) 0xe8, (byte) 0x84, (byte) 0xe8, (byte) 0x92, (byte) 0x94};
 
     /**
      * While the git commit timestamps have a minor version, probably better to
@@ -32,8 +33,6 @@ class DetachedTimestampFile {
      * @default 1
      */
     static byte MAJOR_VERSION = 1;
-    // const MIN_FILE_DIGEST_LENGTH = 20;
-    // const MAX_FILE_DIGEST_LENGTH = 32;
 
     Op fileHashOp;
     Timestamp timestamp;
@@ -73,7 +72,7 @@ class DetachedTimestampFile {
         ctx.assertMagic(HEADER_MAGIC);
         ctx.readVaruint();
 
-        OpCrypto fileHashOp = (OpCrypto) OpCrypto.deserialize(ctx) ;
+        OpCrypto fileHashOp = (OpCrypto) OpCrypto.deserialize(ctx);
         byte[] fileHash = ctx.readBytes(fileHashOp._DIGEST_LENGTH());
         Timestamp timestamp = Timestamp.deserialize(ctx, fileHash);
 
@@ -106,6 +105,7 @@ class DetachedTimestampFile {
      * Print the object.
      * @return {string} The output.
      */
+    @Override
     public String toString() {
         String output = "com.eternitywall.DetachedTimestampFile\n";
         output += "fileHashOp: " + this.fileHashOp.toString() + '\n';

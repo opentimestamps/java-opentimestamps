@@ -24,16 +24,18 @@ package com.eternitywall; /**
  * exceptionally rare events anyway, so better to just tell the user the timestamp
  * can't be verified rather than add almost-never tested code to handle that case
  * more gracefully.
+ *
  * @extends com.eternitywall.TimeAttestation
  */
 class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
-    public static byte[] _TAG ={(byte)0x05, (byte)0x88, (byte)0x96, (byte)0x0d, (byte)0x73, (byte)0xd7, (byte)0x19, (byte)0x01};
+    public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
 
     @Override
     public byte[] _TAG() {
         return BitcoinBlockHeaderAttestation._TAG;
     }
+
     int height = 0;
 
     BitcoinBlockHeaderAttestation(int height_) {
@@ -50,6 +52,7 @@ class BitcoinBlockHeaderAttestation extends TimeAttestation {
     public void serializePayload(StreamSerializationContext ctx) {
         ctx.writeVaruint(this.height);
     }
+
     public String toString() {
         return "com.eternitywall.BitcoinBlockHeaderAttestation(" + this.height + ")";
     }

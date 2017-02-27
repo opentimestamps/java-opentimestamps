@@ -2,6 +2,7 @@ package com.eternitywall;
 
 /**
  * Placeholder for attestations that don't support
+ *
  * @extends com.eternitywall.TimeAttestation
  */
 class UnknownAttestation extends TimeAttestation {

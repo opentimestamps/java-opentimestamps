@@ -5,8 +5,9 @@ import java.util.*;
 
 /**
  * com.eternitywall.OpenTimestamps module.
- * @module com.eternitywall.OpenTimestamps
+ *
  * @author EternityWall
+ * @module com.eternitywall.OpenTimestamps
  * @license LPGL3
  */
 
@@ -15,8 +16,9 @@ public class OpenTimestamps {
 
     /**
      * Show information on a timestamp.
-     * @exports com.eternitywall.OpenTimestamps/info
+     *
      * @param {byte[]} ots - The ots array buffer.
+     * @exports com.eternitywall.OpenTimestamps/info
      */
     public static String info(byte[] ots) {
         if (ots == null) {
@@ -24,7 +26,7 @@ public class OpenTimestamps {
         }
 
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-        DetachedTimestampFile detachedTimestampFile=DetachedTimestampFile.deserialize(ctx);
+        DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
 
         String fileHash = Utils.bytesToHex(detachedTimestampFile.timestamp.msg);
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._HASHLIB_NAME();
@@ -35,11 +37,12 @@ public class OpenTimestamps {
 
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @exports com.eternitywall.OpenTimestamps/stamp
-     * @param {byte[]} plain - The plain array buffer to stamp.
+     *
+     * @param {byte[]}  plain - The plain array buffer to stamp.
      * @param {Boolean} isHash - 1 = Hash , 0 = Data File
+     * @exports com.eternitywall.OpenTimestamps/stamp
      */
-    public static byte[] stamp(byte[]plain, Boolean isHash) throws IOException {
+    public static byte[] stamp(byte[] plain, Boolean isHash) throws IOException {
         DetachedTimestampFile fileTimestamp;
         if (isHash != null && isHash == true) {
             // Read Hash
@@ -99,10 +102,11 @@ public class OpenTimestamps {
 
     /**
      * Create a timestamp
-     * @param {timestamp} timestamp - The timestamp.
+     *
+     * @param {timestamp}    timestamp - The timestamp.
      * @param {List<String>} calendarUrls - List of calendar's to use.
      */
-    public static Timestamp createTimestamp(Timestamp timestamp, List<String>calendarUrls) {
+    public static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls) {
         List<Calendar> calendars = new ArrayList<Calendar>();
         /*for (final String calendarUrl : calendarUrls) {
             com.eternitywall.Calendar calendar = new com.eternitywall.Calendar(calendarUrl);
@@ -117,12 +121,13 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     * @exports com.eternitywall.OpenTimestamps/verify
-     * @param {byte[]} ots - The ots array buffer containing the proof to verify.
-     * @param {byte[]} plain - The plain array buffer to verify.
+     *
+     * @param {byte[]}  ots - The ots array buffer containing the proof to verify.
+     * @param {byte[]}  plain - The plain array buffer to verify.
      * @param {Boolean} isHash - 1 = Hash , 0 = Data File
+     * @exports com.eternitywall.OpenTimestamps/verify
      */
-    public static String verify(byte[]ots, byte[]plain, Boolean isHash) {
+    public static String verify(byte[] ots, byte[] plain, Boolean isHash) {
         // Read OTS
         DetachedTimestampFile detachedTimestamp = null;
         try {
@@ -137,7 +142,7 @@ public class OpenTimestamps {
             // Read from file stream
             try {
                 StreamDeserializationContext ctxHashfd = new StreamDeserializationContext(plain);
-                actualFileDigest = ((OpCrypto)(detachedTimestamp.fileHashOp)).hashFd(ctxHashfd);
+                actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(ctxHashfd);
             } catch (Exception e) {
                 System.err.print("com.eternitywall.StreamDeserializationContext : file stream error");
             }
@@ -154,14 +159,16 @@ public class OpenTimestamps {
         if (!Arrays.equals(actualFileDigest, detachedFileDigest)) {
             System.err.print("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()));
             System.err.print("File does not match original!");
-            
+
         }
 
         // console.log(com.eternitywall.Timestamp.strTreeExtended(detachedTimestamp.timestamp, 0));
         return OpenTimestamps.verifyTimestamp(detachedTimestamp.timestamp);
     }
 
-    /** Verify a timestamp.
+    /**
+     * Verify a timestamp.
+     *
      * @param {com.eternitywall.Timestamp} timestamp - The timestamp.
      * @return {int} unix timestamp if verified, undefined otherwise.
      */
@@ -206,7 +213,9 @@ public class OpenTimestamps {
         return "";
     }
 
-    /** Upgrade a timestamp.
+    /**
+     * Upgrade a timestamp.
+     *
      * @param {byte[]} ots - The ots array buffer containing the proof to verify.
      */
     public static byte[] upgrade(byte[] ots) {
@@ -240,8 +249,10 @@ public class OpenTimestamps {
     }
 
 
-    /** Attempt to upgrade an incomplete timestamp to make it verifiable.
+    /**
+     * Attempt to upgrade an incomplete timestamp to make it verifiable.
      * Note that this means if the timestamp that is already complete, False will be returned as nothing has changed.
+     *
      * @param {Timestamp} timestamp - The timestamp.
      */
     public static boolean upgradeTimestamp(Timestamp timestamp) {

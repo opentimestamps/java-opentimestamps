@@ -1,14 +1,18 @@
 package com.eternitywall;
 /**
  * com.eternitywall.Calendar module.
+ *
  * @module com.eternitywall.Calendar
  * @author EternityWall
  * @license LPGL3
  */
 
 
+import com.oracle.tools.packager.Log;
+
 import java.net.*;
 import java.io.*;
+import java.util.logging.Logger;
 
 /** Class representing Remote com.eternitywall.Calendar server interface */
 public class Calendar {
@@ -49,20 +53,20 @@ public class Calendar {
 
             // Response
             int responseCode = con.getResponseCode();
-            InputStream inputStream =con.getInputStream();
+            InputStream inputStream = con.getInputStream();
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             byte[] byteArray = new byte[bufferedInputStream.available()];
             int current = bufferedInputStream.read(byteArray);
             while (current != -1) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
-                Utils.arraysConcat(byteArray,buffer);
+                Utils.arraysConcat(byteArray, buffer);
             }
 
             // Response Hanlder
             byte[] body = byteArray;
             if (body.length > 10000) {
-                System.err.print("com.eternitywall.Calendar response exceeded size limit");
+                Log.debug("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 
@@ -101,20 +105,20 @@ public class Calendar {
 
             // Response
             int responseCode = con.getResponseCode();
-            InputStream inputStream =con.getInputStream();
+            InputStream inputStream = con.getInputStream();
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             byte[] byteArray = new byte[bufferedInputStream.available()];
             int current = bufferedInputStream.read(byteArray);
             while (current != -1) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
-                Utils.arraysConcat(byteArray,buffer);
+                Utils.arraysConcat(byteArray, buffer);
             }
 
             // Response Hanlder
             byte[] body = byteArray;
             if (body.length > 10000) {
-                System.err.print("com.eternitywall.Calendar response exceeded size limit");
+                Log.debug("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 

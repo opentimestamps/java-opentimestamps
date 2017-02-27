@@ -1,6 +1,7 @@
 package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,7 +15,7 @@ public class OtsCli {
         Path pathPlain = Paths.get("./examples/hello-world.txt");
         Path pathOts = Paths.get("./examples/hello-world.txt.ots");
 
-         //INFO
+        //INFO
         /*try {
             byte[] data = Files.readAllBytes(pathOts);
             String res = com.eternitywall.OpenTimestamps.info(data);

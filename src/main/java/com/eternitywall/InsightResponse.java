@@ -19,8 +19,8 @@ public class InsightResponse {
         return time;
     }
 
-    public String getFormattedTime(){
-        String formatted = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Long.valueOf(time)*1000);
+    public String getFormattedTime() {
+        String formatted = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Long.valueOf(time) * 1000);
         return formatted;
     }
 
@@ -31,6 +31,7 @@ public class InsightResponse {
     public void setMerkleroot(String merkleroot) {
         this.merkleroot = merkleroot;
     }
+
     public String getBlockHash() {
         return blockHash;
     }

@@ -1,5 +1,6 @@
 package com.eternitywall; /**
  * com.eternitywall.Insight module.
+ *
  * @module com.eternitywall.Insight
  * @author EternityWall
  * @license LPGL3
@@ -62,8 +63,8 @@ class Insight {
             JSONObject json = new JSONObject(jsonString);
             String blockHash = json.getString("blockHash");
             InsightResponse insightResponse = new InsightResponse();
-            insightResponse.setBlockHash( blockHash );
-            return  insightResponse;
+            insightResponse.setBlockHash(blockHash);
+            return insightResponse;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -108,9 +109,9 @@ class Insight {
             String merkleroot = json.getString("merkleroot");
             String time = String.valueOf(json.getInt("time"));
             InsightResponse insightResponse = new InsightResponse();
-            insightResponse.setMerkleroot( merkleroot );
-            insightResponse.setTime( time );
-            return  insightResponse;
+            insightResponse.setMerkleroot(merkleroot);
+            insightResponse.setTime(time);
+            return insightResponse;
 
         } catch (ProtocolException e) {
             e.printStackTrace();

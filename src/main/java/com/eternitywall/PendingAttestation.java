@@ -17,20 +17,21 @@ package com.eternitywall;
  * to normally have more than a small number of remote calendar attestations,
  * it'd be better to have verifiers get the most recent status of such
  * information (possibly with appropriate negative response caching).
+ *
  * @extends com.eternitywall.TimeAttestation
  */
 class PendingAttestation extends TimeAttestation {
 
-    public static byte[] _TAG = {(byte)0x83, (byte)0xdf, (byte)0xe3, (byte)0x0d, (byte)0x2e, (byte)0xf9, (byte)0x0c, (byte)0x8e};
+    public static byte[] _TAG = {(byte) 0x83, (byte) 0xdf, (byte) 0xe3, (byte) 0x0d, (byte) 0x2e, (byte) 0xf9, (byte) 0x0c, (byte) 0x8e};
 
     @Override
     public byte[] _TAG() {
         return PendingAttestation._TAG;
     }
 
-    public static int _MAX_URI_LENGTH= 1000;
+    public static int _MAX_URI_LENGTH = 1000;
 
-    public static String _ALLOWED_URI_CHARS= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._/:";
+    public static String _ALLOWED_URI_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._/:";
 
     byte[] uri;
 
@@ -45,7 +46,7 @@ class PendingAttestation extends TimeAttestation {
             return false;
         }
         for (int i = 0; i < uri.length; i++) {
-            Character c = String.format("%c",uri[i]).charAt(0);
+            Character c = String.format("%c", uri[i]).charAt(0);
             if (PendingAttestation._ALLOWED_URI_CHARS.indexOf(c) < 0) {
                 System.err.print("URI contains invalid character ");
                 return false;
@@ -62,10 +63,12 @@ class PendingAttestation extends TimeAttestation {
         }
         return new PendingAttestation(utf8Uri);
     }
+
     @Override
     public void serializePayload(StreamSerializationContext ctx) {
         ctx.writeVarbytes(this.uri);
     }
+
     public String toString() {
         return "com.eternitywall.PendingAttestation(\'" + this.uri + "\')";
     }

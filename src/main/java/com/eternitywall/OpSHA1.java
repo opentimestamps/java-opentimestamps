@@ -10,6 +10,7 @@ package com.eternitywall;
  * change that.
  * Heck, even md5 is still secure enough for timestamping... but that's
  * pushing our luck...
+ *
  * @extends CryptOp
  */
 class OpSHA1 extends OpCrypto {
@@ -27,12 +28,15 @@ class OpSHA1 extends OpCrypto {
     }
 
     @Override
-    public int _DIGEST_LENGTH(){ return 20;}
+    public int _DIGEST_LENGTH() {
+        return 20;
+    }
 
     OpSHA1() {
         super();
         this.arg = new byte[]{};
     }
+
     OpSHA1(byte[] arg_) {
         super(new byte[]{});
         this.arg = arg_;
@@ -44,7 +48,7 @@ class OpSHA1 extends OpCrypto {
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
-        return OpCrypto.deserializeFromTag(ctx,tag);
+        return OpCrypto.deserializeFromTag(ctx, tag);
     }
 
 }

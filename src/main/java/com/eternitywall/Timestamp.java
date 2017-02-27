@@ -1,6 +1,7 @@
 package com.eternitywall;
 /**
  * com.eternitywall.Timestamp module.
+ *
  * @module com.eternitywall.Timestamp
  * @author EternityWall
  * @license LPGL3
@@ -58,8 +59,7 @@ class Timestamp {
         return self;
     }
 
-    private static void doTagOrAttestation (Timestamp self, StreamDeserializationContext ctx, byte tag, byte[] initialMsg) {
-        // console.log('doTagOrAttestation: ', tag);
+    private static void doTagOrAttestation(Timestamp self, StreamDeserializationContext ctx, byte tag, byte[] initialMsg) {
         if (tag == 0x00) {
             TimeAttestation attestation = TimeAttestation.deserialize(ctx);
             self.attestations.add(attestation);
@@ -87,25 +87,25 @@ class Timestamp {
         List<TimeAttestation> sortedAttestations = this.attestations;
         if (sortedAttestations.size() > 1) {
             for (int i = 0; i < sortedAttestations.size(); i++) {
-                ctx.writeBytes(new byte[]{(byte)0xff, (byte)0x00});
+                ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(i).serialize(ctx);
             }
         }
         if (this.ops.size() == 0) {
-            ctx.writeByte((byte)0x00);
+            ctx.writeByte((byte) 0x00);
             if (sortedAttestations.size() > 0) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
         } else if (this.ops.size() > 0) {
             if (sortedAttestations.size() > 0) {
-                ctx.writeBytes(new byte[]{(byte)0xff, (byte)0x00});
+                ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
 
             // all op/stamp
             int counter = 0;
 
-            for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp stamp = entry.getValue();
                 Op op = entry.getKey();
 
@@ -139,7 +139,7 @@ class Timestamp {
             this.attestations.add(attestation);
         }
 
-        for(Map.Entry<Op, Timestamp> entry : other.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : other.ops.entrySet()) {
             Timestamp otherOpStamp = entry.getValue();
             Op otherOp = entry.getKey();
 
@@ -188,7 +188,7 @@ class Timestamp {
         i = 0;
         output += Timestamp.indention(indent) + this.ops.size() + " ops: \n";
 
-        for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp stamp = entry.getValue();
             Op op = entry.getKey();
 
@@ -224,7 +224,7 @@ class Timestamp {
         String output = "";
         if (this.attestations.size() > 0) {
             for (final TimeAttestation attestation : this.attestations) {
-                output += Timestamp.indention(indent) ;
+                output += Timestamp.indention(indent);
                 output += "verify " + attestation.toString() + '\n';
 
             }
@@ -232,7 +232,7 @@ class Timestamp {
 
         if (this.ops.size() > 1) {
 
-            for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
@@ -242,7 +242,7 @@ class Timestamp {
             }
         } else if (this.ops.size() > 0) {
             // output += com.eternitywall.Timestamp.indention(indent);
-            for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
@@ -273,9 +273,9 @@ class Timestamp {
             }
         }
 
-        if (timestamp.ops.size()  > 1) {
+        if (timestamp.ops.size() > 1) {
 
-            for(Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
                 Timestamp ts = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
@@ -285,9 +285,9 @@ class Timestamp {
                 output += '\n';
                 output += Timestamp.strTreeExtended(ts, indent + 1);
             }
-        } else if (timestamp.ops.size()  > 0) {
+        } else if (timestamp.ops.size() > 0) {
             output += Timestamp.indention(indent);
-            for(Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
                 Timestamp ts = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
@@ -312,7 +312,7 @@ class Timestamp {
         }
         List<Timestamp> list = new ArrayList<Timestamp>();
 
-        for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp ts = entry.getValue();
             Op op = entry.getKey();
 
@@ -327,7 +327,7 @@ class Timestamp {
      */
     public Set<TimeAttestation> getAttestations() {
         Set set = new HashSet<TimeAttestation>();
-        for(Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
+        for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
             set.add(attestation);
@@ -339,7 +339,7 @@ class Timestamp {
      * @return {boolean} True if the timestamp is complete, False otherwise.
      */
     public Boolean isTimestampComplete() {
-        for(Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
+        for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
             if (attestation instanceof BitcoinBlockHeaderAttestation) {
@@ -353,20 +353,20 @@ class Timestamp {
      * Iterate over all attestations recursively
      * @return {HashMap} Returns iterable of (msg, attestation)
      */
-    public HashMap<byte[],TimeAttestation> allAttestations() {
-        HashMap<byte[],TimeAttestation> map = new HashMap<byte[],TimeAttestation>();
-        for (TimeAttestation attestation : this.attestations ){
+    public HashMap<byte[], TimeAttestation> allAttestations() {
+        HashMap<byte[], TimeAttestation> map = new HashMap<byte[], TimeAttestation>();
+        for (TimeAttestation attestation : this.attestations) {
             map.put(this.msg, attestation);
         }
-        for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp ts = entry.getValue();
             Op op = entry.getKey();
 
-            HashMap<byte[],TimeAttestation> subMap = ts.allAttestations();
-            for(Map.Entry<byte[], TimeAttestation> item : subMap.entrySet()) {
+            HashMap<byte[], TimeAttestation> subMap = ts.allAttestations();
+            for (Map.Entry<byte[], TimeAttestation> item : subMap.entrySet()) {
                 byte[] msg = item.getKey();
                 TimeAttestation attestation = item.getValue();
-                map.put(msg,attestation);
+                map.put(msg, attestation);
             }
         }
         return map;
