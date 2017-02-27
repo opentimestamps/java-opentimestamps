@@ -6,7 +6,6 @@ package com.eternitywall;
  * @license LPGL3
  */
 
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
 
 import java.net.*;
 import java.io.*;
@@ -30,7 +29,6 @@ public class Calendar {
      * @param {byte[]} digest - The digest hash to send.
      */
     public Timestamp submit(byte[] digest) {
-        ByteArrayBuffer byteArrayBuffer = null;
         try {
 
             URL obj = new URL(url + "/digest");
@@ -53,15 +51,16 @@ public class Calendar {
             int responseCode = con.getResponseCode();
             InputStream inputStream =con.getInputStream();
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            byteArrayBuffer = new ByteArrayBuffer();
-            int current;
-            while ((current = bufferedInputStream.read()) != -1) {
-                byteArrayBuffer.write((byte) current);
+            byte[] byteArray = new byte[bufferedInputStream.available()];
+            int current = bufferedInputStream.read(byteArray);
+            while (current != -1) {
+                byte[] buffer = new byte[bufferedInputStream.available()];
+                current = bufferedInputStream.read(buffer);
+                Utils.ArraysConcat(byteArray,buffer);
             }
-            byteArrayBuffer.close();
 
             // Response Hanlder
-            byte[] body = byteArrayBuffer.getRawData();
+            byte[] body = byteArray;
             if (body.length > 10000) {
                 System.err.print("com.eternitywall.Calendar response exceeded size limit");
                 return null;
@@ -80,12 +79,6 @@ public class Calendar {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            try {
-                byteArrayBuffer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -95,7 +88,6 @@ public class Calendar {
      * @param {byte[]} commitment - The digest hash to send.
      */
     public Timestamp getTimestamp(byte[] commitment) {
-        ByteArrayBuffer byteArrayBuffer = null;
         try {
 
             URL obj = new URL(url + "/timestamp/" + Utils.bytesToHex(commitment));
@@ -111,15 +103,16 @@ public class Calendar {
             int responseCode = con.getResponseCode();
             InputStream inputStream =con.getInputStream();
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            byteArrayBuffer = new ByteArrayBuffer();
-            int current;
-            while ((current = bufferedInputStream.read()) != -1) {
-                byteArrayBuffer.write((byte) current);
+            byte[] byteArray = new byte[bufferedInputStream.available()];
+            int current = bufferedInputStream.read(byteArray);
+            while (current != -1) {
+                byte[] buffer = new byte[bufferedInputStream.available()];
+                current = bufferedInputStream.read(buffer);
+                Utils.ArraysConcat(byteArray,buffer);
             }
-            byteArrayBuffer.close();
 
             // Response Hanlder
-            byte[] body = byteArrayBuffer.getRawData();
+            byte[] body = byteArray;
             if (body.length > 10000) {
                 System.err.print("com.eternitywall.Calendar response exceeded size limit");
                 return null;
@@ -138,12 +131,6 @@ public class Calendar {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            try {
-                byteArrayBuffer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
