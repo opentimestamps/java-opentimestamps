@@ -5,7 +5,7 @@
 
 [![Build Status](https://travis-ci.org/eternitywall/java-opentimestamps.svg?branch=master)](https://travis-ci.org/eternitywall/java-opentimestamps)
 
-This repo host the java implementation of OpenTimestamps.
+This repo host the Java implementation of OpenTimestamps.
 
 It is a based on the python implementation at https://github.com/opentimestamps/python-opentimestamps and https://github.com/opentimestamps/opentimestamps-client
 
