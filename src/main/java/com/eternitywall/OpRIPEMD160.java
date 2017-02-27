@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Cryptographic RIPEMD160 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not
@@ -8,6 +10,8 @@ package com.eternitywall;
  * @extends CryptOp
  */
 class OpRIPEMD160 extends OpCrypto {
+
+    private static Logger log = Logger.getLogger(OpRIPEMD160.class.getName());
 
     public static byte _TAG = 0x03;
 

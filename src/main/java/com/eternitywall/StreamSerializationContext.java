@@ -2,11 +2,15 @@ package com.eternitywall;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * Created by luca on 25/02/2017.
  */
 public class StreamSerializationContext {
+
+
+    private static Logger log = Logger.getLogger(StreamSerializationContext.class.getName());
 
     byte[] buffer = new byte[1024 * 4];
     int length = 0;

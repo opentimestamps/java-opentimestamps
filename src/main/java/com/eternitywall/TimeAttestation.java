@@ -9,9 +9,13 @@ package com.eternitywall;
 
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /** Class representing com.eternitywall.Timestamp signature verification */
 class TimeAttestation {
+
+
+    private static Logger log = Logger.getLogger(TimeAttestation.class.getName());
 
     public static int _TAG_SIZE = 8;
 

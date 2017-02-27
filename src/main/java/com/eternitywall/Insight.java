@@ -12,9 +12,12 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /** Class used to query com.eternitywall.Insight API */
 class Insight {
+
+    private static Logger log = Logger.getLogger(Insight.class.getName());
 
     String urlBlockindex;
     String urlBlock;

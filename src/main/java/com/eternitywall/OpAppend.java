@@ -1,11 +1,15 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Append a suffix to a message.
  *
  * @extends com.eternitywall.OpBinary
  */
 class OpAppend extends OpBinary {
+
+    private static Logger log = Logger.getLogger(OpAppend.class.getName());
 
     byte[] arg;
 

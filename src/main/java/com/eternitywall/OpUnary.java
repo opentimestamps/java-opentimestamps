@@ -1,11 +1,16 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Operations that act on a single message.
  *
  * @extends com.eternitywall.Op
  */
 class OpUnary extends Op {
+
+
+    private static Logger log = Logger.getLogger(OpUnary.class.getName());
 
     byte[] arg;
 
@@ -36,7 +41,7 @@ class OpUnary extends Op {
         } else if (tag == OpRIPEMD160._TAG) {
             return new OpRIPEMD160();
         } else {
-            System.err.print("Unknown operation tag: " + tag);
+            log.severe("Unknown operation tag: " + tag);
             return null;
         }
     }

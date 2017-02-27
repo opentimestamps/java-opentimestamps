@@ -8,6 +8,7 @@ package com.eternitywall;
  */
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Class representing com.eternitywall.Timestamp interface
@@ -17,6 +18,9 @@ import java.util.*;
  * attestations that attest to the time that messages in the tree existed prior.
  */
 class Timestamp {
+
+
+    private static Logger log = Logger.getLogger(Timestamp.class.getName());
 
     byte[] msg;
     List<TimeAttestation> attestations;
@@ -63,12 +67,12 @@ class Timestamp {
         if (tag == 0x00) {
             TimeAttestation attestation = TimeAttestation.deserialize(ctx);
             self.attestations.add(attestation);
-            // console.log('attestation ', attestation);
+            // log.info('attestation ', attestation);
         } else {
             Op op = Op.deserializeFromTag(ctx, tag);
 
             byte[] result = op.call(initialMsg);
-            // console.log('result: ', com.eternitywall.Utils.bytesToHex(result));
+            // log.info('result: ', com.eternitywall.Utils.bytesToHex(result));
 
             Timestamp stamp = Timestamp.deserialize(ctx, result);
             self.ops.put(op, stamp);
@@ -127,11 +131,11 @@ class Timestamp {
      */
     void merge(Timestamp other) {
         if (!(other instanceof Timestamp)) {
-            System.err.print("Can only merge Timestamps together");
+            log.severe("Can only merge Timestamps together");
             return;
         }
         if (!Arrays.equals(this.msg, other.msg)) {
-            System.err.print("Can\'t merge timestamps for different messages together");
+            log.severe("Can\'t merge timestamps for different messages together");
             return;
         }
 
@@ -151,24 +155,6 @@ class Timestamp {
             ourOpStamp.merge(otherOpStamp);
         }
     }
-
-    /**
-     * Iterate over all attestations recursively
-     * @return {HashMap} Returns iterable of (msg, attestation)
-     */
-    /*allAttestations() {
-    const map = new Map();
-        this.attestations.forEach(attestation => {
-                map.set(this.msg, attestation);
-    });
-        this.ops.forEach(opStamp => {
-      const subMap = opStamp.allAttestations();
-        subMap.forEach((b, a) => {
-            map.set(a, b);
-        });
-    });
-        return map;
-    }*/
 
     /**
      * Print as memory hierarchical object.

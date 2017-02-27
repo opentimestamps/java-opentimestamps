@@ -1,11 +1,15 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Placeholder for attestations that don't support
  *
  * @extends com.eternitywall.TimeAttestation
  */
 class UnknownAttestation extends TimeAttestation {
+
+    private static Logger log = Logger.getLogger(UnknownAttestation.class.getName());
 
     byte[] payload;
 

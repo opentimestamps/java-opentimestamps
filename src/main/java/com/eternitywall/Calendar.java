@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class Calendar {
 
     String url;
+    private static Logger log = Logger.getLogger(Calendar.class.getName());
 
     /**
      * Create a RemoteCalendar.
@@ -66,7 +67,7 @@ public class Calendar {
             // Response Hanlder
             byte[] body = byteArray;
             if (body.length > 10000) {
-                Log.debug("com.eternitywall.Calendar response exceeded size limit");
+                log.severe("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 
@@ -118,7 +119,7 @@ public class Calendar {
             // Response Hanlder
             byte[] body = byteArray;
             if (body.length > 10000) {
-                Log.debug("com.eternitywall.Calendar response exceeded size limit");
+                log.severe("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 

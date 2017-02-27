@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Pending attestations.
  * Commitment has been recorded in a remote calendar for future attestation,
@@ -21,6 +23,9 @@ package com.eternitywall;
  * @extends com.eternitywall.TimeAttestation
  */
 class PendingAttestation extends TimeAttestation {
+
+
+    private static Logger log = Logger.getLogger(PendingAttestation.class.getName());
 
     public static byte[] _TAG = {(byte) 0x83, (byte) 0xdf, (byte) 0xe3, (byte) 0x0d, (byte) 0x2e, (byte) 0xf9, (byte) 0x0c, (byte) 0x8e};
 
@@ -48,7 +53,7 @@ class PendingAttestation extends TimeAttestation {
         for (int i = 0; i < uri.length; i++) {
             Character c = String.format("%c", uri[i]).charAt(0);
             if (PendingAttestation._ALLOWED_URI_CHARS.indexOf(c) < 0) {
-                System.err.print("URI contains invalid character ");
+                log.severe("URI contains invalid character ");
                 return false;
             }
         }
@@ -58,7 +63,7 @@ class PendingAttestation extends TimeAttestation {
     public static PendingAttestation deserialize(StreamDeserializationContext ctxPayload) {
         byte[] utf8Uri = ctxPayload.readVarbytes(PendingAttestation._MAX_URI_LENGTH);
         if (PendingAttestation.checkUri(utf8Uri) == false) {
-            System.err.print("Invalid URI: ");
+            log.severe("Invalid URI: ");
             return null;
         }
         return new PendingAttestation(utf8Uri);

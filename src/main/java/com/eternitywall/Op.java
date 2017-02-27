@@ -2,11 +2,16 @@ package com.eternitywall;
 
 import com.oracle.tools.packager.Log;
 
+import java.util.logging.Logger;
+
 /**
  * com.eternitywall.Timestamp proof operations.
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 class Op {
+
+
+    private static Logger log = Logger.getLogger(Op.class.getName());
 
     /**
      * Maximum length of an com.eternitywall.Op result
@@ -77,7 +82,7 @@ class Op {
         } else if (tag == OpRIPEMD160._TAG) {
             return OpRIPEMD160.deserializeFromTag(ctx, tag);
         } else {
-            Log.debug("Unknown operation tag: " + tag);
+            log.severe("Unknown operation tag: " + tag);
             return null;
         }
     }
@@ -100,14 +105,14 @@ class Op {
      */
     byte[] call(byte[] msg) {
         if (msg.length > _MAX_MSG_LENGTH) {
-            Log.debug("Error : Message too long;");
+            log.severe("Error : Message too long;");
             return new byte[]{};
         }
 
         byte[] r = this.call(msg);
 
         if (r.length > _MAX_RESULT_LENGTH) {
-            Log.debug("Error : Result too long;");
+            log.severe("Error : Result too long;");
         }
         return r;
     }

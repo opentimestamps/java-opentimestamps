@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import java.util.logging.Logger;
+
 /**
  * Cryptographic SHA256 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not
@@ -8,6 +10,9 @@ package com.eternitywall;
  * @extends CryptOp
  */
 class OpSHA256 extends OpCrypto {
+
+
+    private static Logger log = Logger.getLogger(OpSHA256.class.getName());
 
     public static byte _TAG = 0x08;
 

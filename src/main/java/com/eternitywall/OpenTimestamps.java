@@ -2,6 +2,7 @@ package com.eternitywall;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * com.eternitywall.OpenTimestamps module.
@@ -13,6 +14,8 @@ import java.util.*;
 
 public class OpenTimestamps {
 
+
+    private static Logger log = Logger.getLogger(OpenTimestamps.class.getName());
 
     /**
      * Show information on a timestamp.
@@ -144,21 +147,21 @@ public class OpenTimestamps {
                 StreamDeserializationContext ctxHashfd = new StreamDeserializationContext(plain);
                 actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(ctxHashfd);
             } catch (Exception e) {
-                System.err.print("com.eternitywall.StreamDeserializationContext : file stream error");
+                log.severe("com.eternitywall.StreamDeserializationContext : file stream error");
             }
         } else {
             // Read Hash
             try {
                 actualFileDigest = plain.clone();
             } catch (Exception e) {
-                System.err.print("com.eternitywall.StreamDeserializationContext : file hash error");
+                log.severe("com.eternitywall.StreamDeserializationContext : file hash error");
             }
         }
 
         byte[] detachedFileDigest = detachedTimestamp.fileDigest();
         if (!Arrays.equals(actualFileDigest, detachedFileDigest)) {
-            System.err.print("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()));
-            System.err.print("File does not match original!");
+            log.severe("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()));
+            log.severe("File does not match original!");
 
         }
 
@@ -226,20 +229,20 @@ public class OpenTimestamps {
             StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
-            System.err.print("com.eternitywall.StreamDeserializationContext error");
+            log.severe("com.eternitywall.StreamDeserializationContext error");
         }
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgradeTimestamp(detachedTimestamp.timestamp);
 
         if (changed) {
-            System.out.print("Timestamp upgraded");
+            log.info("Timestamp upgraded");
         }
 
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            System.out.print("Timestamp complete");
+            log.info("Timestamp complete");
         } else {
-            System.out.print("Timestamp not complete");
+            log.info("Timestamp not complete");
         }
 
 
@@ -288,7 +291,7 @@ public class OpenTimestamps {
         Timestamp upgradedStamp = calendar.getTimestamp(commitment);
         Set<TimeAttestation> attsFromRemote = upgradedStamp.getAttestations();
         if (attsFromRemote.size() > 0) {
-            // console.log(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+            // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
         }
 
         // Set difference from remote attestations & existing attestations
@@ -298,7 +301,7 @@ public class OpenTimestamps {
         if (newAttestations.size() > 0) {
             // changed & found_new_attestations
             // foundNewAttestations = true;
-            // console.log(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+            // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
 
             // Set union of existingAttestations & newAttestations
             existingAttestations.addAll(newAttestations);

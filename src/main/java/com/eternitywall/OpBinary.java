@@ -2,12 +2,16 @@ package com.eternitywall;
 
 import com.oracle.tools.packager.Log;
 
+import java.util.logging.Logger;
+
 /**
  * Operations that act on a message and a single argument.
  *
  * @extends com.eternitywall.OpUnary
  */
 class OpBinary extends Op {
+
+    private static Logger log = Logger.getLogger(OpBinary.class.getName());
 
     byte[] arg;
 
@@ -39,7 +43,7 @@ class OpBinary extends Op {
         } else if (tag == OpRIPEMD160._TAG) {
             return new OpRIPEMD160(arg);
         } else {
-            Log.debug("Unknown operation tag: " + tag);
+            log.severe("Unknown operation tag: " + tag);
             return null;
         }
     }

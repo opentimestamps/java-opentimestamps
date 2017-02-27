@@ -7,12 +7,17 @@ package com.eternitywall;
  * @license LPGL3
  */
 
+import java.util.logging.Logger;
+
 /**
  * Class representing Detached com.eternitywall.Timestamp File.
  * A file containing a timestamp for another file.
  * Contains a timestamp, along with a header and the digest of the file.
  */
 class DetachedTimestampFile {
+
+    private static Logger log = Logger.getLogger(DetachedTimestampFile.class.getName());
+
 
     /**
      * Header magic bytes

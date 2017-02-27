@@ -2,11 +2,14 @@ package com.eternitywall;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * Created by luca on 25/02/2017.
  */
 public class StreamDeserializationContext {
+
+    private static Logger log = Logger.getLogger(StreamDeserializationContext.class.getName());
 
     byte[] buffer;
     int counter = 0;
@@ -74,10 +77,10 @@ public class StreamDeserializationContext {
     public byte[] readVarbytes(int maxLen, int minLen) {
         int l = this.readVaruint();
         if ((l & 0xff) > maxLen) {
-            System.err.println("varbytes max length exceeded;");
+            log.severe("varbytes max length exceeded;");
             return null;
         } else if ((l & 0xff) < minLen) {
-            System.err.println("varbytes min length not met;");
+            log.severe("varbytes min length not met;");
             return null;
         }
         return this.read((l & 0xff));

@@ -9,6 +9,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by luca on 26/02/2017.
@@ -42,7 +43,6 @@ public class Utils {
         try {
             SecureRandom.getInstanceStrong().nextBytes(bytes);
         } catch (NoSuchAlgorithmException e) {
-            Log.debug("NoSuchAlgorithmException");
             e.printStackTrace();
             throw new IOException();
         }

@@ -2,6 +2,7 @@ package com.eternitywall;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 
 import com.oracle.tools.packager.Log;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -16,6 +17,8 @@ import org.bouncycastle.crypto.digests.RIPEMD160Digest;
  * @extends com.eternitywall.OpUnary
  */
 class OpCrypto extends OpUnary {
+
+    private static Logger log = Logger.getLogger(OpCrypto.class.getName());
 
     byte[] arg;
     public byte _TAG = 0x00;
@@ -60,7 +63,7 @@ class OpCrypto extends OpUnary {
                 byte[] hash = digest.digest(msg);
                 return hash;
             } catch (NoSuchAlgorithmException e) {
-                Log.debug("NoSuchAlgorithmException");
+                log.severe("NoSuchAlgorithmException");
                 e.printStackTrace();
                 return new byte[]{};
             }
@@ -80,7 +83,7 @@ class OpCrypto extends OpUnary {
             byte[] hash = digest.digest();
             return hash;
         } catch (NoSuchAlgorithmException e) {
-            Log.debug("NoSuchAlgorithmException");
+            log.severe("NoSuchAlgorithmException");
             e.printStackTrace();
             return new byte[]{};
         }
