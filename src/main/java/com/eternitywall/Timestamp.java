@@ -1,16 +1,15 @@
-
+package com.eternitywall;
 /**
- * Timestamp module.
- * @module Timestamp
+ * com.eternitywall.Timestamp module.
+ * @module com.eternitywall.Timestamp
  * @author EternityWall
  * @license LPGL3
  */
 
-import java.sql.Time;
 import java.util.*;
 
 /**
- * Class representing Timestamp interface
+ * Class representing com.eternitywall.Timestamp interface
  * Proof that one or more attestations commit to a message.
  * The proof is in the form of a tree, with each node being a message, and the
  * edges being operations acting on those messages. The leafs of the tree are
@@ -23,7 +22,7 @@ class Timestamp {
     HashMap<Op, Timestamp> ops;
 
     /**
-     * Create a Timestamp object.
+     * Create a com.eternitywall.Timestamp object.
      * @param {string} msg - The server url.
      */
     Timestamp(byte[] msg) {
@@ -33,19 +32,19 @@ class Timestamp {
     }
 
     /**
-     * Deserialize a Timestamp.
+     * Deserialize a com.eternitywall.Timestamp.
      * Because the serialization format doesn't include the message that the
      * timestamp operates on, you have to provide it so that the correct
      * operation results can be calculated.
      * The message you provide is assumed to be correct; if it causes a op to
      * raise MsgValueError when the results are being calculated (done
      * immediately, not lazily) DeserializationError is raised instead.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
      * @param {initialMsg} initialMsg - The initial message.
-     * @return {Timestamp} The generated Timestamp.
+     * @return {com.eternitywall.Timestamp} The generated com.eternitywall.Timestamp.
      */
     public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
-        // console.log('deserialize: ', Utils.bytesToHex(initialMsg));
+        // console.log('deserialize: ', com.eternitywall.Utils.bytesToHex(initialMsg));
         Timestamp self = new Timestamp(initialMsg);
 
         byte tag = ctx.readBytes(1)[0];
@@ -69,7 +68,7 @@ class Timestamp {
             Op op = Op.deserializeFromTag(ctx, tag);
 
             byte[] result = op.call(initialMsg);
-            // console.log('result: ', Utils.bytesToHex(result));
+            // console.log('result: ', com.eternitywall.Utils.bytesToHex(result));
 
             Timestamp stamp = Timestamp.deserialize(ctx, result);
             self.ops.put(op, stamp);
@@ -78,7 +77,7 @@ class Timestamp {
 
     /**
      * Create a Serialize object.
-     * @param {StreamSerializationContext} ctx - The stream serialization context.
+     * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
         // console.log('SERIALIZE');
@@ -124,7 +123,7 @@ class Timestamp {
 
     /**
      * Add all operations and attestations from another timestamp to this one.
-     * @param {Timestamp} other - Initial other Timestamp to merge.
+     * @param {com.eternitywall.Timestamp} other - Initial other com.eternitywall.Timestamp to merge.
      */
     void merge(Timestamp other) {
         if (!(other instanceof Timestamp)) {
@@ -242,13 +241,13 @@ class Timestamp {
                 output += timestamp.strTree(indent + 1);
             }
         } else if (this.ops.size() > 0) {
-            // output += Timestamp.indention(indent);
+            // output += com.eternitywall.Timestamp.indention(indent);
             for(Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
                 output += op.toString() + '\n';
-                // output += ' ( ' + Utils.bytesToHex(this.msg) + ' ) ';
+                // output += ' ( ' + com.eternitywall.Utils.bytesToHex(this.msg) + ' ) ';
                 // output += '\n';
                 output += timestamp.strTree(indent);
             }
@@ -269,7 +268,7 @@ class Timestamp {
                 output += Timestamp.indention(indent);
                 output += "verify " + attestation.toString();
                 output += " (" + Utils.bytesToHex(timestamp.msg) + ") ";
-                // output += " ["+Utils.bytesToHex(timestamp.msg)+"] ";
+                // output += " ["+com.eternitywall.Utils.bytesToHex(timestamp.msg)+"] ";
                 output += '\n';
             }
         }

@@ -1,7 +1,8 @@
+package com.eternitywall;
 
 /**
  * Placeholder for attestations that don't support
- * @extends TimeAttestation
+ * @extends com.eternitywall.TimeAttestation
  */
 class UnknownAttestation extends TimeAttestation {
 
@@ -31,6 +32,6 @@ class UnknownAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "UnknownAttestation " + this._TAG() + ' ' + this.payload;
+        return "com.eternitywall.UnknownAttestation " + this._TAG() + ' ' + this.payload;
     }
 }

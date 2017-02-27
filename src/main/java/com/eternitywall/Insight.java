@@ -1,12 +1,10 @@
-/**
- * Insight module.
- * @module Insight
+package com.eternitywall; /**
+ * com.eternitywall.Insight module.
+ * @module com.eternitywall.Insight
  * @author EternityWall
  * @license LPGL3
  */
 
-import com.oracle.javafx.jmx.json.JSONFactory;
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -14,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 
-/** Class used to query Insight API */
+/** Class used to query com.eternitywall.Insight API */
 class Insight {
 
     String urlBlockindex;
@@ -108,7 +106,7 @@ class Insight {
             // Response Hanlder
             JSONObject json = new JSONObject(jsonString);
             String merkleroot = json.getString("merkleroot");
-            String time = json.getString("time");
+            String time = String.valueOf(json.getInt("time"));
             InsightResponse insightResponse = new InsightResponse();
             insightResponse.setMerkleroot( merkleroot );
             insightResponse.setTime( time );

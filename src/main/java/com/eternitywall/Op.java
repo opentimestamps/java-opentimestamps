@@ -1,14 +1,13 @@
-import java.util.HashMap;
-import java.util.Map;
+package com.eternitywall;
 
 /**
- * Timestamp proof operations.
+ * com.eternitywall.Timestamp proof operations.
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 class Op {
 
     /**
-     * Maximum length of an Op result
+     * Maximum length of an com.eternitywall.Op result
      *
      * For a verifier, this limit is what limits the maximum amount of memory you
      * need at any one time to verify a particular timestamp path; while verifying
@@ -22,20 +21,20 @@ class Op {
      * limits required by both are quite large - 1MB and 16MiB respectively - 4KiB
      * is perfectly adequate in both cases for more reasonable usage.
      *
-     * Op subclasses should set this limit even lower if doing so is appropriate
+     * com.eternitywall.Op subclasses should set this limit even lower if doing so is appropriate
      * for them.
      */
     public static int _MAX_RESULT_LENGTH = 4096;
 
 
     /**
-     * Maximum length of the message an Op can be applied too.
+     * Maximum length of the message an com.eternitywall.Op can be applied too.
      *
      * Similar to the result length limit, this limit gives implementations a sane
      * constraint to work with; the maximum result-length limit implicitly
      * constrains maximum message length anyway.
      *
-     * Op subclasses should set this limit even lower if doing so is appropriate
+     * com.eternitywall.Op subclasses should set this limit even lower if doing so is appropriate
      * for them.
      */
     public static int _MAX_MSG_LENGTH = 4096;
@@ -48,8 +47,8 @@ class Op {
 
     /**
      * Deserialize operation from a buffer.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
-     * @return {Op} The subclass Operation.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
+     * @return {com.eternitywall.Op} The subclass Operation.
      */
     public static Op deserialize(StreamDeserializationContext ctx) {
         byte tag = ctx.readBytes(1)[0];
@@ -58,9 +57,9 @@ class Op {
 
     /**
      * Deserialize operation from a buffer.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
      * @param {int} tag - The tag of the operation.
-     * @return {Op} The subclass Operation.
+     * @return {com.eternitywall.Op} The subclass Operation.
      */
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         if (tag == OpAppend._TAG){
@@ -81,7 +80,7 @@ class Op {
 
     /**
      * Serialize operation.
-     * @param {StreamSerializationContext} ctx - The stream serialization context.
+     * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
      */
     void serialize(StreamSerializationContext ctx) {
         ctx.writeByte(_TAG);

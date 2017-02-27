@@ -1,4 +1,4 @@
-/**
+package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
 
@@ -24,7 +24,7 @@
  * exceptionally rare events anyway, so better to just tell the user the timestamp
  * can't be verified rather than add almost-never tested code to handle that case
  * more gracefully.
- * @extends TimeAttestation
+ * @extends com.eternitywall.TimeAttestation
  */
 class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
@@ -51,6 +51,6 @@ class BitcoinBlockHeaderAttestation extends TimeAttestation {
         ctx.writeVaruint(this.height);
     }
     public String toString() {
-        return "BitcoinBlockHeaderAttestation(" + this.height + ")";
+        return "com.eternitywall.BitcoinBlockHeaderAttestation(" + this.height + ")";
     }
 }

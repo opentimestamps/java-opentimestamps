@@ -1,3 +1,5 @@
+package com.eternitywall;
+
 import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
 
 import java.io.IOException;

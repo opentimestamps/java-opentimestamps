@@ -1,5 +1,4 @@
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+package com.eternitywall;
 
 /**
  * Cryptographic SHA1 operation

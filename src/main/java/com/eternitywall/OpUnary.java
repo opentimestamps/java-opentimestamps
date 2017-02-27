@@ -1,7 +1,8 @@
+package com.eternitywall;
 
 /**
  * Operations that act on a single message.
- * @extends Op
+ * @extends com.eternitywall.Op
  */
 class OpUnary extends Op {
 

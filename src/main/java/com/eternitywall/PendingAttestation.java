@@ -1,3 +1,4 @@
+package com.eternitywall;
 
 /**
  * Pending attestations.
@@ -16,7 +17,7 @@
  * to normally have more than a small number of remote calendar attestations,
  * it'd be better to have verifiers get the most recent status of such
  * information (possibly with appropriate negative response caching).
- * @extends TimeAttestation
+ * @extends com.eternitywall.TimeAttestation
  */
 class PendingAttestation extends TimeAttestation {
 
@@ -66,6 +67,6 @@ class PendingAttestation extends TimeAttestation {
         ctx.writeVarbytes(this.uri);
     }
     public String toString() {
-        return "PendingAttestation(\'" + this.uri + "\')";
+        return "com.eternitywall.PendingAttestation(\'" + this.uri + "\')";
     }
 }

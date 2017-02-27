@@ -1,4 +1,5 @@
-import java.nio.charset.StandardCharsets;
+package com.eternitywall;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -9,7 +10,7 @@ import org.bouncycastle.crypto.digests.RIPEMD160Digest;
  * These transformations have the unique property that for any length message,
  * the size of the result they return is fixed. Additionally, they're the only
  * type of operation that can be applied directly to a stream.
- * @extends OpUnary
+ * @extends com.eternitywall.OpUnary
  */
 class OpCrypto extends OpUnary {
 

@@ -1,7 +1,8 @@
+package com.eternitywall;
 
 /**
  * Operations that act on a message and a single argument.
- * @extends OpUnary
+ * @extends com.eternitywall.OpUnary
  */
 class OpBinary extends Op {
 
@@ -22,7 +23,7 @@ class OpBinary extends Op {
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
-        byte[] arg = ctx.readVarbytes(Op._MAX_RESULT_LENGTH, 1);
+        byte[] arg = ctx.readVarbytes(_MAX_RESULT_LENGTH, 1);
         if (tag == OpAppend._TAG){
             return new OpAppend(arg);
         }else if (tag == OpPrepend._TAG){

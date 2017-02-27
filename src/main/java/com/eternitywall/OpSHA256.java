@@ -1,3 +1,5 @@
+package com.eternitywall;
+
 /**
  * Cryptographic SHA256 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not

@@ -1,13 +1,13 @@
-
+package com.eternitywall;
 /**
- * Detached Timestamp File module.
- * @module DetachedTimestampFile
+ * Detached com.eternitywall.Timestamp File module.
+ * @module com.eternitywall.DetachedTimestampFile
  * @author EternityWall
  * @license LPGL3
  */
 
 /**
- * Class representing Detached Timestamp File.
+ * Class representing Detached com.eternitywall.Timestamp File.
  * A file containing a timestamp for another file.
  * Contains a timestamp, along with a header and the digest of the file.
  */
@@ -52,9 +52,9 @@ class DetachedTimestampFile {
     }
 
     /**
-     * Serialize a Timestamp File.
-     * @param {StreamSerializationContext} ctx - The stream serialization context.
-     * @return {byte[]} The serialized DetachedTimestampFile object.
+     * Serialize a com.eternitywall.Timestamp File.
+     * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
+     * @return {byte[]} The serialized com.eternitywall.DetachedTimestampFile object.
      */
     public void serialize(StreamSerializationContext ctx) {
         ctx.writeBytes(HEADER_MAGIC);
@@ -65,9 +65,9 @@ class DetachedTimestampFile {
     }
 
     /**
-     * Deserialize a Timestamp File.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
-     * @return {DetachedTimestampFile} The generated DetachedTimestampFile object.
+     * Deserialize a com.eternitywall.Timestamp File.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
+     * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile deserialize(StreamDeserializationContext ctx) {
         ctx.assertMagic(HEADER_MAGIC);
@@ -82,10 +82,10 @@ class DetachedTimestampFile {
     }
 
     /**
-     * Read the Detached Timestamp File from bytes.
-     * @param {Op} fileHashOp - The file hash operation.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
-     * @return {DetachedTimestampFile} The generated DetachedTimestampFile object.
+     * Read the Detached com.eternitywall.Timestamp File from bytes.
+     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
+     * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile fromBytes(OpCrypto fileHashOp, StreamDeserializationContext ctx) {
         byte[] fdHash = fileHashOp.hashFd(ctx);
@@ -93,10 +93,10 @@ class DetachedTimestampFile {
     }
 
     /**
-     * Read the Detached Timestamp File from hash.
-     * @param {Op} fileHashOp - The file hash operation.
+     * Read the Detached com.eternitywall.Timestamp File from hash.
+     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
      * @param {int[]} fdHash - The hash file.
-     * @return {DetachedTimestampFile} The generated DetachedTimestampFile object.
+     * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile fromHash(Op fileHashOp, byte[] fdHash) {
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
@@ -107,7 +107,7 @@ class DetachedTimestampFile {
      * @return {string} The output.
      */
     public String toString() {
-        String output = "DetachedTimestampFile\n";
+        String output = "com.eternitywall.DetachedTimestampFile\n";
         output += "fileHashOp: " + this.fileHashOp.toString() + '\n';
         output += "timestamp: " + this.timestamp.toString() + '\n';
         return output;

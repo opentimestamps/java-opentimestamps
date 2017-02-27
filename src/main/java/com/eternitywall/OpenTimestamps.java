@@ -1,3 +1,5 @@
+package com.eternitywall;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -5,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OpenTimestamps module.
- * @module OpenTimestamps
+ * com.eternitywall.OpenTimestamps module.
+ * @module com.eternitywall.OpenTimestamps
  * @author EternityWall
  * @license LPGL3
  */
@@ -16,7 +18,7 @@ public class OpenTimestamps {
 
     /**
      * Show information on a timestamp.
-     * @exports OpenTimestamps/info
+     * @exports com.eternitywall.OpenTimestamps/info
      * @param {byte[]} ots - The ots array buffer.
      */
     public static String info(byte[] ots) {
@@ -31,12 +33,12 @@ public class OpenTimestamps {
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._HASHLIB_NAME();
 
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
-        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
+        return firstLine + "com.eternitywall.Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
     }
 
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @exports OpenTimestamps/stamp
+     * @exports com.eternitywall.OpenTimestamps/stamp
      * @param {byte[]} plain - The plain array buffer to stamp.
      * @param {Boolean} isHash - 1 = Hash , 0 = Data File
      */
@@ -65,7 +67,7 @@ public class OpenTimestamps {
             throw new IOException();
         }
 
-        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(OpAppend(os.urandom(16)))
+        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.OpAppend(os.urandom(16)))
         Op opAppend = new OpAppend(bytesRandom16);
         Timestamp nonceAppendedStamp = fileTimestamp.timestamp.ops.get(opAppend);
         if (nonceAppendedStamp == null) {
@@ -73,7 +75,7 @@ public class OpenTimestamps {
             fileTimestamp.timestamp.ops.put(opAppend, nonceAppendedStamp);
         }
 
-        // merkle_root = nonce_appended_stamp.ops.add(OpSHA256())
+        // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.OpSHA256())
         Op opSHA256 = new OpSHA256();
         merkleRoot = nonceAppendedStamp.ops.get(opSHA256);
         if (merkleRoot == null) {
@@ -92,7 +94,7 @@ public class OpenTimestamps {
         if (resultTimestamp == null) {
             throw new IOException();
         }
-        // Timestamp serialization
+        // com.eternitywall.Timestamp serialization
         StreamSerializationContext css = new StreamSerializationContext();
         fileTimestamp.serialize(css);
         return css.getOutput();
@@ -106,7 +108,7 @@ public class OpenTimestamps {
     public static Timestamp createTimestamp(Timestamp timestamp, List<String>calendarUrls) {
         List<Calendar> calendars = new ArrayList<Calendar>();
         /*for (final String calendarUrl : calendarUrls) {
-            Calendar calendar = new Calendar(calendarUrl);
+            com.eternitywall.Calendar calendar = new com.eternitywall.Calendar(calendarUrl);
             calendars.add(calendar.submit(timestamp.msg));
         }*/
         Calendar calendar = new Calendar(calendarUrls.get(0));
@@ -118,7 +120,7 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     * @exports OpenTimestamps/verify
+     * @exports com.eternitywall.OpenTimestamps/verify
      * @param {byte[]} ots - The ots array buffer containing the proof to verify.
      * @param {byte[]} plain - The plain array buffer to verify.
      * @param {Boolean} isHash - 1 = Hash , 0 = Data File
@@ -130,7 +132,7 @@ public class OpenTimestamps {
             StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
-            System.err.print("StreamDeserializationContext error");
+            System.err.print("com.eternitywall.StreamDeserializationContext error");
         }
 
         byte[] actualFileDigest = new byte[0];
@@ -140,14 +142,14 @@ public class OpenTimestamps {
                 StreamDeserializationContext ctxHashfd = new StreamDeserializationContext(plain);
                 actualFileDigest = ((OpCrypto)(detachedTimestamp.fileHashOp)).hashFd(ctxHashfd);
             } catch (Exception e) {
-                System.err.print("StreamDeserializationContext : file stream error");
+                System.err.print("com.eternitywall.StreamDeserializationContext : file stream error");
             }
         } else {
             // Read Hash
             try {
                 actualFileDigest = plain.clone();
             } catch (Exception e) {
-                System.err.print("StreamDeserializationContext : file hash error");
+                System.err.print("com.eternitywall.StreamDeserializationContext : file hash error");
             }
         }
 
@@ -158,12 +160,12 @@ public class OpenTimestamps {
             
         }
 
-        // console.log(Timestamp.strTreeExtended(detachedTimestamp.timestamp, 0));
+        // console.log(com.eternitywall.Timestamp.strTreeExtended(detachedTimestamp.timestamp, 0));
         return OpenTimestamps.verifyTimestamp(detachedTimestamp.timestamp);
     }
 
     /** Verify a timestamp.
-     * @param {Timestamp} timestamp - The timestamp.
+     * @param {com.eternitywall.Timestamp} timestamp - The timestamp.
      * @return {int} unix timestamp if verified, undefined otherwise.
      */
     public static String verifyTimestamp(Timestamp timestamp) {
@@ -173,9 +175,9 @@ public class OpenTimestamps {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
 
-            if (!found) { // Verify only the first BitcoinBlockHeaderAttestation
+            if (!found) { // Verify only the first com.eternitywall.BitcoinBlockHeaderAttestation
                 if (attestation instanceof PendingAttestation) {
-                    // console.log('PendingAttestation: pass ');
+                    // console.log('com.eternitywall.PendingAttestation: pass ');
                 } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
                     found = true;
                     // console.log('Request to insight ');
@@ -188,8 +190,8 @@ public class OpenTimestamps {
                     byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);
 
-                    // console.log('merkleroot: ' + Utils.bytesToHex(merkle));
-                    // console.log('msg: ' + Utils.bytesToHex(message));
+                    // console.log('merkleroot: ' + com.eternitywall.Utils.bytesToHex(merkle));
+                    // console.log('msg: ' + com.eternitywall.Utils.bytesToHex(message));
                     // console.log('Time: ' + (new Date(blockInfo.time * 1000)));
 
                     // One Bitcoin attestation is enought

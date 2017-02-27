@@ -1,3 +1,5 @@
+package com.eternitywall;
+
 /**
  * Cryptographic RIPEMD160 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not

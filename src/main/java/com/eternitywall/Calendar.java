@@ -1,7 +1,7 @@
-
+package com.eternitywall;
 /**
- * Calendar module.
- * @module Calendar
+ * com.eternitywall.Calendar module.
+ * @module com.eternitywall.Calendar
  * @author EternityWall
  * @license LPGL3
  */
@@ -11,7 +11,7 @@ import com.sun.xml.internal.ws.util.ByteArrayBuffer;
 import java.net.*;
 import java.io.*;
 
-/** Class representing Remote Calendar server interface */
+/** Class representing Remote com.eternitywall.Calendar server interface */
 public class Calendar {
 
     String url;
@@ -26,7 +26,7 @@ public class Calendar {
 
 
     /**
-     * Submitting a digest to remote calendar. Returns a Timestamp committing to that digest.
+     * Submitting a digest to remote calendar. Returns a com.eternitywall.Timestamp committing to that digest.
      * @param {byte[]} digest - The digest hash to send.
      */
     public Timestamp submit(byte[] digest) {
@@ -63,7 +63,7 @@ public class Calendar {
             // Response Hanlder
             byte[] body = byteArrayBuffer.getRawData();
             if (body.length > 10000) {
-                System.err.print("Calendar response exceeded size limit");
+                System.err.print("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 
@@ -121,7 +121,7 @@ public class Calendar {
             // Response Hanlder
             byte[] body = byteArrayBuffer.getRawData();
             if (body.length > 10000) {
-                System.err.print("Calendar response exceeded size limit");
+                System.err.print("com.eternitywall.Calendar response exceeded size limit");
                 return null;
             }
 

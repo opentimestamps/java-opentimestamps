@@ -1,7 +1,7 @@
-
+package com.eternitywall;
 /**
- * TimeAttestation module.
- * @module TimeAttestation
+ * com.eternitywall.TimeAttestation module.
+ * @module com.eternitywall.TimeAttestation
  * @author EternityWall
  * @license LPGL3
  */
@@ -9,7 +9,7 @@
 
 import java.util.Arrays;
 
-/** Class representing Timestamp signature verification */
+/** Class representing com.eternitywall.Timestamp signature verification */
 class TimeAttestation {
 
     public static int _TAG_SIZE = 8;
@@ -25,26 +25,26 @@ class TimeAttestation {
 
     /**
      * Deserialize a general Time Attestation to the specific subclass Attestation.
-     * @param {StreamDeserializationContext} ctx - The stream deserialization context.
+     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
      * @return {Attestation} The specific subclass Attestation.
      */
     public static TimeAttestation deserialize(StreamDeserializationContext ctx) {
         // console.log('attestation deserialize');
 
         byte[] tag = ctx.readBytes(_TAG_SIZE);
-        // console.log('tag: ', Utils.bytesToHex(tag));
+        // console.log('tag: ', com.eternitywall.Utils.bytesToHex(tag));
 
         byte[] serializedAttestation = ctx.readVarbytes(_MAX_PAYLOAD_SIZE);
-        // console.log('serializedAttestation: ', Utils.bytesToHex(serializedAttestation));
+        // console.log('serializedAttestation: ', com.eternitywall.Utils.bytesToHex(serializedAttestation));
 
         StreamDeserializationContext ctxPayload = new StreamDeserializationContext(serializedAttestation);
 
     /* eslint no-use-before-define: ["error", { "classes": false }] */
         if (Arrays.equals(tag, PendingAttestation._TAG) == true) {
-            // console.log('tag(PendingAttestation)');
+            // console.log('tag(com.eternitywall.PendingAttestation)');
             return PendingAttestation.deserialize(ctxPayload);
         } else if (Arrays.equals(tag, BitcoinBlockHeaderAttestation._TAG) == true) {
-            // console.log('tag(BitcoinBlockHeaderAttestation)');
+            // console.log('tag(com.eternitywall.BitcoinBlockHeaderAttestation)');
             return BitcoinBlockHeaderAttestation.deserialize(ctxPayload);
         }
         return UnknownAttestation.deserialize(ctxPayload, tag);
@@ -52,7 +52,7 @@ class TimeAttestation {
 
     /**
      * Serialize a a general Time Attestation to the specific subclass Attestation.
-     * @param {StreamSerializationContext} ctx - The output stream serialization context.
+     * @param {com.eternitywall.StreamSerializationContext} ctx - The output stream serialization context.
      */
     public void serialize( StreamSerializationContext ctx) {
         ctx.writeBytes(this._TAG());

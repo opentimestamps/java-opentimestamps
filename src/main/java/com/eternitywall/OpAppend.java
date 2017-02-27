@@ -1,31 +1,32 @@
+package com.eternitywall;
 
 /**
- * Prepend a prefix to a message.
- * @extends OpBinary
+ * Append a suffix to a message.
+ * @extends com.eternitywall.OpBinary
  */
-class OpPrepend extends OpBinary {
+class OpAppend extends OpBinary {
 
     byte[] arg;
 
-    public static byte _TAG= (byte)0xf1;
+    public static byte _TAG= (byte)0xf0;
 
     @Override
     public String _TAG_NAME() {
-        return "prepend";
+        return "append";
     }
 
-    OpPrepend() {
+    OpAppend() {
         super();
         this.arg = new byte[]{};
     }
-    OpPrepend(byte[] arg_) {
+    OpAppend(byte[] arg_) {
         super(arg_);
         this.arg = arg_;
     }
 
     @Override
     public byte[] call(byte[] msg) {
-        return Utils.ArraysConcat(this.arg,msg);
+        return Utils.ArraysConcat(msg,this.arg);
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {

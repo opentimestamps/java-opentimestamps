@@ -1,4 +1,4 @@
-/**
+package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 
-public class otscli {
+public class OtsCli {
 
     public static void main(String[] args) {
 
@@ -18,7 +18,7 @@ public class otscli {
         Path path = Paths.get("./examples/hello-world.txt.ots");
         try {
             byte[] data = Files.readAllBytes(path);
-            String res = OpenTimestamps.info(data);
+            String res = com.eternitywall.OpenTimestamps.info(data);
             System.out.print(res);
         } catch (IOException e) {
             e.printStackTrace();
@@ -28,8 +28,8 @@ public class otscli {
         Path path = Paths.get("./examples/hello-world.txt");
         try {
             byte[] data = Files.readAllBytes(path);
-            byte[] ots = OpenTimestamps.stamp(data,true);
-            System.out.print(Utils.bytesToHex(ots));
+            byte[] ots = com.eternitywall.OpenTimestamps.stamp(data,true);
+            System.out.print(com.eternitywall.Utils.bytesToHex(ots));
         } catch (IOException e) {
             e.printStackTrace();
         }*/
