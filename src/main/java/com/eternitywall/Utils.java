@@ -1,7 +1,5 @@
 package com.eternitywall;
 
-import com.oracle.tools.packager.Log;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;

@@ -8,8 +8,6 @@ package com.eternitywall;
  */
 
 
-import com.oracle.tools.packager.Log;
-
 import java.net.*;
 import java.io.*;
 import java.util.logging.Logger;
