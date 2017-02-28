@@ -3,6 +3,7 @@ package com.eternitywall;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -90,7 +91,7 @@ public class OpenTimestamps {
         byte[] bytesRandom16 = new byte[16];
         try {
             bytesRandom16 = Utils.randBytes(16);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new IOException();
         }
@@ -358,7 +359,7 @@ public class OpenTimestamps {
         for (Timestamp subStamp : timestamp.directlyVerified()) {
             for (TimeAttestation attestation : subStamp.attestations) {
                 if (attestation instanceof PendingAttestation) {
-                    String calendarUrl = Utils.bytesToString(((PendingAttestation) attestation).uri);
+                    String calendarUrl = new String(((PendingAttestation) attestation).uri, StandardCharsets.UTF_8);
                     // var calendarUrl = calendarUrls[0];
                     byte[] commitment = subStamp.msg;
 
