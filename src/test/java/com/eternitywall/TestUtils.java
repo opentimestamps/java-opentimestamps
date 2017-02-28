@@ -1,4 +1,4 @@
-package eternitywall.com;
+package com.eternitywall;
 
 import org.junit.Test;
 
