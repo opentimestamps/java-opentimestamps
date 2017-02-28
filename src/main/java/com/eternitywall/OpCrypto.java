@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import java.io.*;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
@@ -67,12 +69,10 @@ class OpCrypto extends OpUnary {
                 return new byte[]{};
             }
         }
-
     }
 
 
-    public byte[] hashFd(StreamDeserializationContext ctx) {
-        try {
+    public byte[] hashFd(StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
             MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
             byte[] chunk = ctx.read(1048576);
             while (chunk != null && chunk.length > 0) {
@@ -81,11 +81,20 @@ class OpCrypto extends OpUnary {
             }
             byte[] hash = digest.digest();
             return hash;
-        } catch (NoSuchAlgorithmException e) {
-            log.severe("NoSuchAlgorithmException");
-            e.printStackTrace();
-            return new byte[]{};
+    }
+
+    public byte[] hashFd(File file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] chunk = new byte[1048576];
+        int count = 1;
+        while (count > 0) {
+            fileInputStream.read(chunk, 0, 1048576);
+            digest.update(chunk);
         }
+        fileInputStream.close();
+        byte[] hash = digest.digest();
+        return hash;
     }
 
 }

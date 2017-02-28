@@ -7,6 +7,9 @@ package com.eternitywall;
  * @license LPGL3
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 /**
@@ -91,7 +94,7 @@ class DetachedTimestampFile {
      * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile fromBytes(OpCrypto fileHashOp, StreamDeserializationContext ctx) {
+    public static DetachedTimestampFile fromBytes(OpCrypto fileHashOp, StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(ctx);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
@@ -99,10 +102,21 @@ class DetachedTimestampFile {
     /**
      * Read the Detached com.eternitywall.Timestamp File from hash.
      * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
-     * @param {int[]} fdHash - The hash file.
+     * @param {byte[]} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile fromHash(Op fileHashOp, byte[] fdHash) {
+    public static DetachedTimestampFile fromHash(OpCrypto fileHashOp, byte[] fdHash) {
+        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    }
+
+    /**
+     * Read the Detached com.eternitywall.Timestamp File from File.
+     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {File} fdHash - The hash file.
+     * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
+     */
+    public static DetachedTimestampFile fromFile(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
+        byte[] fdHash = fileHashOp.hashFd(file);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 

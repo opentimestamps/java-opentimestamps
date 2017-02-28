@@ -2,61 +2,143 @@ package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
 
+import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.logging.Logger;
 
 public class OtsCli {
 
     private static Logger log = Logger.getLogger(OtsCli.class.getName());
+    private static String title = "OtsCli";
+    private static String version = "1.0";
 
     public static void main(String[] args) {
 
 
-        Path pathPlain = Paths.get("./examples/hello-world.txt");
-        Path pathOts = Paths.get("./examples/hello-world.txt.ots");
-
-        //INFO
-        /*try {
-            byte[] data = Files.readAllBytes(pathOts);
-            String res = com.eternitywall.OpenTimestamps.info(data);
-            System.out.print(res);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        // STAMP
-        /*try {
-            byte[] data = Files.readAllBytes(pathPlain);
-            byte[] ots = com.eternitywall.OpenTimestamps.stamp(data,true);
-            System.out.print(com.eternitywall.Utils.bytesToHex(ots));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        /* VERIFY */
-        /*try {
-            byte[] bytesPlain = Files.readAllBytes(pathPlain);
-            byte[] bytesOts = Files.readAllBytes(pathOts);
-            String result = OpenTimestamps.verify(bytesOts,bytesPlain,false);
-            System.out.print(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        /* UPGRADE */
-        try {
-            byte[] bytesPlain = Files.readAllBytes(pathPlain);
-            byte[] bytesOts = Files.readAllBytes(pathOts);
-            byte[] ots = OpenTimestamps.upgrade(bytesOts);
-            System.out.print(com.eternitywall.Utils.bytesToHex(ots));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (args[0] == null) {
+            showHelp();
+            return;
         }
 
+        switch (args[0]) {
+            case "info":
+            case "i":
+                if (args.length != 2) {
+                    System.out.print("Show information on a timestamp given as argument.\n");
+                    System.out.print(title + " info: bad options number ");
+                    break;
+                }
+                info(args[1]);
+                break;
+            case "stamp":
+            case "s":
+                if (args.length != 2) {
+                    System.out.print("Create timestamp with the aid of a remote calendar.\n");
+                    System.out.print(title + ": bad options number ");
+                    break;
+                }
+                stamp(args[1]);
+                break;
+            case "verify":
+            case "v":
+                if (args.length != 2) {
+                    System.out.print("Verify the timestamp attestations given as argument.\n");
+                    System.out.print(title + ": bad options number ");
+                    break;
+                }
+                verify(args[1]);
+                break;
+            case "upgrade":
+            case "u":
+                if (args.length != 2) {
+                    System.out.print("Upgrade remote calendar timestamps to be locally verifiable.\n");
+                    System.out.print(title + ": bad options number ");
+                    break;
+                }
+                upgrade(args[1]);
+                break;
+            case "--version":
+            case "-V":
+                System.out.print("Version: " + title + " v." + version + '\n');
+                break;
+            case "--help":
+            case "-h":
+                showHelp();
+                break;
+            default:
+                System.out.print(title + ": bad option: " + args[0]);
+        }
+    }
 
+
+    public static void info (String argsOts) {
+        try {
+            Path pathOts = Paths.get(argsOts);
+            byte[] byteOts = Files.readAllBytes(pathOts);
+            String infoResult = OpenTimestamps.info(byteOts);
+            System.out.print(infoResult);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("No valid file");
+        }
+    }
+
+    public static void stamp (String argsFile) {
+        try {
+            byte[] infoResult = OpenTimestamps.stamp(new File(argsFile));
+            System.out.print(Utils.bytesToHex(infoResult));
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("No valid file");
+        }
+    }
+
+    public static void verify (String argsOts) {
+        try {
+            String argsFile = argsOts.replace(".ots","");
+            String verifyResult = OpenTimestamps.verify(new File(argsOts),new File(argsFile));
+            if(verifyResult==null){
+                System.out.print("Pending or Bad attestation");
+            }else {
+                System.out.print("Success! Bitcoin attests data existed as of "+(new Date(Integer.valueOf(verifyResult) * 1000)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("No valid file");
+        }
+    }
+
+    public static void upgrade (String argsOts) {
+        try {
+            Path pathOts = Paths.get(argsOts);
+            byte[] byteOts = Files.readAllBytes(pathOts);
+            byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
+            System.out.print(Utils.bytesToHex(upgradeResult));
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("No valid file");
+        }
+    }
+
+    public static void showHelp() {
+        System.out.print(
+                "Usage: " + title + " [options] {stamp,s,upgrade,u,verify,v,info} [arguments]\n\n" +
+                "Subcommands:\n" +
+                "s, stamp FILE       \tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
+                "S, multistamp FILES       \tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
+                "i, info FILE_OTS \tShow information on a timestamp.\n" +
+                "v, verify FILE_OTS\tVerify the timestamp attestations, expect original file present in the same directory without .ots\n" +
+                "u, upgrade FILE_OTS\tUpgrade remote calendar timestamps to be locally verifiable.\n\n" +
+                "Options:\n" +
+                        "-V, --version         \tprint " + title + " version.\n" +
+                        "-h, --help         \tprint this help.\n" +
+                        "\nLicense: LGPL."
+        );
     }
 
 }
