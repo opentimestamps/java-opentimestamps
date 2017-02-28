@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,6 +57,16 @@ public class TestOpenTimestamps {
         boolean equals = result.equals(expectedResult);
         assertEquals(expectedResult, result);
     }
+/*
+    @Test
+    public void stamp() throws NoSuchAlgorithmException, IOException {
+        byte[] bytes = Utils.randBytes(32);
+        byte[] ots = OpenTimestamps.stamp(bytes);
+        StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
+        DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
+        assertEquals(detachedTimestampFile.fileDigest(), bytes);
+    }
+*/
 
     @After
     public void tearDown() {
