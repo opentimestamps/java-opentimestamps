@@ -54,6 +54,6 @@ class OpUnary extends Op {
 
     @Override
     public String toString() {
-        return this._TAG_NAME() + ' ' + Utils.bytesToHex(this.arg);
+        return this._TAG_NAME();
     }
 }

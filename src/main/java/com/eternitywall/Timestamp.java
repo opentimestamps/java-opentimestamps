@@ -211,7 +211,7 @@ class Timestamp {
         if (this.attestations.size() > 0) {
             for (final TimeAttestation attestation : this.attestations) {
                 output += Timestamp.indention(indent);
-                output += "verify " + attestation.toString() + '\n';
+                output += "verify " + attestation.toString();
 
             }
         }

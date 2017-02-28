@@ -36,10 +36,10 @@ public class OpenTimestamps {
         DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
 
         String fileHash = Utils.bytesToHex(detachedTimestampFile.timestamp.msg);
-        String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._HASHLIB_NAME();
+        String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._TAG_NAME();
 
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
-        return firstLine + "com.eternitywall.Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
+        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
     }
 
     /**

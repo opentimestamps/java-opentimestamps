@@ -1,5 +1,6 @@
 package com.eternitywall;
 
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 /**
@@ -75,6 +76,6 @@ class PendingAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "com.eternitywall.PendingAttestation(\'" + this.uri + "\')";
+        return "PendingAttestation(\'" + new String(this.uri, StandardCharsets.UTF_8) + "\')";
     }
 }
