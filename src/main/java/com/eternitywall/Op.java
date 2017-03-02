@@ -51,6 +51,10 @@ class Op {
         return "";
     }
 
+    public byte _TAG() {
+        return Op._TAG;
+    }
+
     /**
      * Deserialize operation from a buffer.
      *
@@ -92,7 +96,7 @@ class Op {
      * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
      */
     void serialize(StreamSerializationContext ctx) {
-        ctx.writeByte(_TAG);
+        ctx.writeByte(this._TAG());
     }
 
     /**

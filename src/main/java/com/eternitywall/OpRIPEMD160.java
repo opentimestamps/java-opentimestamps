@@ -16,6 +16,11 @@ class OpRIPEMD160 extends OpCrypto {
     public static byte _TAG = 0x03;
 
     @Override
+    public byte _TAG() {
+        return OpRIPEMD160._TAG;
+    }
+
+    @Override
     public String _TAG_NAME() {
         return "ripemd160";
     }

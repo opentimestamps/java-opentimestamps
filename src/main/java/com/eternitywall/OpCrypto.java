@@ -22,7 +22,6 @@ class OpCrypto extends OpUnary {
     private static Logger log = Logger.getLogger(OpCrypto.class.getName());
 
     byte[] arg;
-    public byte _TAG = 0x00;
     public String _TAG_NAME = "";
 
     public String _HASHLIB_NAME() {

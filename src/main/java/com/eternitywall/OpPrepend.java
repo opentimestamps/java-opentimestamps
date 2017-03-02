@@ -18,6 +18,11 @@ class OpPrepend extends OpBinary {
     public static byte _TAG = (byte) 0xf1;
 
     @Override
+    public byte _TAG() {
+        return OpPrepend._TAG;
+    }
+
+    @Override
     public String _TAG_NAME() {
         return "prepend";
     }

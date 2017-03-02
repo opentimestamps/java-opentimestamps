@@ -15,6 +15,12 @@ class OpAppend extends OpBinary {
 
     public static byte _TAG = (byte) 0xf0;
 
+
+    @Override
+    public byte _TAG() {
+        return OpAppend._TAG;
+    }
+
     @Override
     public String _TAG_NAME() {
         return "append";

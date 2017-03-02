@@ -22,6 +22,11 @@ class OpSHA1 extends OpCrypto {
     public static byte _TAG = 0x02;
 
     @Override
+    public byte _TAG() {
+        return OpSHA1._TAG;
+    }
+
+    @Override
     public String _TAG_NAME() {
         return "sha1";
     }

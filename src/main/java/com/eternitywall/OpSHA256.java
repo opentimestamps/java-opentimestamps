@@ -17,6 +17,11 @@ class OpSHA256 extends OpCrypto {
     public static byte _TAG = 0x08;
 
     @Override
+    public byte _TAG() {
+        return OpSHA256._TAG;
+    }
+
+    @Override
     public String _TAG_NAME() {
         return "sha256";
     }
