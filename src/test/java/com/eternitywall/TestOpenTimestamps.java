@@ -31,6 +31,7 @@ public class TestOpenTimestamps {
     private Future<Response> helloworldFuture;
     private Future<Response> merkle2OtsFuture;
     private Future<Response> merkle2OtsInfoFuture;
+    private String helloWorldHashHex="03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
     
     
     private String baseUrl = "https://raw.githubusercontent.com/eternitywall/javascript-opentimestamps/master";
@@ -57,16 +58,21 @@ public class TestOpenTimestamps {
         boolean equals = result.equals(expectedResult);
         assertEquals(expectedResult, result);
     }
-/*
+
     @Test
-    public void stamp() throws NoSuchAlgorithmException, IOException {
+    public void stamp() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
         byte[] bytes = Utils.randBytes(32);
         byte[] ots = OpenTimestamps.stamp(bytes);
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
         DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
         assertEquals(detachedTimestampFile.fileDigest(), bytes);
+
+        byte[] ots2 = OpenTimestamps.stamp(helloworldFuture.get().getStream());
+        StreamDeserializationContext ctx2 = new StreamDeserializationContext(ots2);
+        DetachedTimestampFile detachedTimestampFile2 = DetachedTimestampFile.deserialize(ctx2);
+        assertEquals(detachedTimestampFile2.fileDigest(), Utils.hexToBytes(helloWorldHashHex));
     }
-*/
+
 
     @After
     public void tearDown() {
