@@ -15,13 +15,8 @@ public class InsightResponse {
         this.time = time;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public String getFormattedTime() {
-        String formatted = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Long.valueOf(time) * 1000);
-        return formatted;
+    public Long getTime() {
+        return Long.valueOf(time)*1000;
     }
 
     public String getMerkleroot() {

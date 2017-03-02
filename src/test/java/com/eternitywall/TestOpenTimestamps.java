@@ -73,6 +73,14 @@ public class TestOpenTimestamps {
         assertEquals(detachedTimestampFile2.fileDigest(), Utils.hexToBytes(helloWorldHashHex));
     }
 
+    @Test
+    public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+
+        Long timestamp = OpenTimestamps.verify( helloworldOtsFuture.get().getBytes(), helloworldFuture.get().getStream() );
+        assertEquals(1438269988L, timestamp);
+
+    }
+
 
     @After
     public void tearDown() {

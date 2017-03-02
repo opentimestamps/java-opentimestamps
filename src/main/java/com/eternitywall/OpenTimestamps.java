@@ -156,7 +156,7 @@ public class OpenTimestamps {
      *  @param {byte[]}  ots - The ots array buffer containing the proof to verify.
      * @param {byte[]}  stamped - The plain array buffer to verify.
      */
-    public static String verify(byte[] ots, byte[] stamped) throws IOException {
+    public static Long verify(byte[] ots, byte[] stamped) throws IOException {
         // Read OTS
         DetachedTimestampFile detachedTimestamp = null;
         try {
@@ -183,7 +183,7 @@ public class OpenTimestamps {
      *  @param {File}  ots - The ots array buffer containing the proof to verify.
      * @param {InputStream}  inputStream - The input stream to verify.
      */
-    public static String verify(byte[] ots, InputStream inputStream) throws IOException {
+    public static Long verify(byte[] ots, InputStream inputStream) throws IOException {
 
         // Read OTS
         DetachedTimestampFile detachedTimestamp = null;
@@ -211,7 +211,7 @@ public class OpenTimestamps {
      *  @param {File}  ots - The ots array buffer containing the proof to verify.
      * @param {File}  stamped - The File to verify.
      */
-    public static String verify(byte[] ots, File stamped) throws IOException {
+    public static Long verify(byte[] ots, File stamped) throws IOException {
 
         // Read OTS
         DetachedTimestampFile detachedTimestamp = null;
@@ -242,7 +242,7 @@ public class OpenTimestamps {
      * @param {DetachedTimestampFile}  detachedTimestamp - The ots containing the proof to verify.
      * @param {byte[]}  actualFileDigest - The plain array buffer stamped.
      */
-    private static String verify(DetachedTimestampFile detachedTimestamp, byte[] actualFileDigest) {
+    private static Long verify(DetachedTimestampFile detachedTimestamp, byte[] actualFileDigest) {
 
         byte[] detachedFileDigest = detachedTimestamp.fileDigest();
         if (!Arrays.equals(actualFileDigest, detachedFileDigest)) {
@@ -261,7 +261,7 @@ public class OpenTimestamps {
      * @param {com.eternitywall.Timestamp} timestamp - The timestamp.
      * @return {int} unix timestamp if verified, undefined otherwise.
      */
-    private static String verifyTimestamp(Timestamp timestamp) {
+    private static Long verifyTimestamp(Timestamp timestamp) {
         Boolean found = false;
 
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
@@ -289,17 +289,17 @@ public class OpenTimestamps {
 
                     // One Bitcoin attestation is enought
                     if (Arrays.equals(merkle, message)) {
-                        return blockInfo.getFormattedTime();
+                        return blockInfo.getTime();
                     } else {
-                        return "";
+                        return null;
                     }
                 }
             }
         }
         if (!found) {
-            return "";
+            return null;
         }
-        return "";
+        return null;
     }
 
     /**

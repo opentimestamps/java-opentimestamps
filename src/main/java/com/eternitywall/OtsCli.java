@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -120,11 +121,11 @@ public class OtsCli {
             String argsFile = argsOts.replace(".ots","");
             File file = new File(argsFile);
             fis = new FileInputStream(file);
-            String verifyResult = OpenTimestamps.verify(byteOts,fis);
-            if(verifyResult==null){
+            Long timestamp = OpenTimestamps.verify(byteOts,fis);
+            if(timestamp==null){
                 System.out.print("Pending or Bad attestation");
             }else {
-                System.out.print("Success! Bitcoin attests data existed as of "+(new Date(Integer.valueOf(verifyResult) * 1000)));
+                System.out.print("Success! Bitcoin attests data existed as of "+ new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp) );
             }
 
         } catch (IOException e) {
