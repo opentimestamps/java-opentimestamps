@@ -84,17 +84,7 @@ class OpCrypto extends OpUnary {
     }
 
     public byte[] hashFd(File file) throws IOException, NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] chunk = new byte[1048576];
-        int count = 1;
-        while (count > 0) {
-            fileInputStream.read(chunk, 0, 1048576);
-            digest.update(chunk);
-        }
-        fileInputStream.close();
-        byte[] hash = digest.digest();
-        return hash;
+        return hashFd(new FileInputStream(file));
     }
 
 
