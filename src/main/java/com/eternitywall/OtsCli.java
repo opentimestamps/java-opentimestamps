@@ -3,6 +3,7 @@ package com.eternitywall; /**
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -89,27 +90,52 @@ public class OtsCli {
     }
 
     public static void stamp (String argsFile) {
+        FileInputStream fis = null;
         try {
-            byte[] infoResult = OpenTimestamps.stamp(new File(argsFile));
+
+            File file = new File(argsFile);
+            fis = new FileInputStream(file);
+            byte[] infoResult = OpenTimestamps.stamp(fis);
             System.out.print(Utils.bytesToHex(infoResult));
+
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
+        } finally {
+            try {
+                fis.close();
+            }catch  (IOException e) {
+                log.severe("No valid file");
+            }
         }
     }
 
     public static void verify (String argsOts) {
+        FileInputStream fis = null;
         try {
+
+            Path pathOts = Paths.get(argsOts);
+            byte[] byteOts = Files.readAllBytes(pathOts);
+
             String argsFile = argsOts.replace(".ots","");
-            String verifyResult = OpenTimestamps.verify(new File(argsOts),new File(argsFile));
+            File file = new File(argsFile);
+            fis = new FileInputStream(file);
+            String verifyResult = OpenTimestamps.verify(byteOts,fis);
             if(verifyResult==null){
                 System.out.print("Pending or Bad attestation");
             }else {
                 System.out.print("Success! Bitcoin attests data existed as of "+(new Date(Integer.valueOf(verifyResult) * 1000)));
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
+        } finally {
+            try {
+                fis.close();
+            }catch  (IOException e) {
+                log.severe("No valid file");
+            }
         }
     }
 

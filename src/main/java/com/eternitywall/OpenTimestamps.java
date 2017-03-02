@@ -2,6 +2,7 @@ package com.eternitywall;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -48,15 +49,15 @@ public class OpenTimestamps {
      * @param {File} file - The plain File to stamp.
      * @return {byte[]} The plain array buffer of stamped.
      */
-    public static byte[] stamp(File file) throws IOException {
+    public static byte[] stamp(InputStream inputStream) throws IOException {
         // Read from file reader stream
         try {
             DetachedTimestampFile fileTimestamp;
-            fileTimestamp = DetachedTimestampFile.fromFile(new OpSHA256(), file);
+            fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
             return stamp(fileTimestamp);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            log.severe("Invalid file");
+            log.severe("Invalid InputStream");
             throw new IOException();
         }
     }
@@ -70,7 +71,7 @@ public class OpenTimestamps {
     public static byte[] stamp(byte[] hash) throws IOException {
         // Read from file reader stream
         DetachedTimestampFile fileTimestamp;
-        fileTimestamp = DetachedTimestampFile.fromHash(new OpSHA256(), hash);
+        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
         return stamp(fileTimestamp);
     }
 
@@ -180,15 +181,14 @@ public class OpenTimestamps {
     /**
      * Verify a timestamp.
      *  @param {File}  ots - The ots array buffer containing the proof to verify.
-     * @param {File}  stamped - The plain array buffer to verify.
+     * @param {InputStream}  inputStream - The input stream to verify.
      */
-    public static String verify(File ots, File stamped) throws IOException {
+    public static String verify(byte[] ots, InputStream inputStream) throws IOException {
 
         // Read OTS
         DetachedTimestampFile detachedTimestamp = null;
         try {
-            byte[] bytesOts=Files.readAllBytes(ots.toPath());
-            StreamDeserializationContext ctx = new StreamDeserializationContext(bytesOts);
+            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
             System.err.print("com.eternitywall.StreamDeserializationContext error");
@@ -197,9 +197,9 @@ public class OpenTimestamps {
         // Read STAMPED
         byte[] actualFileDigest = new byte[0];
         try {
-            actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(stamped);
+            actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(inputStream);
         } catch (Exception e) {
-            log.severe("com.eternitywall.StreamDeserializationContext : file stream error");
+            log.severe("com.eternitywall.StreamDeserializationContext : inputStream error");
         }
 
         // Call Verify
@@ -209,7 +209,7 @@ public class OpenTimestamps {
     /**
      * Verify a timestamp.
      *  @param {File}  ots - The ots array buffer containing the proof to verify.
-     * @param {File}  stamped - The plain array buffer to verify.
+     * @param {File}  stamped - The File to verify.
      */
     public static String verify(byte[] ots, File stamped) throws IOException {
 

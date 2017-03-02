@@ -9,6 +9,7 @@ package com.eternitywall;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
@@ -105,7 +106,7 @@ class DetachedTimestampFile {
      * @param {byte[]} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile fromHash(OpCrypto fileHashOp, byte[] fdHash) {
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, byte[] fdHash) {
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
@@ -115,8 +116,19 @@ class DetachedTimestampFile {
      * @param {File} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile fromFile(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(file);
+        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    }
+
+    /**
+     * Read the Detached com.eternitywall.Timestamp File from InputStream.
+     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {File} fdHash - The hash file.
+     * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
+     */
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, InputStream inputStream) throws IOException, NoSuchAlgorithmException {
+        byte[] fdHash = fileHashOp.hashFd(inputStream);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
