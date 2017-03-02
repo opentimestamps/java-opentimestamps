@@ -56,7 +56,7 @@ public class Calendar {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             byte[] byteArray = new byte[bufferedInputStream.available()];
             int current = bufferedInputStream.read(byteArray);
-            while (current != -1) {
+            while (current > 0 ) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
                 Utils.arraysConcat(byteArray, buffer);
@@ -108,7 +108,7 @@ public class Calendar {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             byte[] byteArray = new byte[bufferedInputStream.available()];
             int current = bufferedInputStream.read(byteArray);
-            while (current != -1) {
+            while (current > 0) {
                 byte[] buffer = new byte[bufferedInputStream.available()];
                 current = bufferedInputStream.read(buffer);
                 Utils.arraysConcat(byteArray, buffer);
