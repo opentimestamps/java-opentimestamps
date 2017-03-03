@@ -16,7 +16,7 @@ public class InsightResponse {
     }
 
     public Long getTime() {
-        return Long.valueOf(time)*1000;
+        return Long.valueOf(time);
     }
 
     public String getMerkleroot() {
