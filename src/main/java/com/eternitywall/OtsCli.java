@@ -31,8 +31,8 @@ public class OtsCli {
             case "info":
             case "i":
                 if (args.length != 2) {
-                    System.out.print("Show information on a timestamp given as argument.\n");
-                    System.out.print(title + " info: bad options number ");
+                    System.out.println("Show information on a timestamp given as argument.\n");
+                    System.out.println(title + " info: bad options number ");
                     break;
                 }
                 info(args[1]);
@@ -40,8 +40,8 @@ public class OtsCli {
             case "stamp":
             case "s":
                 if (args.length != 2) {
-                    System.out.print("Create timestamp with the aid of a remote calendar.\n");
-                    System.out.print(title + ": bad options number ");
+                    System.out.println("Create timestamp with the aid of a remote calendar.\n");
+                    System.out.println(title + ": bad options number ");
                     break;
                 }
                 stamp(args[1]);
@@ -49,8 +49,8 @@ public class OtsCli {
             case "verify":
             case "v":
                 if (args.length != 2) {
-                    System.out.print("Verify the timestamp attestations given as argument.\n");
-                    System.out.print(title + ": bad options number ");
+                    System.out.println("Verify the timestamp attestations given as argument.\n");
+                    System.out.println(title + ": bad options number ");
                     break;
                 }
                 verify(args[1]);
@@ -58,22 +58,22 @@ public class OtsCli {
             case "upgrade":
             case "u":
                 if (args.length != 2) {
-                    System.out.print("Upgrade remote calendar timestamps to be locally verifiable.\n");
-                    System.out.print(title + ": bad options number ");
+                    System.out.println("Upgrade remote calendar timestamps to be locally verifiable.\n");
+                    System.out.println(title + ": bad options number ");
                     break;
                 }
                 upgrade(args[1]);
                 break;
             case "--version":
             case "-V":
-                System.out.print("Version: " + title + " v." + version + '\n');
+                System.out.println("Version: " + title + " v." + version + '\n');
                 break;
             case "--help":
             case "-h":
                 showHelp();
                 break;
             default:
-                System.out.print(title + ": bad option: " + args[0]);
+                System.out.println(title + ": bad option: " + args[0]);
         }
     }
 
@@ -83,7 +83,7 @@ public class OtsCli {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             String infoResult = OpenTimestamps.info(byteOts);
-            System.out.print(infoResult);
+            System.out.println(infoResult);
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
@@ -97,7 +97,7 @@ public class OtsCli {
             File file = new File(argsFile);
             fis = new FileInputStream(file);
             byte[] infoResult = OpenTimestamps.stamp(fis);
-            System.out.print(Utils.bytesToHex(infoResult));
+            System.out.println(Utils.bytesToHex(infoResult));
 
             String argsOts = argsFile + ".ots";
             Files.write(Paths.get(argsOts), infoResult);
@@ -126,9 +126,9 @@ public class OtsCli {
             fis = new FileInputStream(file);
             Long timestamp = OpenTimestamps.verify(byteOts,fis);
             if(timestamp==null){
-                System.out.print("Pending or Bad attestation");
+                System.out.println("Pending or Bad attestation");
             }else {
-                System.out.print("Success! Bitcoin attests data existed as of "+ new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp) );
+                System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
             }
 
         } catch (IOException e) {
@@ -148,7 +148,7 @@ public class OtsCli {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
-            System.out.print(Utils.bytesToHex(upgradeResult));
+            System.out.println(Utils.bytesToHex(upgradeResult));
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
@@ -156,7 +156,7 @@ public class OtsCli {
     }
 
     public static void showHelp() {
-        System.out.print(
+        System.out.println(
                 "Usage: " + title + " [options] {stamp,s,upgrade,u,verify,v,info} [arguments]\n\n" +
                 "Subcommands:\n" +
                 "s, stamp FILE       \tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
