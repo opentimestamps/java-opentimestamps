@@ -24,7 +24,7 @@ git clone https://github.com/eternitywall/java-opentimestamps
 ```
 cd java-opentimestamps
 mvn install
-java -jar target/java-opentimestamps-1.0-SNAPSHOT.jar stamp README.md
+java -jar target/OtsCli.jar stamp README.md
 ```
 
 ## Testing
