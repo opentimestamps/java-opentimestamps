@@ -51,11 +51,10 @@ class Timestamp {
      * @return {com.eternitywall.Timestamp} The generated com.eternitywall.Timestamp.
      */
     public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
-        // console.log('deserialize: ', com.eternitywall.Utils.bytesToHex(initialMsg));
         Timestamp self = new Timestamp(initialMsg);
 
         byte tag = ctx.readBytes(1)[0];
-        while (tag == 0xff) {
+        while ((tag&0xff) == 0xff) {
             byte current = ctx.readBytes(1)[0];
             doTagOrAttestation(self, ctx, current, initialMsg);
             tag = ctx.readBytes(1)[0];
@@ -66,15 +65,13 @@ class Timestamp {
     }
 
     private static void doTagOrAttestation(Timestamp self, StreamDeserializationContext ctx, byte tag, byte[] initialMsg) {
-        if (tag == 0x00) {
+        if ((tag&0xff) == 0x00) {
             TimeAttestation attestation = TimeAttestation.deserialize(ctx);
             self.attestations.add(attestation);
-            // log.info('attestation ', attestation);
         } else {
-            Op op = Op.deserializeFromTag(ctx, tag);
 
+            Op op = Op.deserializeFromTag(ctx, tag);
             byte[] result = op.call(initialMsg);
-            // log.info('result: ', com.eternitywall.Utils.bytesToHex(result));
 
             Timestamp stamp = Timestamp.deserialize(ctx, result);
             self.ops.put(op, stamp);
@@ -213,7 +210,7 @@ class Timestamp {
         if (this.attestations.size() > 0) {
             for (final TimeAttestation attestation : this.attestations) {
                 output += Timestamp.indention(indent);
-                output += "verify " + attestation.toString();
+                output += "verify " + attestation.toString() + '\n';
 
             }
         }
