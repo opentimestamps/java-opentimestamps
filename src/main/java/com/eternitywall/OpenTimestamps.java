@@ -1,5 +1,6 @@
 package com.eternitywall;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,12 +64,22 @@ public class OpenTimestamps {
     }
 
     /**
+    * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+    *
+            * @param {byte[]}  hash - The sha 256 of the file to stamp.
+    * @return {byte[]} The plain array buffer of stamped.
+            */
+    public static byte[] stamp(byte[] content) throws IOException {
+        return stamp(new ByteArrayInputStream(content));
+    }
+
+    /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
-     * @param {byte[]}  hash - The sha 256 of the file to stamp.
+     * @param {Hash}  hash - The sha 256 of the file to stamp.
      * @return {byte[]} The plain array buffer of stamped.
      */
-    public static byte[] stamp(byte[] hash) throws IOException {
+    public static byte[] stamp(Hash hash) throws IOException {
         // Read from file reader stream
         DetachedTimestampFile fileTimestamp;
         fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);

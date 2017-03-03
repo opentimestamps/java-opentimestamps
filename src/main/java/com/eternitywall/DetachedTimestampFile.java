@@ -106,8 +106,8 @@ class DetachedTimestampFile {
      * @param {byte[]} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile from(OpCrypto fileHashOp, byte[] fdHash) {
-        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, Hash hash) {
+        return new DetachedTimestampFile(fileHashOp, new Timestamp(hash.getValue()));
     }
 
     /**
