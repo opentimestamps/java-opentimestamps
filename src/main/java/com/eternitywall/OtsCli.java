@@ -99,6 +99,9 @@ public class OtsCli {
             byte[] infoResult = OpenTimestamps.stamp(fis);
             System.out.print(Utils.bytesToHex(infoResult));
 
+            String argsOts = argsFile + ".ots";
+            Files.write(Paths.get(argsOts), infoResult);
+
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
