@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -94,6 +95,12 @@ public class TestOpenTimestamps {
         DetachedTimestampFile detachedTimestampFile2 = DetachedTimestampFile.deserialize(ctx2);
         byte[] digest2 = detachedTimestampFile2.fileDigest();
         assertTrue(Arrays.equals(digest2, Utils.hexToBytes(helloWorldHashHex)));
+
+        byte[] ots3 = OpenTimestamps.stamp(new ByteArrayInputStream(helloworld));  //testing input stream
+        StreamDeserializationContext ctx3 = new StreamDeserializationContext(ots3);
+        DetachedTimestampFile detachedTimestampFile3 = DetachedTimestampFile.deserialize(ctx3);
+        byte[] digest3 = detachedTimestampFile3.fileDigest();
+        assertTrue(Arrays.equals(digest3, digest2));
     }
 
     @Test
