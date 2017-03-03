@@ -1,11 +1,11 @@
-package com.eternitywall;
+package com.eternitywall.op;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
+import com.eternitywall.StreamDeserializationContext;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 
 
@@ -15,9 +15,9 @@ import org.bouncycastle.crypto.digests.RIPEMD160Digest;
  * the size of the result they return is fixed. Additionally, they're the only
  * type of operation that can be applied directly to a stream.
  *
- * @extends com.eternitywall.OpUnary
+ * @extends com.eternitywall.op.OpUnary
  */
-class OpCrypto extends OpUnary {
+public class OpCrypto extends OpUnary {
 
     private static Logger log = Logger.getLogger(OpCrypto.class.getName());
 

@@ -1,10 +1,14 @@
 package com.eternitywall;
 
+import com.eternitywall.op.Op;
+import com.eternitywall.op.OpAppend;
+import com.eternitywall.op.OpCrypto;
+import com.eternitywall.op.OpSHA256;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -108,7 +112,7 @@ public class OpenTimestamps {
             throw new IOException();
         }
 
-        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.OpAppend(os.urandom(16)))
+        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.op.OpAppend(os.urandom(16)))
         Op opAppend = new OpAppend(bytesRandom16);
         Timestamp nonceAppendedStamp = fileTimestamp.timestamp.ops.get(opAppend);
         if (nonceAppendedStamp == null) {
@@ -116,7 +120,7 @@ public class OpenTimestamps {
             fileTimestamp.timestamp.ops.put(opAppend, nonceAppendedStamp);
         }
 
-        // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.OpSHA256())
+        // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.op.OpSHA256())
         Op opSHA256 = new OpSHA256();
         merkleRoot = nonceAppendedStamp.ops.get(opSHA256);
         if (merkleRoot == null) {

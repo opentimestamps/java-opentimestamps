@@ -1,13 +1,16 @@
-package com.eternitywall;
+package com.eternitywall.op;
+
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.Utils;
 
 import java.util.logging.Logger;
 
 /**
  * Append a suffix to a message.
  *
- * @extends com.eternitywall.OpBinary
+ * @extends com.eternitywall.op.OpBinary
  */
-class OpAppend extends OpBinary {
+public class OpAppend extends OpBinary {
 
     private static Logger log = Logger.getLogger(OpAppend.class.getName());
 
@@ -26,12 +29,12 @@ class OpAppend extends OpBinary {
         return "append";
     }
 
-    OpAppend() {
+    public OpAppend() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpAppend(byte[] arg_) {
+    public OpAppend(byte[] arg_) {
         super(arg_);
         this.arg = arg_;
     }

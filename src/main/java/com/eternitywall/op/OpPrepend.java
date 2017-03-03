@@ -1,13 +1,16 @@
-package com.eternitywall;
+package com.eternitywall.op;
+
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.Utils;
 
 import java.util.logging.Logger;
 
 /**
  * Prepend a prefix to a message.
  *
- * @extends com.eternitywall.OpBinary
+ * @extends com.eternitywall.op.OpBinary
  */
-class OpPrepend extends OpBinary {
+public class OpPrepend extends OpBinary {
 
 
     private static Logger log = Logger.getLogger(OpPrepend.class.getName());

@@ -1,13 +1,17 @@
-package com.eternitywall;
+package com.eternitywall.op;
+
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.StreamSerializationContext;
+import com.eternitywall.Utils;
 
 import java.util.logging.Logger;
 
 /**
  * Operations that act on a message and a single argument.
  *
- * @extends com.eternitywall.OpUnary
+ * @extends com.eternitywall.op.OpUnary
  */
-class OpBinary extends Op {
+public class OpBinary extends Op {
 
     private static Logger log = Logger.getLogger(OpBinary.class.getName());
 

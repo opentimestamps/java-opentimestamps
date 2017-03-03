@@ -1,47 +1,50 @@
-package com.eternitywall;
+package com.eternitywall.op;
+
+import com.eternitywall.StreamDeserializationContext;
 
 import java.util.logging.Logger;
 
 /**
- * Cryptographic RIPEMD160 operation
+ * Cryptographic SHA256 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not
  * guaranteed that they'll continue to match that RFC in the future.
  *
  * @extends CryptOp
  */
-class OpRIPEMD160 extends OpCrypto {
+public class OpSHA256 extends OpCrypto {
 
-    private static Logger log = Logger.getLogger(OpRIPEMD160.class.getName());
 
-    public static byte _TAG = 0x03;
+    private static Logger log = Logger.getLogger(OpSHA256.class.getName());
+
+    public static byte _TAG = 0x08;
 
     @Override
     public byte _TAG() {
-        return OpRIPEMD160._TAG;
+        return OpSHA256._TAG;
     }
 
     @Override
     public String _TAG_NAME() {
-        return "ripemd160";
+        return "sha256";
     }
 
     @Override
     public String _HASHLIB_NAME() {
-        return "ripemd160";
+        return "SHA-256";
     }
 
     @Override
     public int _DIGEST_LENGTH() {
-        return 20;
+        return 32;
     }
 
-    OpRIPEMD160() {
+    public OpSHA256() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpRIPEMD160(byte[] arg_) {
-        super(arg_);
+    public OpSHA256(byte[] arg_) {
+        super(new byte[]{});
         this.arg = arg_;
     }
 

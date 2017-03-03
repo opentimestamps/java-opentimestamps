@@ -7,6 +7,9 @@ package com.eternitywall;
  * @license LPGL3
  */
 
+import com.eternitywall.op.Op;
+import com.eternitywall.op.OpCrypto;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +94,7 @@ class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.Timestamp File from bytes.
-     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {com.eternitywall.op.Op} fileHashOp - The file hash operation.
      * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
@@ -102,7 +105,7 @@ class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.Timestamp File from hash.
-     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {com.eternitywall.op.Op} fileHashOp - The file hash operation.
      * @param {byte[]} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
@@ -112,7 +115,7 @@ class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.Timestamp File from File.
-     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {com.eternitywall.op.Op} fileHashOp - The file hash operation.
      * @param {File} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */
@@ -123,7 +126,7 @@ class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.Timestamp File from InputStream.
-     * @param {com.eternitywall.Op} fileHashOp - The file hash operation.
+     * @param {com.eternitywall.op.Op} fileHashOp - The file hash operation.
      * @param {File} fdHash - The hash file.
      * @return {com.eternitywall.DetachedTimestampFile} The generated com.eternitywall.DetachedTimestampFile object.
      */

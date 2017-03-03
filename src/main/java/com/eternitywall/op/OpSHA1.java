@@ -1,47 +1,54 @@
-package com.eternitywall;
+package com.eternitywall.op;
+
+import com.eternitywall.StreamDeserializationContext;
 
 import java.util.logging.Logger;
 
 /**
- * Cryptographic SHA256 operation
+ * Cryptographic SHA1 operation
  * Cryptographic operation tag numbers taken from RFC4880, although it's not
  * guaranteed that they'll continue to match that RFC in the future.
+ * Remember that for timestamping, hash algorithms with collision attacks
+ * *are* secure! We've still proven that both messages existed prior to some
+ * point in time - the fact that they both have the same hash digest doesn't
+ * change that.
+ * Heck, even md5 is still secure enough for timestamping... but that's
+ * pushing our luck...
  *
  * @extends CryptOp
  */
-class OpSHA256 extends OpCrypto {
+public class OpSHA1 extends OpCrypto {
 
+    private static Logger log = Logger.getLogger(OpSHA1.class.getName());
 
-    private static Logger log = Logger.getLogger(OpSHA256.class.getName());
-
-    public static byte _TAG = 0x08;
+    public static byte _TAG = 0x02;
 
     @Override
     public byte _TAG() {
-        return OpSHA256._TAG;
+        return OpSHA1._TAG;
     }
 
     @Override
     public String _TAG_NAME() {
-        return "sha256";
+        return "sha1";
     }
 
     @Override
     public String _HASHLIB_NAME() {
-        return "SHA-256";
+        return "SHA-1";
     }
 
     @Override
     public int _DIGEST_LENGTH() {
-        return 32;
+        return 20;
     }
 
-    OpSHA256() {
+    OpSHA1() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpSHA256(byte[] arg_) {
+    OpSHA1(byte[] arg_) {
         super(new byte[]{});
         this.arg = arg_;
     }
