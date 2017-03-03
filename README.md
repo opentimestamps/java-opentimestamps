@@ -17,13 +17,13 @@ Java 1.8
 
 ```
 git clone https://github.com/eternitywall/java-opentimestamps
+cd java-opentimestamps
+mvn install
 ```
 
 ## Command line
 
 ```
-cd java-opentimestamps
-mvn install
 java -jar target/OtsCli.jar stamp README.md
 ```
 

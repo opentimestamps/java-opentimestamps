@@ -80,7 +80,7 @@ public class TestOpenTimestamps {
     public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
         Long timestamp = OpenTimestamps.verify( helloworldOtsFuture.get().getBytes(), helloworldFuture.get().getStream() );
-        //assertEquals(1438269988L, timestamp.longValue());
+        assertEquals(1432827678L, timestamp.longValue());
 
     }
 
