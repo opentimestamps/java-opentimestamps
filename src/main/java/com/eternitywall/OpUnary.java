@@ -46,11 +46,6 @@ class OpUnary extends Op {
         }
     }
 
-    @Override
-    public void serialize(StreamSerializationContext ctx) {
-        super.serialize(ctx);
-        ctx.writeVarbytes(this.arg);
-    }
 
     @Override
     public String toString() {
