@@ -164,15 +164,12 @@ public class OpenTimestamps {
         return timestamp;
     }
 
-
-
     /**
      * Verify a timestamp.
      *  @param {byte[]}  ots - The ots array buffer containing the proof to verify.
      * @param {byte[]}  stamped - The plain array buffer to verify.
      */
-    public static Long verify(byte[] ots, byte[] stamped) throws IOException {
-        // Read OTS
+    public static Long verify(byte[] ots, Hash stampedHash) throws IOException {
         DetachedTimestampFile detachedTimestamp = null;
         try {
             StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
@@ -181,16 +178,17 @@ public class OpenTimestamps {
             System.err.print("com.eternitywall.StreamDeserializationContext error");
         }
 
-        // Read STAMPED
-        byte[] actualFileDigest = new byte[0];
-        try {
-            actualFileDigest = stamped.clone();
-        } catch (Exception e) {
-            log.severe("com.eternitywall.StreamDeserializationContext : file hash error");
-        }
-
         // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,actualFileDigest);
+        return OpenTimestamps.verify(detachedTimestamp,stampedHash);
+    }
+
+    /**
+     * Verify a timestamp.
+     *  @param {byte[]}  ots - The ots array buffer containing the proof to verify.
+     * @param {byte[]}  stamped - The plain array buffer to verify.
+     */
+    public static Long verify(byte[] ots, byte[] stamped) throws IOException {
+       return verify(ots, new ByteArrayInputStream(stamped));
     }
 
     /**
@@ -218,7 +216,7 @@ public class OpenTimestamps {
         }
 
         // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,actualFileDigest);
+        return OpenTimestamps.verify(detachedTimestamp,new Hash(actualFileDigest));
     }
 
     /**
@@ -246,7 +244,7 @@ public class OpenTimestamps {
         }
 
         // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,actualFileDigest);
+        return OpenTimestamps.verify(detachedTimestamp, new Hash(actualFileDigest));
     }
 
 
@@ -257,10 +255,10 @@ public class OpenTimestamps {
      * @param {DetachedTimestampFile}  detachedTimestamp - The ots containing the proof to verify.
      * @param {byte[]}  actualFileDigest - The plain array buffer stamped.
      */
-    private static Long verify(DetachedTimestampFile detachedTimestamp, byte[] actualFileDigest) {
+    private static Long verify(DetachedTimestampFile detachedTimestamp, Hash actualFileDigest) {
 
         byte[] detachedFileDigest = detachedTimestamp.fileDigest();
-        if (!Arrays.equals(actualFileDigest, detachedFileDigest)) {
+        if (!Arrays.equals(actualFileDigest.getValue(), detachedFileDigest)) {
             log.severe("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()));
             log.severe("File does not match original!");
 
