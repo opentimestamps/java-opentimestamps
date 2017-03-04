@@ -2,7 +2,6 @@ package com.eternitywall.http;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
 
 public class Response {
     private InputStream stream;
