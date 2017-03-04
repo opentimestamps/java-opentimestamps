@@ -33,7 +33,7 @@ public class Utils {
     public static byte[] randBytes(int length) throws NoSuchAlgorithmException {
         //Java 6 & 7:
         SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[20];
+        byte[] bytes = new byte[length];
         random.nextBytes(bytes);
 
         //Java 8 (even more secure):
