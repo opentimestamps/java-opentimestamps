@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  *
  * @extends com.eternitywall.op.OpUnary
  */
-public class OpBinary extends Op {
+public class OpBinary extends Op implements Comparable<Op> {
 
     private static Logger log = Logger.getLogger(OpBinary.class.getName());
 
@@ -60,4 +60,15 @@ public class OpBinary extends Op {
     public String toString() {
         return this._TAG_NAME() + ' ' + Utils.bytesToHex(this.arg);
     }
+
+
+    @Override
+    public int compareTo(Op o) {
+        if(o instanceof OpBinary && this._TAG()==o._TAG()) {
+            return Utils.bytesToHex(this.arg).compareTo(Utils.bytesToHex(((OpBinary) o).arg));
+        }
+        return this._TAG()-o._TAG();
+
+    }
+
 }

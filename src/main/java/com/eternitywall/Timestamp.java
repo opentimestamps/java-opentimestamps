@@ -216,8 +216,9 @@ class Timestamp {
         }
 
         if (this.ops.size() > 1) {
+            TreeMap<Op, Timestamp> ordered = new TreeMap<>(this.ops);
 
-            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : ordered.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);

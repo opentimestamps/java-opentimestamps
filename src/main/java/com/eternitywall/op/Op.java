@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * com.eternitywall.Timestamp proof operations.
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
-public class Op {
+public class Op implements Comparable<Op> {
 
 
     private static Logger log = Logger.getLogger(Op.class.getName());
@@ -122,4 +122,8 @@ public class Op {
         return r;
     }
 
+    @Override
+    public int compareTo(Op o) {
+        return this._TAG()-o._TAG();
+    }
 }
