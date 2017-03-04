@@ -2,6 +2,7 @@ package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -58,5 +59,12 @@ class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public String toString() {
         return "com.eternitywall.BitcoinBlockHeaderAttestation(" + this.height + ")";
+    }
+
+
+    @Override
+    public int compareTo(TimeAttestation o) {
+        BitcoinBlockHeaderAttestation ob = (BitcoinBlockHeaderAttestation) o;
+        return this.height - ob.height;
     }
 }

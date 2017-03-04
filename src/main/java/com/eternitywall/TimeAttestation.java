@@ -8,11 +8,13 @@ package com.eternitywall;
  */
 
 
+import com.eternitywall.op.Op;
+
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 /** Class representing com.eternitywall.Timestamp signature verification */
-class TimeAttestation {
+class TimeAttestation  implements Comparable<TimeAttestation> {
 
 
     private static Logger log = Logger.getLogger(TimeAttestation.class.getName());
@@ -69,5 +71,15 @@ class TimeAttestation {
 
     public void serializePayload(StreamSerializationContext ctxPayload) {
 
+    }
+
+    @Override
+    public int compareTo(TimeAttestation o) {
+        int deltaTag = org.bouncycastle.util.Arrays.compareUnsigned(this._TAG(),o._TAG());
+        if( deltaTag == 0){
+            return this.compareTo(o);
+        } else {
+            return deltaTag;
+        }
     }
 }

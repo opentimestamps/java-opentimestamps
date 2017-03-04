@@ -88,6 +88,8 @@ class Timestamp {
 
         // sort
         List<TimeAttestation> sortedAttestations = this.attestations;
+        Collections.sort(sortedAttestations);
+        
         if (sortedAttestations.size() > 1) {
             for (int i = 0; i < sortedAttestations.size(); i++) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
