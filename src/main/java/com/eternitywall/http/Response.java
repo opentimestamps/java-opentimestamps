@@ -16,9 +16,7 @@ public class Response {
     }
 
     public String getString() throws IOException {
-        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(this.stream, StandardCharsets.UTF_8))) {
-            return buffer.lines().collect(Collectors.joining("\n"));
-        }
+        return new String(getBytes(), StandardCharsets.UTF_8);
     }
 
     public byte[] getBytes() throws IOException {

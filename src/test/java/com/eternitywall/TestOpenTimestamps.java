@@ -73,12 +73,12 @@ public class TestOpenTimestamps {
         assertEquals(incompleteOtsInfo, result);
 
         // Unknown operation tag: -1
-        /*
+
         String result2 = OpenTimestamps.info(merkle2Ots);
         assertNotNull(result2);
         assertNotNull(merkle2OtsInfo);
         assertEquals(merkle2OtsInfo, result2);
-        */
+
     }
 
     @Test
