@@ -42,6 +42,8 @@ public class OpUnary extends Op {
             return new OpSHA256();
         } else if (tag == OpRIPEMD160._TAG) {
             return new OpRIPEMD160();
+        } else if (tag == OpKECCAK256._TAG) {
+            return new OpKECCAK256();
         } else {
             log.severe("Unknown operation tag: " + tag);
             return null;

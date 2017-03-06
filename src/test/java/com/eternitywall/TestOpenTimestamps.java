@@ -31,15 +31,14 @@ public class TestOpenTimestamps {
     private byte[] helloworldOts;
     private byte[] merkle2Ots;
     private String merkle2OtsInfo;
-
-
-
+    private byte[] differentBlockchainOts;
+    private String differentBlockchainOtsInfo;
 
 
     private String helloWorldHashHex="03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
     
     
-    private String baseUrl = "https://raw.githubusercontent.com/eternitywall/javascript-opentimestamps/master";
+    private String baseUrl = "https://raw.githubusercontent.com/eternitywall/java-opentimestamps/master";
 
     @Before
     public void loadData() throws ExecutionException, InterruptedException, IOException {
@@ -51,6 +50,8 @@ public class TestOpenTimestamps {
         Future<Response> helloworldOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/hello-world.txt.ots")));
         Future<Response> merkle2OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots")));
         Future<Response> merkle2OtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots.info")));
+        Future<Response> differentBlockchainOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots")));
+        Future<Response> differentBlockchainOtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots.info")));
 
         incompleteOts = incompleteOtsFuture.get().getBytes();
         incomplete = incompleteFuture.get().getBytes();
@@ -59,6 +60,8 @@ public class TestOpenTimestamps {
         helloworldOts = helloworldOtsFuture.get().getBytes();
         merkle2Ots = merkle2OtsFuture.get().getBytes();
         merkle2OtsInfo = merkle2OtsInfoFuture.get().getString();
+        differentBlockchainOts = differentBlockchainOtsFuture.get().getBytes();
+        differentBlockchainOtsInfo = differentBlockchainOtsInfoFuture.get().getString();
     }
 
     @Test
@@ -69,13 +72,17 @@ public class TestOpenTimestamps {
         boolean equals = result.equals(incompleteOtsInfo);
         assertEquals(incompleteOtsInfo, result);
 
-        // Unknown operation tag: -1
-
         String result2 = OpenTimestamps.info(merkle2Ots);
         assertNotNull(result2);
         assertNotNull(merkle2OtsInfo);
         assertEquals(merkle2OtsInfo, result2);
 
+        /*
+        String result3 = OpenTimestamps.info(differentBlockchainOts);
+        assertNotNull(result3);
+        assertNotNull(differentBlockchainOtsInfo);
+        assertEquals(differentBlockchainOtsInfo, result3);
+        */
     }
 
     @Test

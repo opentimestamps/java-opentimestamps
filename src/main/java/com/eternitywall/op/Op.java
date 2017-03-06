@@ -2,6 +2,7 @@ package com.eternitywall.op;
 
 import com.eternitywall.StreamDeserializationContext;
 import com.eternitywall.StreamSerializationContext;
+import com.eternitywall.Utils;
 
 import java.util.logging.Logger;
 
@@ -86,8 +87,10 @@ public class Op implements Comparable<Op> {
             return OpSHA256.deserializeFromTag(ctx, tag);
         } else if (tag == OpRIPEMD160._TAG) {
             return OpRIPEMD160.deserializeFromTag(ctx, tag);
+        } else if (tag == OpKECCAK256._TAG) {
+            return OpKECCAK256.deserializeFromTag(ctx, tag);
         } else {
-            log.severe("Unknown operation tag: " + tag);
+            log.severe("Unknown operation tag: " + tag + " 0x" + String.format("%02x", tag));
             return null;
         }
     }
