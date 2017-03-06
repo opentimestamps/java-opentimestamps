@@ -83,7 +83,7 @@ public class StreamDeserializationContext {
             log.severe("varbytes min length not met;");
             return null;
         }
-        return this.read((l & 0xff));
+        return this.read(l);
     }
 
     public boolean assertMagic(byte[] expectedMagic) {

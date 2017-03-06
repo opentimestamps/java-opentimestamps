@@ -44,6 +44,8 @@ public class OpBinary extends Op implements Comparable<Op> {
             return new OpSHA256(arg);
         } else if (tag == OpRIPEMD160._TAG) {
             return new OpRIPEMD160(arg);
+        } else if (tag == OpKECCAK256._TAG) {
+            return new OpRIPEMD160(arg);
         } else {
             log.severe("Unknown operation tag: " + tag  + " 0x" + String.format("%02x", tag));
             return null;

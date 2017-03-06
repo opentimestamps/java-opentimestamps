@@ -44,7 +44,7 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "com.eternitywall.attestation.BitcoinBlockHeaderAttestation(" + this.height + ")";
+        return "EthereumBlockHeaderAttestation(" + this.height + ")";
     }
 
 

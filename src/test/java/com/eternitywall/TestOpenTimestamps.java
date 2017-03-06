@@ -77,13 +77,12 @@ public class TestOpenTimestamps {
         assertNotNull(merkle2OtsInfo);
         assertEquals(merkle2OtsInfo, result2);
 
-        /*
         String result3 = OpenTimestamps.info(differentBlockchainOts);
         assertNotNull(result3);
         assertNotNull(differentBlockchainOtsInfo);
         assertEquals(differentBlockchainOtsInfo, result3);
-        */
     }
+
 
     @Test
     public void stamp() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {

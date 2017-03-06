@@ -56,6 +56,9 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
         } else if (Arrays.equals(tag, BitcoinBlockHeaderAttestation._TAG) == true) {
             // console.log('tag(com.eternitywall.attestation.BitcoinBlockHeaderAttestation)');
             return BitcoinBlockHeaderAttestation.deserialize(ctxPayload);
+        } else if (Arrays.equals(tag, EthereumBlockHeaderAttestation._TAG) == true) {
+            // console.log('tag(com.eternitywall.attestation.BitcoinBlockHeaderAttestation)');
+            return EthereumBlockHeaderAttestation.deserialize(ctxPayload);
         }
         return UnknownAttestation.deserialize(ctxPayload, tag);
     }
