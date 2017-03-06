@@ -2,8 +2,6 @@ package com.eternitywall; /**
  * Created by luca on 25/02/2017.
  */
 
-import org.bouncycastle.asn1.x509.Time;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
