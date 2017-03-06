@@ -48,28 +48,17 @@ public class OpCrypto extends OpUnary {
 
     @Override
     public byte[] call(byte[] msg) {
-
-        if (this._HASHLIB_NAME().equals(new OpRIPEMD160()._HASHLIB_NAME())) {
-            // Only for RIPEMD160 use bouncycastle library
-            RIPEMD160Digest digest = new RIPEMD160Digest();
-            digest.update(msg, 0, msg.length);
-            byte[] hash = new byte[digest.getDigestSize()];
-            digest.doFinal(hash, 0);
+        // For Sha1 & Sha256 use java.security.MessageDigest library
+        try {
+            MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
+            byte[] hash = digest.digest(msg);
             return hash;
-        } else {
-            // For Sha1 & Sha256 use java.security.MessageDigest library
-            try {
-                MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
-                byte[] hash = digest.digest(msg);
-                return hash;
-            } catch (NoSuchAlgorithmException e) {
-                log.severe("NoSuchAlgorithmException");
-                e.printStackTrace();
-                return new byte[]{};
-            }
+        } catch (NoSuchAlgorithmException e) {
+            log.severe("NoSuchAlgorithmException");
+            e.printStackTrace();
+            return new byte[]{};
         }
     }
-
 
     public byte[] hashFd(StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
             MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());

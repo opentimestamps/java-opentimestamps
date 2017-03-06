@@ -14,6 +14,23 @@ import java.util.logging.Logger;
  */
 public class Utils {
 
+    public static void arrayFill(byte[] array, byte value) {
+        for (int i = 0; i < array.length; i++)
+        {
+            array[i] = value;
+        }
+    }
+
+    public static byte[] arraysCopy(byte[] data)
+    {
+        if (data == null) {
+            return null;
+        }
+        byte[] copy = new byte[data.length];
+        System.arraycopy(data, 0, copy, 0, data.length);
+
+        return copy;
+    }
 
     public static byte[] arraysConcat(byte[] array1, byte[] array2) {
         byte[] array1and2 = new byte[array1.length + array2.length];

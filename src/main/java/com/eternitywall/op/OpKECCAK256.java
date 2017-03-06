@@ -1,6 +1,7 @@
 package com.eternitywall.op;
 
 import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.crypto.KeccakDigest;
 import com.eternitywall.crypto.RIPEMD160Digest;
 
 import java.util.logging.Logger;
@@ -12,45 +13,45 @@ import java.util.logging.Logger;
  *
  * @extends CryptOp
  */
-public class OpRIPEMD160 extends OpCrypto {
+public class OpKECCAK256 extends OpCrypto {
 
-    private static Logger log = Logger.getLogger(OpRIPEMD160.class.getName());
+    private static Logger log = Logger.getLogger(OpKECCAK256.class.getName());
+    private KeccakDigest digest = new KeccakDigest(256);
 
-    public static byte _TAG = 0x03;
+    public static byte _TAG = 0x67;
 
     @Override
     public byte _TAG() {
-        return OpRIPEMD160._TAG;
+        return OpKECCAK256._TAG;
     }
 
     @Override
     public String _TAG_NAME() {
-        return "ripemd160";
+        return "keccak256";
     }
 
     @Override
     public String _HASHLIB_NAME() {
-        return "ripemd160";
+        return "keccak256";
     }
 
     @Override
     public int _DIGEST_LENGTH() {
-        return 20;
+        return digest.getDigestSize();
     }
 
-    OpRIPEMD160() {
+    OpKECCAK256() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpRIPEMD160(byte[] arg_) {
+    OpKECCAK256(byte[] arg_) {
         super(arg_);
         this.arg = arg_;
     }
 
     @Override
     public byte[] call(byte[] msg) {
-        RIPEMD160Digest digest = new RIPEMD160Digest();
         digest.update(msg, 0, msg.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
