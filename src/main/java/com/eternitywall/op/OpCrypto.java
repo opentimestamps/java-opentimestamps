@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import com.eternitywall.StreamDeserializationContext;
-import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import com.eternitywall.crypto.RIPEMD160Digest;
 
 
 /**

@@ -75,7 +75,7 @@ class TimeAttestation  implements Comparable<TimeAttestation> {
 
     @Override
     public int compareTo(TimeAttestation o) {
-        int deltaTag = org.bouncycastle.util.Arrays.compareUnsigned(this._TAG(),o._TAG());
+        int deltaTag = Utils.compare(this._TAG(),o._TAG());
         if( deltaTag == 0){
             return this.compareTo(o);
         } else {

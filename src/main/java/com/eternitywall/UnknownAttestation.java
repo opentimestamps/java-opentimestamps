@@ -1,7 +1,5 @@
 package com.eternitywall;
 
-import org.bouncycastle.util.Arrays;
-
 import java.util.logging.Logger;
 
 /**
@@ -46,6 +44,6 @@ class UnknownAttestation extends TimeAttestation {
     @Override
     public int compareTo(TimeAttestation o) {
         UnknownAttestation ota = (UnknownAttestation) o;
-        return Arrays.compareUnsigned(this.payload, ota.payload) ;
+        return Utils.compare(this.payload, ota.payload) ;
     }
 }

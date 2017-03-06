@@ -1,7 +1,5 @@
 package com.eternitywall;
 
-import org.bouncycastle.util.Arrays;
-
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
@@ -84,6 +82,6 @@ class PendingAttestation extends TimeAttestation {
     @Override
     public int compareTo(TimeAttestation o) {
         PendingAttestation opa = (PendingAttestation) o;
-        return Arrays.compareUnsigned(this.uri, opa.uri) ;
+        return Utils.compare(this.uri, opa.uri) ;
     }
 }
