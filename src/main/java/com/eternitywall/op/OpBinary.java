@@ -65,7 +65,7 @@ public class OpBinary extends Op implements Comparable<Op> {
     @Override
     public int compareTo(Op o) {
         if(o instanceof OpBinary && this._TAG()==o._TAG()) {
-            return Utils.bytesToHex(this.arg).compareTo(Utils.bytesToHex(((OpBinary) o).arg));
+            return Utils.compare(this.arg, ((OpBinary) o).arg );
         }
         return this._TAG()-o._TAG();
 
