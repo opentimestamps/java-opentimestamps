@@ -10,9 +10,9 @@ sha256
     sha256
     prepend 57d982df
     append b1f26e2e55590477
-    verify com.eternitywall.PendingAttestation('https://alice.btc.calendar.opentimestamps.org')
+    verify com.eternitywall.attestation.PendingAttestation('https://alice.btc.calendar.opentimestamps.org')
  -> append 4aaade9c2ffb853ccff9c07681d019fd
     sha256
     prepend 57d982e0
     append 6644ef713071762a
-    verify com.eternitywall.PendingAttestation('https://bob.btc.calendar.opentimestamps.org')
+    verify com.eternitywall.attestation.PendingAttestation('https://bob.btc.calendar.opentimestamps.org')

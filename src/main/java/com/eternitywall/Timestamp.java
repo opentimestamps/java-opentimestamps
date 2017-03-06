@@ -7,6 +7,8 @@ package com.eternitywall;
  * @license LPGL3
  */
 
+import com.eternitywall.attestation.BitcoinBlockHeaderAttestation;
+import com.eternitywall.attestation.TimeAttestation;
 import com.eternitywall.op.Op;
 
 import java.util.*;

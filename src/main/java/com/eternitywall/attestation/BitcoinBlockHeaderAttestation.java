@@ -1,8 +1,10 @@
-package com.eternitywall; /**
+package com.eternitywall.attestation; /**
  * Created by luca on 25/02/2017.
  */
 
-import java.util.Arrays;
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.StreamSerializationContext;
+
 import java.util.logging.Logger;
 
 /**
@@ -28,9 +30,9 @@ import java.util.logging.Logger;
  * can't be verified rather than add almost-never tested code to handle that case
  * more gracefully.
  *
- * @extends com.eternitywall.TimeAttestation
+ * @extends com.eternitywall.attestation.TimeAttestation
  */
-class BitcoinBlockHeaderAttestation extends TimeAttestation {
+public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
     private static Logger log = Logger.getLogger(BitcoinBlockHeaderAttestation.class.getName());
@@ -40,7 +42,11 @@ class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return BitcoinBlockHeaderAttestation._TAG;
     }
 
-    int height = 0;
+    private int height = 0;
+
+    public int getHeight() {
+        return height;
+    }
 
     BitcoinBlockHeaderAttestation(int height_) {
         super();
@@ -58,7 +64,7 @@ class BitcoinBlockHeaderAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "com.eternitywall.BitcoinBlockHeaderAttestation(" + this.height + ")";
+        return "com.eternitywall.attestation.BitcoinBlockHeaderAttestation(" + this.height + ")";
     }
 
 

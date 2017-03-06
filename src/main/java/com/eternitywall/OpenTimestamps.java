@@ -1,5 +1,8 @@
 package com.eternitywall;
 
+import com.eternitywall.attestation.BitcoinBlockHeaderAttestation;
+import com.eternitywall.attestation.PendingAttestation;
+import com.eternitywall.attestation.TimeAttestation;
 import com.eternitywall.op.Op;
 import com.eternitywall.op.OpAppend;
 import com.eternitywall.op.OpCrypto;
@@ -281,15 +284,15 @@ public class OpenTimestamps {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
 
-            if (!found) { // Verify only the first com.eternitywall.BitcoinBlockHeaderAttestation
+            if (!found) { // Verify only the first com.eternitywall.attestation.BitcoinBlockHeaderAttestation
                 if (attestation instanceof PendingAttestation) {
-                    // console.log('com.eternitywall.PendingAttestation: pass ');
+                    // console.log('com.eternitywall.attestation.PendingAttestation: pass ');
                 } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
                     found = true;
                     // console.log('Request to insight ');
                     Insight insight = new Insight("https://insight.bitpay.com/api");
 
-                    String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).height);
+                    String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).getHeight());
                     InsightResponse blockHash = insight.blockhash(height);
                     InsightResponse blockInfo = insight.block(blockHash.getBlockHash());
 
@@ -372,7 +375,7 @@ public class OpenTimestamps {
         for (Timestamp subStamp : timestamp.directlyVerified()) {
             for (TimeAttestation attestation : subStamp.attestations) {
                 if (attestation instanceof PendingAttestation) {
-                    String calendarUrl = new String(((PendingAttestation) attestation).uri, StandardCharsets.UTF_8);
+                    String calendarUrl = new String(((PendingAttestation) attestation).getUri(), StandardCharsets.UTF_8);
                     // var calendarUrl = calendarUrls[0];
                     byte[] commitment = subStamp.msg;
 

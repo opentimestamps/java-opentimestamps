@@ -1,20 +1,22 @@
-package com.eternitywall;
+package com.eternitywall.attestation;
 /**
- * com.eternitywall.TimeAttestation module.
+ * com.eternitywall.attestation.TimeAttestation module.
  *
- * @module com.eternitywall.TimeAttestation
+ * @module com.eternitywall.attestation.TimeAttestation
  * @author EternityWall
  * @license LPGL3
  */
 
 
-import com.eternitywall.op.Op;
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.StreamSerializationContext;
+import com.eternitywall.Utils;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 /** Class representing com.eternitywall.Timestamp signature verification */
-class TimeAttestation  implements Comparable<TimeAttestation> {
+public class TimeAttestation  implements Comparable<TimeAttestation> {
 
 
     private static Logger log = Logger.getLogger(TimeAttestation.class.getName());
@@ -49,10 +51,10 @@ class TimeAttestation  implements Comparable<TimeAttestation> {
 
     /* eslint no-use-before-define: ["error", { "classes": false }] */
         if (Arrays.equals(tag, PendingAttestation._TAG) == true) {
-            // console.log('tag(com.eternitywall.PendingAttestation)');
+            // console.log('tag(com.eternitywall.attestation.PendingAttestation)');
             return PendingAttestation.deserialize(ctxPayload);
         } else if (Arrays.equals(tag, BitcoinBlockHeaderAttestation._TAG) == true) {
-            // console.log('tag(com.eternitywall.BitcoinBlockHeaderAttestation)');
+            // console.log('tag(com.eternitywall.attestation.BitcoinBlockHeaderAttestation)');
             return BitcoinBlockHeaderAttestation.deserialize(ctxPayload);
         }
         return UnknownAttestation.deserialize(ctxPayload, tag);

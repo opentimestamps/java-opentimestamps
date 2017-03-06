@@ -6,4 +6,4 @@ append b573e8850cfd9e63d1f043fbb6fc250e
 sha256
 prepend 57cfa5c4
 append 6fb1ac8d4e4eb0e7
-verify com.eternitywall.PendingAttestation('https://alice.btc.calendar.opentimestamps.org')
+verify com.eternitywall.attestation.PendingAttestation('https://alice.btc.calendar.opentimestamps.org')

@@ -1,13 +1,17 @@
-package com.eternitywall;
+package com.eternitywall.attestation;
+
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.StreamSerializationContext;
+import com.eternitywall.Utils;
 
 import java.util.logging.Logger;
 
 /**
  * Placeholder for attestations that don't support
  *
- * @extends com.eternitywall.TimeAttestation
+ * @extends com.eternitywall.attestation.TimeAttestation
  */
-class UnknownAttestation extends TimeAttestation {
+public class UnknownAttestation extends TimeAttestation {
 
     private static Logger log = Logger.getLogger(UnknownAttestation.class.getName());
 
@@ -37,7 +41,7 @@ class UnknownAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "com.eternitywall.UnknownAttestation " + this._TAG() + ' ' + this.payload;
+        return "com.eternitywall.attestation.UnknownAttestation " + this._TAG() + ' ' + this.payload;
     }
 
 

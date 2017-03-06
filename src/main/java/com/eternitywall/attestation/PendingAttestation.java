@@ -1,4 +1,8 @@
-package com.eternitywall;
+package com.eternitywall.attestation;
+
+import com.eternitywall.StreamDeserializationContext;
+import com.eternitywall.StreamSerializationContext;
+import com.eternitywall.Utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
@@ -21,9 +25,9 @@ import java.util.logging.Logger;
  * it'd be better to have verifiers get the most recent status of such
  * information (possibly with appropriate negative response caching).
  *
- * @extends com.eternitywall.TimeAttestation
+ * @extends com.eternitywall.attestation.TimeAttestation
  */
-class PendingAttestation extends TimeAttestation {
+public class PendingAttestation extends TimeAttestation {
 
 
     private static Logger log = Logger.getLogger(PendingAttestation.class.getName());
@@ -39,7 +43,11 @@ class PendingAttestation extends TimeAttestation {
 
     public static String _ALLOWED_URI_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._/:";
 
-    byte[] uri;
+    private byte[] uri;
+
+    public byte[] getUri() {
+        return uri;
+    }
 
     PendingAttestation(byte[] uri_) {
         super();
