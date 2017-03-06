@@ -150,8 +150,13 @@ public class OtsCli {
             byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
             System.out.println(Utils.bytesToHex(upgradeResult));
 
+            // Copy Bak File
+            Path pathBak = Paths.get(argsOts+".bak");
+            byte[] byteBak = Files.readAllBytes(pathBak);
+            Files.write(pathBak, byteBak);
 
-            Files.write(Paths.get("aaa"), upgradeResult);
+            // Write new Upgrade Result
+            Files.write(pathOts, upgradeResult);
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");

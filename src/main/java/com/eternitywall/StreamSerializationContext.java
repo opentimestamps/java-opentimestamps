@@ -36,18 +36,6 @@ public class StreamSerializationContext {
         }
     }
 
-    /*public int readVaruint() {
-        int value = 0;
-        byte shift = 0;
-        byte b;
-        do {
-            b = this.read(1)[0];
-            value |= (b & 0b01111111) << shift;
-            shift += 7;
-        } while ((b & 0b10000000) == 0b10000000);
-        return value;
-    }*/
-
     public void writeVaruint(int value) {
         if ((value&0xff) == 0) {
             this.writeByte((byte) 0x00);
@@ -62,6 +50,7 @@ public class StreamSerializationContext {
                     break;
                 }
                 value = (value&0xff) >> 7;
+                //value >>= 7;
             }
         }
     }
