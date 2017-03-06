@@ -98,6 +98,10 @@ public class Op implements Comparable<Op> {
      * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
+
+        if(this._TAG()==0x00){
+            log.severe("No valid serialized Op");
+        }
         ctx.writeByte(this._TAG());
     }
 

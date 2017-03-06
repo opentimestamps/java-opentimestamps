@@ -85,8 +85,6 @@ class Timestamp {
      * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
-        // console.log('SERIALIZE');
-        // console.log(ctx.toString());
 
         // sort
         List<TimeAttestation> sortedAttestations = this.attestations;
@@ -120,6 +118,7 @@ class Timestamp {
                     ctx.writeBytes(new byte[]{(byte) 0xff});
                     counter++;
                 }
+
                 op.serialize(ctx);
                 stamp.serialize(ctx);
 

@@ -69,7 +69,7 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
         StreamSerializationContext ctxPayload = new StreamSerializationContext();
         serializePayload(ctxPayload);
         ctx.writeVarbytes(ctxPayload.getOutput());
-    }
+     }
 
     public void serializePayload(StreamSerializationContext ctxPayload) {
 

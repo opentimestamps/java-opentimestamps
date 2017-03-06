@@ -6,8 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -110,19 +109,18 @@ public class TestOpenTimestamps {
         assertEquals(1432827678L, timestamp.longValue());
 
         // verify on python call upgrade
-        /*
         Long timestamp2 = OpenTimestamps.verify( incompleteOts, incomplete );
-        assertEquals(1473227803L, timestamp2.longValue());
-        */
+        assertEquals( null,timestamp2);
+
     }
 
     @Test
     public void upgrade() throws ExecutionException, InterruptedException, IOException {
-        /*
+
         byte[] upgraded = OpenTimestamps.upgrade(incompleteOts);
         Long timestamp = OpenTimestamps.verify( upgraded, incomplete );
         assertEquals(1473227803L, timestamp.longValue());
-        */
+
     }
 
 
