@@ -102,7 +102,6 @@ public class Bitcoin {
     private JSONObject callRPC(JSONObject query) {
         try {
             String s=query.toString();
-            System.out.println(s);
             URL url = new URL(urlString);
             Request request = new Request(url);
             Map<String,String> headers = new HashMap<>();

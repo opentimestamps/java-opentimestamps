@@ -10,12 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 /**
  * Created by luca on 07/03/2017.
  */
 public class MultiInsight {
-
+    private static Logger log = Logger.getLogger(MultiInsight.class.getName());
 
     private ExecutorService executor;
     private List<String> insightUrls;
@@ -49,14 +50,13 @@ public class MultiInsight {
         for (int i = 0; i < insightUrls.size(); i++) {
             Response take = queueBlockHeader.take();
             JSONObject jsonObject = take.getJson();
-            System.out.println(jsonObject);
             String merkleroot = jsonObject.getString("merkleroot");
             String time = String.valueOf(jsonObject.getInt("time"));
             BlockHeader blockHeader = new BlockHeader();
             blockHeader.setMerkleroot(merkleroot);
             blockHeader.setTime(time);
             blockHeader.setBlockHash(hash);
-            System.out.println(take.getFromUrl() + " " + blockHeader);
+            log.info(take.getFromUrl() + " " + blockHeader);
 
             if (results.contains(blockHeader)){
                 return blockHeader;
@@ -85,7 +85,7 @@ public class MultiInsight {
             if(take.isValid()) {
                 JSONObject jsonObject = take.getJson();
                 String blockHash = jsonObject.getString("blockHash");
-                System.out.println(take.getFromUrl() + " " + blockHash);
+                log.info(take.getFromUrl() + " " + blockHash);
 
                 if (results.contains(blockHash)) {
                     return blockHash;

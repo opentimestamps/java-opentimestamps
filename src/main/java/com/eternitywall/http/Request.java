@@ -1,5 +1,7 @@
 package com.eternitywall.http;
 
+import com.eternitywall.MultiInsight;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +12,11 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 public class Request implements Callable<Response> {
+    private static Logger log = Logger.getLogger(MultiInsight.class.getName());
+
     private URL url;
     private String data;
     private Map<String,String> headers;
@@ -74,7 +79,7 @@ public class Request implements Callable<Response> {
             return response;
 
         }catch (Exception e) {
-            System.out.println(url.toString() + " exception " + e);
+            log.severe(url.toString() + " exception " + e);
             if(queue!=null) {
                 queue.offer(new Response()); //FIXME
 
