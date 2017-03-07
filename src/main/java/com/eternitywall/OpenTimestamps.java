@@ -288,18 +288,27 @@ public class OpenTimestamps {
                 if (attestation instanceof PendingAttestation) {
                 } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
                     found = true;
-                    MultiInsight insight = new MultiInsight();
+                    Integer height = ((BitcoinBlockHeaderAttestation) attestation).getHeight();
 
-                    String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).getHeight());
-                    String blockHash = null;
                     BlockHeader blockInfo = null;
-                    try {
-                        blockHash = insight.blockHash(height);
-                        blockInfo = insight.block(blockHash);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
+                    Properties properties = BitcoinNode.readBitcoinConf();
+                    if(properties!=null) {
+                        BitcoinNode bitcoin = new BitcoinNode(properties);
+                        blockInfo = bitcoin.getBlockHeader(height);
                     }
+                    if(blockInfo==null) {
+                        try {
+                            MultiInsight insight = new MultiInsight();
+                            String blockHash = null;
+                            blockHash = insight.blockHash(height);
+                            blockInfo = insight.block(blockHash);
+                            System.out.println("Lite-client verification, assuming block " + blockHash + " is valid");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+
 
                     byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);

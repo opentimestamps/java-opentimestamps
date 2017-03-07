@@ -71,7 +71,7 @@ public class MultiInsight {
      * Retrieve the block hash from the block height.
      * @param {string} height - Height of the block.
      */
-    public String blockHash(String height) throws Exception {
+    public String blockHash(Integer height) throws Exception {
         for (String insightUrl: insightUrls) {
             URL url = new URL(insightUrl + "/block-index/" + height);
             Request task = new Request(url);

@@ -16,15 +16,15 @@ import java.util.logging.Logger;
 /**
  * Created by casatta on 06/03/17.
  */
-public class Bitcoin {
+public class BitcoinNode {
 
     private String authString;
     private String urlString;
 
-    private Bitcoin() {
+    private BitcoinNode() {
     }
 
-    public Bitcoin(Properties bitcoinConf) {
+    public BitcoinNode(Properties bitcoinConf) {
         authString = String.valueOf(Base64Coder.encode( String.format("%s:%s",bitcoinConf.getProperty("rpcuser"), bitcoinConf.getProperty("rpcpassword")).getBytes()));
         urlString = String.format("http://%s:%s", bitcoinConf.getProperty("rpcconnect"), bitcoinConf.getProperty("rpcport"));
     }
@@ -75,18 +75,24 @@ public class Bitcoin {
         return callRPC(json);
     }
 
-    public JSONObject getBlockHeader(Integer height) {
+    public BlockHeader getBlockHeader(Integer height) {
         return getBlockHeader(getBlockHash(height));
     }
 
-    public JSONObject getBlockHeader(String hash) {
+    public BlockHeader getBlockHeader(String hash) {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getblockheader");
         JSONArray array=new JSONArray();
         array.put(hash);
         json.put("params", array);
-        return callRPC(json);
+        JSONObject jsonObject = callRPC(json);
+        BlockHeader blockHeader = new BlockHeader();
+        JSONObject result = jsonObject.getJSONObject("result");
+        blockHeader.setMerkleroot(result.getString("merkleroot"));
+        blockHeader.setBlockHash(hash);
+        blockHeader.setTime(String.valueOf(result.getInt("time")));
+        return blockHeader;
     }
 
     public String getBlockHash(Integer height) {
