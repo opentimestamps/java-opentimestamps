@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import com.eternitywall.http.Request;
+import com.eternitywall.http.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -102,33 +104,19 @@ public class Bitcoin {
             String s=query.toString();
             System.out.println(s);
             URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Authorization", "Basic " + authString);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Length", ""
-                    + Integer.toString(s.length()));
-            urlConnection.setUseCaches(false);
-            urlConnection.setDoInput(true);
-            urlConnection.setDoOutput(true);
-
-            // Send request
-            DataOutputStream wr = new DataOutputStream(urlConnection
-                    .getOutputStream());
-            wr.writeBytes(s);
-            wr.flush();
-            wr.close();
-
-            InputStream is = urlConnection.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuffer sb = new StringBuffer();
-            while ((numCharsRead = isr.read(charArray)) > 0) {
-                sb.append(charArray, 0, numCharsRead);
+            Request request = new Request(url);
+            Map<String,String> headers = new HashMap<>();
+            headers.put("Authorization", "Basic " + authString);
+            request.setHeaders(headers);
+            request.setData(s);
+            Response response = null;  //sync call
+            try {
+                response = request.call();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            return new JSONObject(sb.toString());
+            return new JSONObject(response.getString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

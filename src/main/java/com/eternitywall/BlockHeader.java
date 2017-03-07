@@ -34,4 +34,25 @@ public class BlockHeader {
     public void setBlockHash(String blockHash) {
         this.blockHash = blockHash;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlockHeader that = (BlockHeader) o;
+
+        if (merkleroot != null ? !merkleroot.equals(that.merkleroot) : that.merkleroot != null) return false;
+        if (blockHash != null ? !blockHash.equals(that.blockHash) : that.blockHash != null) return false;
+        return time != null ? time.equals(that.time) : that.time == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = merkleroot != null ? merkleroot.hashCode() : 0;
+        result = 31 * result + (blockHash != null ? blockHash.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
+        return result;
+    }
 }

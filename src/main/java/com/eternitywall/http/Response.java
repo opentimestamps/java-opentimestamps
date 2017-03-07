@@ -8,9 +8,27 @@ import java.nio.charset.StandardCharsets;
 
 public class Response {
     private InputStream stream;
+    private String fromUrl;
+    private boolean valid=false;
+
+    public Response() {
+    }
 
     public Response(InputStream stream) {
         this.stream = stream;
+        this.valid = true;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public String getFromUrl() {
+        return fromUrl;
+    }
+
+    public void setFromUrl(String fromUrl) {
+        this.fromUrl = fromUrl;
     }
 
     public InputStream getStream() {
@@ -37,4 +55,6 @@ public class Response {
         JSONObject json = new JSONObject(jsonString);
         return json;
     }
+
+
 }

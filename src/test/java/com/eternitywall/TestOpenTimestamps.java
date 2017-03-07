@@ -7,9 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
@@ -105,7 +103,7 @@ public class TestOpenTimestamps {
         byte[] digest3 = detachedTimestampFile3.fileDigest();
         assertTrue(Arrays.equals(digest3, digest2));
     }
-
+/*
     @Test
     public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
@@ -117,7 +115,7 @@ public class TestOpenTimestamps {
         assertEquals( null,timestamp2);
 
     }
-
+*/
     @Test
     public void upgrade() throws ExecutionException, InterruptedException, IOException {
 

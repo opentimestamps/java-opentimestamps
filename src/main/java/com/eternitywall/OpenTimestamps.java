@@ -291,11 +291,11 @@ public class OpenTimestamps {
                     MultiInsight insight = new MultiInsight();
 
                     String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).getHeight());
-                    BlockHeader blockHash = null;
+                    String blockHash = null;
                     BlockHeader blockInfo = null;
                     try {
-                        blockHash = insight.blockhash(height);
-                        blockInfo = insight.block(blockHash.getBlockHash());
+                        blockHash = insight.blockHash(height);
+                        blockInfo = insight.block(blockHash);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return null;
