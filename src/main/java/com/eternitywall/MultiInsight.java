@@ -23,6 +23,7 @@ public class MultiInsight {
     private BlockingQueue<Response> queueBlockHeader;
     private BlockingQueue<Response> queueBlockHash;
 
+
     public MultiInsight(){
         insightUrls = new ArrayList<>();
         insightUrls.add("https://search.bitaccess.co/insight-api");
@@ -33,6 +34,9 @@ public class MultiInsight {
         executor = Executors.newFixedThreadPool(insightUrls.size());
     }
 
+    public ExecutorService getExecutor() {
+        return executor;
+    }
 
     /**
      * Retrieve the block information from the block hash.
@@ -56,7 +60,7 @@ public class MultiInsight {
             blockHeader.setMerkleroot(merkleroot);
             blockHeader.setTime(time);
             blockHeader.setBlockHash(hash);
-            log.info(take.getFromUrl() + " " + blockHeader);
+            log.fine(take.getFromUrl() + " " + blockHeader);
 
             if (results.contains(blockHeader)){
                 return blockHeader;
@@ -85,7 +89,7 @@ public class MultiInsight {
             if(take.isValid()) {
                 JSONObject jsonObject = take.getJson();
                 String blockHash = jsonObject.getString("blockHash");
-                log.info(take.getFromUrl() + " " + blockHash);
+                log.fine(take.getFromUrl() + " " + blockHash);
 
                 if (results.contains(blockHash)) {
                     return blockHash;

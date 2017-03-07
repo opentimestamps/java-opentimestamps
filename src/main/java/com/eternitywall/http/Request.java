@@ -79,7 +79,7 @@ public class Request implements Callable<Response> {
             return response;
 
         }catch (Exception e) {
-            log.severe(url.toString() + " exception " + e);
+            log.fine(url.toString() + " exception " + e);
             if(queue!=null) {
                 queue.offer(new Response()); //FIXME
 

@@ -15,9 +15,9 @@ public class TestBitcoin {
 
 
     @Test
-    public void testBitcoin() {
-        Properties properties = BitcoinNode.readBitcoinConf();
-        if(properties!=null) {
+    public void testBitcoin() throws Exception {
+        try {
+            Properties properties = BitcoinNode.readBitcoinConf();
             BitcoinNode bitcoin=new BitcoinNode(properties);
             String info = bitcoin.getInfo().toString();
             assertNotNull(info);
@@ -29,7 +29,7 @@ public class TestBitcoin {
             assertEquals("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b", blockHeader.getMerkleroot());
             System.out.println(blockHeader);
             assertEquals("1231006505", String.valueOf(blockHeader.getTime()));
-        } else {
+        } catch (Exception e) {
             System.out.println("no bitcoin node");
         }
 

@@ -29,7 +29,7 @@ public class BitcoinNode {
         urlString = String.format("http://%s:%s", bitcoinConf.getProperty("rpcconnect"), bitcoinConf.getProperty("rpcport"));
     }
 
-    public static Properties readBitcoinConf() {
+    public static Properties readBitcoinConf() throws Exception {
         String home = System.getProperty("user.home");
 
         List<String> list= Arrays.asList("/.bitcoin/bitcoin.conf", "\\AppData\\Roaming\\Bitcoin\\bitcoin.conf", "/Library/Application Support/Bitcoin/bitcoin.conf");
@@ -65,21 +65,23 @@ public class BitcoinNode {
                 }
             }
         }
-        return null;
+        throw new Exception();
     }
 
-    public JSONObject getInfo() {
+    public JSONObject getInfo()  throws Exception {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getinfo");
         return callRPC(json);
     }
 
-    public BlockHeader getBlockHeader(Integer height) {
+    public BlockHeader getBlockHeader(Integer height) throws Exception {
         return getBlockHeader(getBlockHash(height));
     }
 
-    public BlockHeader getBlockHeader(String hash) {
+    public BlockHeader getBlockHeader(String hash) throws Exception {
+        if(hash==null)
+            return null;
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getblockheader");
@@ -95,38 +97,34 @@ public class BitcoinNode {
         return blockHeader;
     }
 
-    public String getBlockHash(Integer height) {
+    public String getBlockHash(Integer height) throws Exception {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getblockhash");
         JSONArray array=new JSONArray();
         array.put(height);
         json.put("params", array);
-        return callRPC(json).getString("result");
+        JSONObject jsonObject = callRPC(json);
+        if(jsonObject==null)
+            return null;
+        return jsonObject.getString("result");
     }
 
-    private JSONObject callRPC(JSONObject query) {
-        try {
-            String s=query.toString();
-            URL url = new URL(urlString);
-            Request request = new Request(url);
-            Map<String,String> headers = new HashMap<>();
-            headers.put("Authorization", "Basic " + authString);
-            request.setHeaders(headers);
-            request.setData(s);
-            Response response = null;  //sync call
-            try {
-                response = request.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private JSONObject callRPC(JSONObject query) throws Exception {
 
-            return new JSONObject(response.getString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String s=query.toString();
+        URL url = new URL(urlString);
+        Request request = new Request(url);
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic " + authString);
+        request.setHeaders(headers);
+        request.setData(s);
+        Response response = null;  //sync call
+        response = request.call();
+        if(response==null)
+            throw new Exception();
+
+        return new JSONObject(response.getString());
+
     }
 }

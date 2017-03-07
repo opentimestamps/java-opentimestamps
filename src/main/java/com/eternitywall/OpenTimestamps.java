@@ -291,24 +291,25 @@ public class OpenTimestamps {
                     Integer height = ((BitcoinBlockHeaderAttestation) attestation).getHeight();
 
                     BlockHeader blockInfo = null;
-                    Properties properties = BitcoinNode.readBitcoinConf();
-                    if(properties!=null) {
+
+                    try {
+                        Properties properties = BitcoinNode.readBitcoinConf();
                         BitcoinNode bitcoin = new BitcoinNode(properties);
                         blockInfo = bitcoin.getBlockHeader(height);
-                    }
-                    if(blockInfo==null) {
+                    } catch (Exception e1) {
+                        log.fine("There is no local node available");
                         try {
                             MultiInsight insight = new MultiInsight();
                             String blockHash = null;
                             blockHash = insight.blockHash(height);
                             blockInfo = insight.block(blockHash);
                             System.out.println("Lite-client verification, assuming block " + blockHash + " is valid");
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            insight.getExecutor().shutdown();
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
                             return null;
                         }
                     }
-
 
                     byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);
