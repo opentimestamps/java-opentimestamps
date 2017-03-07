@@ -1,5 +1,6 @@
 package com.eternitywall;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -65,16 +66,41 @@ public class Bitcoin {
         return null;
     }
 
-    public String getInfo() {
+    public JSONObject getInfo() {
         JSONObject json = new JSONObject();
-        json.put("id", "curltest");
+        json.put("id", "java");
         json.put("method", "getinfo");
         return callRPC(json);
     }
 
-    private String callRPC(JSONObject query) {
+    public JSONObject getBlockHeader(Integer height) {
+        return getBlockHeader(getBlockHash(height));
+    }
+
+    public JSONObject getBlockHeader(String hash) {
+        JSONObject json = new JSONObject();
+        json.put("id", "java");
+        json.put("method", "getblockheader");
+        JSONArray array=new JSONArray();
+        array.put(hash);
+        json.put("params", array);
+        return callRPC(json);
+    }
+
+    public String getBlockHash(Integer height) {
+        JSONObject json = new JSONObject();
+        json.put("id", "java");
+        json.put("method", "getblockhash");
+        JSONArray array=new JSONArray();
+        array.put(height);
+        json.put("params", array);
+        return callRPC(json).getString("result");
+    }
+
+    private JSONObject callRPC(JSONObject query) {
         try {
             String s=query.toString();
+            System.out.println(s);
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Authorization", "Basic " + authString);
@@ -101,8 +127,8 @@ public class Bitcoin {
             while ((numCharsRead = isr.read(charArray)) > 0) {
                 sb.append(charArray, 0, numCharsRead);
             }
-            String result = sb.toString();
-            return result;
+
+            return new JSONObject(sb.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
