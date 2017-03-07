@@ -44,9 +44,9 @@ public class Request implements Callable<Response> {
 
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setReadTimeout(2000);
-            httpURLConnection.setConnectTimeout(2000);
-
+            httpURLConnection.setReadTimeout(10000);
+            httpURLConnection.setConnectTimeout(10000);
+            httpURLConnection.setRequestProperty("User-Agent", "java");
             if(headers!=null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     httpURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
@@ -68,13 +68,13 @@ public class Request implements Callable<Response> {
             Response response = new Response(is);
 
             if(queue!=null) {
-                response.setFromUrl(url.getPath());
+                response.setFromUrl(url.toString());
                 queue.offer(response);
             }
             return response;
 
         }catch (Exception e) {
-            System.out.println("exception " + e);
+            System.out.println(url.toString() + " exception " + e);
             if(queue!=null) {
                 queue.offer(new Response()); //FIXME
 

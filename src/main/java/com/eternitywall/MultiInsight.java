@@ -82,7 +82,7 @@ public class MultiInsight {
             if(take.isValid()) {
                 JSONObject jsonObject = take.getJson();
                 String blockHash = jsonObject.getString("blockHash");
-                System.out.println(take.getFromUrl() + ":" + blockHash);
+                System.out.println(take.getFromUrl() + " " + blockHash);
 
                 if (results.contains(blockHash)) {
                     return blockHash;

@@ -103,7 +103,7 @@ public class TestOpenTimestamps {
         byte[] digest3 = detachedTimestampFile3.fileDigest();
         assertTrue(Arrays.equals(digest3, digest2));
     }
-/*
+
     @Test
     public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
@@ -115,7 +115,7 @@ public class TestOpenTimestamps {
         assertEquals( null,timestamp2);
 
     }
-*/
+
     @Test
     public void upgrade() throws ExecutionException, InterruptedException, IOException {
 
