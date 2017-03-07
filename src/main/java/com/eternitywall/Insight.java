@@ -62,7 +62,7 @@ class Insight {
             }
             String jsonString = stringBuilder.toString();
 
-            // Response Hanlder
+            // Response Handler
             JSONObject json = new JSONObject(jsonString);
             String blockHash = json.getString("blockHash");
             InsightResponse insightResponse = new InsightResponse();
@@ -107,7 +107,7 @@ class Insight {
             }
             String jsonString = stringBuilder.toString();
 
-            // Response Hanlder
+            // Response Handler
             JSONObject json = new JSONObject(jsonString);
             String merkleroot = json.getString("merkleroot");
             String time = String.valueOf(json.getInt("time"));
