@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by luca on 27/02/2017.
  */
-public class InsightResponse {
+public class BlockHeader {
 
     private String merkleroot;
     private String blockHash;

@@ -40,7 +40,7 @@ class Insight {
      * Retrieve the block hash from the block height.
      * @param {string} height - Height of the block.
      */
-    public InsightResponse blockhash(String height) {
+    public BlockHeader blockhash(String height) {
         try {
 
             URL obj = new URL(this.urlBlockindex + '/' + height);
@@ -65,9 +65,9 @@ class Insight {
             // Response Handler
             JSONObject json = new JSONObject(jsonString);
             String blockHash = json.getString("blockHash");
-            InsightResponse insightResponse = new InsightResponse();
-            insightResponse.setBlockHash(blockHash);
-            return insightResponse;
+            BlockHeader blockHeader = new BlockHeader();
+            blockHeader.setBlockHash(blockHash);
+            return blockHeader;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ class Insight {
      * Retrieve the block information from the block hash.
      * @param {string} height - Height of the block.
      */
-    public InsightResponse block(String hash) {
+    public BlockHeader block(String hash) {
         try {
 
             URL obj = new URL(this.urlBlock + '/' + hash);
@@ -111,10 +111,10 @@ class Insight {
             JSONObject json = new JSONObject(jsonString);
             String merkleroot = json.getString("merkleroot");
             String time = String.valueOf(json.getInt("time"));
-            InsightResponse insightResponse = new InsightResponse();
-            insightResponse.setMerkleroot(merkleroot);
-            insightResponse.setTime(time);
-            return insightResponse;
+            BlockHeader blockHeader = new BlockHeader();
+            blockHeader.setMerkleroot(merkleroot);
+            blockHeader.setTime(time);
+            return blockHeader;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
