@@ -24,7 +24,7 @@ public class MultiInsight {
 
     public MultiInsight(){
         insightUrls = new ArrayList<>();
-        insightUrls.add("https://search.bitaccess.com/insight-api");
+        insightUrls.add("https://search.bitaccess.co/insight-api");
         insightUrls.add("https://www.localbitcoinschain.com/api");
         insightUrls.add("https://insight.bitpay.com/api");
         queueBlockHeader = new ArrayBlockingQueue<>(insightUrls.size());
@@ -49,11 +49,14 @@ public class MultiInsight {
         for (int i = 0; i < insightUrls.size(); i++) {
             Response take = queueBlockHeader.take();
             JSONObject jsonObject = take.getJson();
+            System.out.println(jsonObject);
             String merkleroot = jsonObject.getString("merkleroot");
             String time = String.valueOf(jsonObject.getInt("time"));
             BlockHeader blockHeader = new BlockHeader();
             blockHeader.setMerkleroot(merkleroot);
             blockHeader.setTime(time);
+            blockHeader.setBlockHash(hash);
+            System.out.println(take.getFromUrl() + " " + blockHeader);
 
             if (results.contains(blockHeader)){
                 return blockHeader;
@@ -89,6 +92,7 @@ public class MultiInsight {
                 }
                 results.add(blockHash);
             }
+
         }
 
         return null;

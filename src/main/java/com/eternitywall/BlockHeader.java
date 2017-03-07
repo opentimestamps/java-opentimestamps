@@ -11,6 +11,7 @@ public class BlockHeader {
     private String blockHash;
     private String time;
 
+
     public void setTime(String time) {
         this.time = time;
     }
@@ -54,5 +55,14 @@ public class BlockHeader {
         result = 31 * result + (blockHash != null ? blockHash.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockHeader{" +
+                "merkleroot='" + merkleroot + '\'' +
+                ", blockHash='" + blockHash + '\'' +
+                ", time='" + time + '\'' +
+                '}';
     }
 }
