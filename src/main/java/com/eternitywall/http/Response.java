@@ -1,5 +1,8 @@
 package com.eternitywall.http;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -27,5 +30,11 @@ public class Response {
         }
         buffer.flush();
         return buffer.toByteArray();
+    }
+
+    public JSONObject getJson() throws IOException, JSONException {
+        String jsonString = getString();
+        JSONObject json = new JSONObject(jsonString);
+        return json;
     }
 }

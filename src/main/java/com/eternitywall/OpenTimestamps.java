@@ -286,15 +286,20 @@ public class OpenTimestamps {
 
             if (!found) { // Verify only the first com.eternitywall.attestation.BitcoinBlockHeaderAttestation
                 if (attestation instanceof PendingAttestation) {
-                    // console.log('com.eternitywall.attestation.PendingAttestation: pass ');
                 } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
                     found = true;
-                    // console.log('Request to insight ');
-                    Insight insight = new Insight("https://insight.bitpay.com/api");
+                    MultiInsight insight = new MultiInsight();
 
                     String height = String.valueOf(((BitcoinBlockHeaderAttestation) attestation).getHeight());
-                    InsightResponse blockHash = insight.blockhash(height);
-                    InsightResponse blockInfo = insight.block(blockHash.getBlockHash());
+                    BlockHeader blockHash = null;
+                    BlockHeader blockInfo = null;
+                    try {
+                        blockHash = insight.blockhash(height);
+                        blockInfo = insight.block(blockHash.getBlockHash());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
 
                     byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);
