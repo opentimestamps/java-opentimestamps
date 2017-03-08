@@ -168,7 +168,8 @@ public class OpenTimestamps {
 
         for (final String calendarUrl : calendarUrls) {
 
-            URL url = null;
+            log.info("ots: Submitting to remote calendar "+calendarUrl);
+
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
                 task.setQueue(queue);
