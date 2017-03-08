@@ -40,17 +40,16 @@ public class StreamSerializationContext {
         if ((value&0xff) == 0) {
             this.writeByte((byte) 0x00);
         } else {
-            while ((value&0xff) != 0) {
+            while (value != 0) {
                 byte b = (byte) ((value&0xff) & 0b01111111);
-                if ((value&0xff) > 0b01111111) {
+                if ((value) > 0b01111111) {
                     b |= 0b10000000;
                 }
                 this.writeByte(b);
-                if ((value&0xff) <= 0b01111111) {
+                if ((value) <= 0b01111111) {
                     break;
                 }
-                value = (value&0xff) >> 7;
-                //value >>= 7;
+                value = value >> 7;
             }
         }
     }
@@ -76,7 +75,7 @@ public class StreamSerializationContext {
     }
 
     public void writeVarbytes(byte[] value) {
-        this.writeVaruint((byte) (value.length & (0xff)));
+        this.writeVaruint(value.length);
         this.writeBytes(value);
     }
 
