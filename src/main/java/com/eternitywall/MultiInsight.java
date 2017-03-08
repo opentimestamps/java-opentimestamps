@@ -40,7 +40,9 @@ public class MultiInsight {
 
     /**
      * Retrieve the block information from the block hash.
-     * @param {string} height - Height of the block.
+     * @param hash Hash of the block.
+     * @return the blockheader of the hash
+     * @throws Exception desc
      */
     public BlockHeader block(String hash) throws Exception {
         for (String insightUrl: insightUrls) {
@@ -73,7 +75,9 @@ public class MultiInsight {
 
     /**
      * Retrieve the block hash from the block height.
-     * @param {string} height - Height of the block.
+     * @param height Height of the block.
+     * @return the hash of the block at height height
+     * @throws Exception desc
      */
     public String blockHash(Integer height) throws Exception {
         for (String insightUrl: insightUrls) {

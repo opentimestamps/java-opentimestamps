@@ -26,6 +26,7 @@ public class RIPEMD160Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t RIPEMD160Digest
      */
     public RIPEMD160Digest(RIPEMD160Digest t)
     {

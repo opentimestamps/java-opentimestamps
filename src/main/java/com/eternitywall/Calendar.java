@@ -29,7 +29,7 @@ public class Calendar{
 
     /**
      * Create a RemoteCalendar.
-     * @param {string} url - The server url.
+     * @param url The server url.
      */
     Calendar(String url) {
         this.url = url;
@@ -37,7 +37,8 @@ public class Calendar{
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.Timestamp committing to that digest.
-     * @param {byte[]} digest - The digest hash to send.
+     * @param digest The digest hash to send.
+     * @return the Timestamp received from the calendar
      */
     public Timestamp submit(byte[] digest) {
         try {
@@ -72,7 +73,8 @@ public class Calendar{
 
     /**
      * Get a timestamp for a given commitment.
-     * @param {byte[]} commitment - The digest hash to send.
+     * @param commitment The digest hash to send.
+     * @return the Timestamp from the calendar server (with blockchain information if already written)
      */
     public Timestamp getTimestamp(byte[] commitment) {
         try {

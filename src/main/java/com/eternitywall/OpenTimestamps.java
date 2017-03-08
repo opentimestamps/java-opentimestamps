@@ -24,11 +24,11 @@ import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 /**
- * com.eternitywall.OpenTimestamps module.
+ * com.eternitywall.OpenTimestamps
  *
  * @author EternityWall
- * @module com.eternitywall.OpenTimestamps
- * @license LPGL3
+ * com.eternitywall.OpenTimestamps
+ * LPGL3
  */
 
 public class OpenTimestamps {
@@ -39,8 +39,8 @@ public class OpenTimestamps {
     /**
      * Show information on a timestamp.
      *
-     * @param {byte[]} ots - The ots array buffer.
-     * @exports com.eternitywall.OpenTimestamps/info
+     * @param ots The ots array buffer.
+     * @return the string representation of the timestamp
      */
     public static String info(byte[] ots) {
         if (ots == null) {
@@ -60,8 +60,9 @@ public class OpenTimestamps {
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
-     * @param {File} file - The plain File to stamp.
-     * @return {byte[]} The plain array buffer of stamped.
+     * @param inputStream The input stream to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
      */
     public static byte[] stamp(InputStream inputStream) throws IOException {
         // Read from file reader stream
@@ -77,11 +78,12 @@ public class OpenTimestamps {
     }
 
     /**
-    * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-    *
-            * @param {byte[]}  hash - The sha 256 of the file to stamp.
-    * @return {byte[]} The plain array buffer of stamped.
-            */
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     * @param content The sha 256 of the file to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+
     public static byte[] stamp(byte[] content) throws IOException {
         return stamp(new ByteArrayInputStream(content));
     }
@@ -89,8 +91,9 @@ public class OpenTimestamps {
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
-     * @param {Hash}  hash - The sha 256 of the file to stamp.
-     * @return {byte[]} The plain array buffer of stamped.
+     * @param hash The sha 256 of the file to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
      */
     public static byte[] stamp(Hash hash) throws IOException {
         // Read from file reader stream
@@ -99,19 +102,20 @@ public class OpenTimestamps {
         return stamp(fileTimestamp);
     }
 
-        /**
-         * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-         *
-         * @param {DetachedTimestampFile}  fileTimestamp - The timestamp to stamp.
-         * @return {byte[]} The plain array buffer of stamped.
-         */
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param fileTimestamp The timestamp to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
     private static byte[] stamp(DetachedTimestampFile fileTimestamp) throws IOException {
-
-         /* Add nonce:
-       * Remember that the files - and their timestamps - might get separated
-       * later, so if we didn't use a nonce for every file, the timestamp
-       * would leak information on the digests of adjacent files.
-       * */
+        /**
+         * Add nonce:
+         * Remember that the files - and their timestamps - might get separated
+         * later, so if we didn't use a nonce for every file, the timestamp
+         * would leak information on the digests of adjacent files.
+         */
         Timestamp merkleRoot;
         byte[] bytesRandom16 = new byte[16];
         try {
@@ -157,9 +161,9 @@ public class OpenTimestamps {
     /**
      * Create a timestamp
      *
-     * @param {Timestamp}    timestamp - The timestamp.
-     * @param {List<String>} calendarUrls - List of calendar's to use.
-     * @return {Timestamp} The created timestamp.
+     * @param timestamp The timestamp.
+     * @param calendarUrls List of calendar's to use.
+     * @return The created timestamp.
      */
     private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls) {
 
@@ -205,8 +209,10 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     *  @param {byte[]}  ots - The ots array buffer containing the proof to verify.
-     * @param {byte[]}  stamped - The plain array buffer to verify.
+     * @param ots The ots array buffer containing the proof to verify.
+     * @param stampedHash The plain array buffer to verify.
+     * @return unix timestamp if verified, undefined otherwise.
+     * @throws IOException desc
      */
     public static Long verify(byte[] ots, Hash stampedHash) throws IOException {
         DetachedTimestampFile detachedTimestamp = null;
@@ -223,8 +229,10 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     *  @param {byte[]}  ots - The ots array buffer containing the proof to verify.
-     * @param {byte[]}  stamped - The plain array buffer to verify.
+     * @param ots The ots array buffer containing the proof to verify.
+     * @param stamped The plain array buffer to verify.
+     * @return unix timestamp if verified, undefined otherwise.
+     * @throws IOException desc
      */
     public static Long verify(byte[] ots, byte[] stamped) throws IOException {
        return verify(ots, new ByteArrayInputStream(stamped));
@@ -232,8 +240,10 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     *  @param {File}  ots - The ots array buffer containing the proof to verify.
-     * @param {InputStream}  inputStream - The input stream to verify.
+     * @param ots The ots array buffer containing the proof to verify.
+     * @param inputStream The input stream to verify.
+     * @return unix timestamp if verified, undefined otherwise.
+     * @throws IOException desc
      */
     public static Long verify(byte[] ots, InputStream inputStream) throws IOException {
 
@@ -260,8 +270,10 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     *  @param {File}  ots - The ots array buffer containing the proof to verify.
-     * @param {File}  stamped - The File to verify.
+     * @param ots The ots array buffer containing the proof to verify.
+     * @param stamped The File to verify.
+     * @return unix timestamp if verified, undefined otherwise.
+     * @throws IOException desc
      */
     public static Long verify(byte[] ots, File stamped) throws IOException {
 
@@ -291,8 +303,9 @@ public class OpenTimestamps {
     /**
      * Verify a timestamp.
      *
-     * @param {DetachedTimestampFile}  detachedTimestamp - The ots containing the proof to verify.
-     * @param {byte[]}  actualFileDigest - The plain array buffer stamped.
+     * @param detachedTimestamp The ots containing the proof to verify.
+     * @param actualFileDigest The plain array buffer stamped.
+     * @return the timestamp in seconds from 1 Jamuary 1970
      */
     private static Long verify(DetachedTimestampFile detachedTimestamp, Hash actualFileDigest) {
 
@@ -310,8 +323,8 @@ public class OpenTimestamps {
     /**
      * Verify a timestamp.
      *
-     * @param {com.eternitywall.Timestamp} timestamp - The timestamp.
-     * @return {int} unix timestamp if verified, undefined otherwise.
+     * @param timestamp The timestamp.
+     * @return unix timestamp if verified, undefined otherwise.
      */
     private static Long verifyTimestamp(Timestamp timestamp) {
         Boolean found = false;
@@ -372,7 +385,8 @@ public class OpenTimestamps {
     /**
      * Upgrade a timestamp.
      *
-     * @param {byte[]} ots - The ots array buffer containing the proof to verify.
+     * @param ots The ots array buffer containing the proof to verify.
+     * @return the upgraded timestamp
      */
     public static byte[] upgrade(byte[] ots) {
 
@@ -408,7 +422,8 @@ public class OpenTimestamps {
      * Attempt to upgrade an incomplete timestamp to make it verifiable.
      * Note that this means if the timestamp that is already complete, False will be returned as nothing has changed.
      *
-     * @param {Timestamp} timestamp - The timestamp.
+     * @param timestamp The timestamp.
+     * @return a boolean represnting if the timestamp has changed
      */
     private static boolean upgradeTimestamp(Timestamp timestamp) {
         // Check remote calendars for upgrades.

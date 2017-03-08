@@ -7,7 +7,6 @@ import com.eternitywall.Utils;
 import java.util.logging.Logger;
 
 /**
- * @see com.eternitywall.Timestamp proof operations.
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 public class Op implements Comparable<Op> {
@@ -61,8 +60,8 @@ public class Op implements Comparable<Op> {
     /**
      * Deserialize operation from a buffer.
      *
-     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
-     * @return {com.eternitywall.op.Op} The subclass Operation.
+     * @param ctx The stream deserialization context.
+     * @return The subclass Operation.
      */
     public static Op deserialize(StreamDeserializationContext ctx) {
         byte tag = ctx.readBytes(1)[0];
@@ -72,9 +71,9 @@ public class Op implements Comparable<Op> {
     /**
      * Deserialize operation from a buffer.
      *
-     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
-     * @param {int}                                           tag - The tag of the operation.
-     * @return {com.eternitywall.op.Op} The subclass Operation.
+     * @param ctx The stream deserialization context.
+     * @param tag The tag of the operation.
+     * @return The subclass Operation.
      */
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         if (tag == OpAppend._TAG) {
@@ -98,7 +97,7 @@ public class Op implements Comparable<Op> {
     /**
      * Serialize operation.
      *
-     * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
+     * @param ctx The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
 
@@ -113,7 +112,8 @@ public class Op implements Comparable<Op> {
      * Raises MsgValueError if the message value is invalid, such as it being
      * too long, or it causing the result to be too long.
      *
-     * @param {byte[]} msg - The message.
+     * @param msg The message.
+     * @return the msg after the operation has been applied
      */
     public byte[] call(byte[] msg) {
         if (msg.length > _MAX_MSG_LENGTH) {

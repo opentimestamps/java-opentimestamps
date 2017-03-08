@@ -167,7 +167,7 @@ public static byte[] decodeLines (String s) {
 /**
 * Decodes a byte array from Base64 format.
 * No blanks or line breaks are allowed within the Base64 encoded input data.
-* @param s  A Base64 String to be decoded.
+* @param    s  A Base64 String to be decoded.
 * @return   An array containing the decoded data bytes.
 * @throws   IllegalArgumentException If the input is not valid Base64 encoded data.
 */
@@ -177,7 +177,7 @@ public static byte[] decode (String s) {
 /**
 * Decodes a byte array from Base64 format.
 * No blanks or line breaks are allowed within the Base64 encoded input data.
-* @param in  A character array containing the Base64 encoded data.
+* @param     in  A character array containing the Base64 encoded data.
 * @return    An array containing the decoded data bytes.
 * @throws    IllegalArgumentException If the input is not valid Base64 encoded data.
 */
