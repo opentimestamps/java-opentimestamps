@@ -97,14 +97,8 @@ public class Calendar{
             Timestamp timestamp = Timestamp.deserialize(ctx, commitment);
             return timestamp;
 
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }

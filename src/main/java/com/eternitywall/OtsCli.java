@@ -151,8 +151,8 @@ public class OtsCli {
             //System.out.println(Utils.bytesToHex(upgradeResult));
 
             // Copy Bak File
+            byte[] byteBak = Files.readAllBytes(pathOts);
             Path pathBak = Paths.get(argsOts+".bak");
-            byte[] byteBak = Files.readAllBytes(pathBak);
             Files.write(pathBak, byteBak);
 
             // Write new Upgrade Result

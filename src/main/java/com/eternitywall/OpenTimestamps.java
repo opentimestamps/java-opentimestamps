@@ -426,9 +426,11 @@ public class OpenTimestamps {
 
                     Calendar calendar = new Calendar(calendarUrl);
                     Timestamp upgradedStamp = OpenTimestamps.upgradeStamp(subStamp, calendar, commitment, existingAttestations);
-                    subStamp.merge(upgradedStamp);
-                    upgraded = true;
-                    return upgraded;
+                    if(upgradedStamp != null) {
+                        subStamp.merge(upgradedStamp);
+                        upgraded = true;
+                        return upgraded;
+                    }
                 }
             }
         }
@@ -437,6 +439,10 @@ public class OpenTimestamps {
 
     private static Timestamp upgradeStamp(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
         Timestamp upgradedStamp = calendar.getTimestamp(commitment);
+        if (upgradedStamp == null) {
+            return null;
+        }
+
         Set<TimeAttestation> attsFromRemote = upgradedStamp.getAttestations();
         if (attsFromRemote.size() > 0) {
             // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
@@ -446,20 +452,19 @@ public class OpenTimestamps {
         Set<TimeAttestation> newAttestations = attsFromRemote;
         newAttestations.removeAll(existingAttestations);
 
-        if (newAttestations.size() > 0) {
-            // changed & found_new_attestations
-            // foundNewAttestations = true;
-            // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
-
-            // Set union of existingAttestations & newAttestations
-            existingAttestations.addAll(newAttestations);
-
-            return upgradedStamp;
-            // subStamp.merge(upgradedStamp);
-            // args.cache.merge(upgraded_stamp)
-            // sub_stamp.merge(upgraded_stamp)
-        } else {
+        if (newAttestations.size() == 0) {
             return null;
         }
+        // changed & found_new_attestations
+        // foundNewAttestations = true;
+        // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+
+        // Set union of existingAttestations & newAttestations
+        existingAttestations.addAll(newAttestations);
+
+        return upgradedStamp;
+        // subStamp.merge(upgradedStamp);
+        // args.cache.merge(upgraded_stamp)
+        // sub_stamp.merge(upgraded_stamp)
     }
 }
