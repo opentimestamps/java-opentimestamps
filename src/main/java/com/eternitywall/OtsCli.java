@@ -97,7 +97,7 @@ public class OtsCli {
             File file = new File(argsFile);
             fis = new FileInputStream(file);
             byte[] infoResult = OpenTimestamps.stamp(fis);
-            System.out.println(Utils.bytesToHex(infoResult));
+            //System.out.println(Utils.bytesToHex(infoResult));
 
             String argsOts = argsFile + ".ots";
             Files.write(Paths.get(argsOts), infoResult);
@@ -148,7 +148,7 @@ public class OtsCli {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
-            System.out.println(Utils.bytesToHex(upgradeResult));
+            //System.out.println(Utils.bytesToHex(upgradeResult));
 
             // Copy Bak File
             Path pathBak = Paths.get(argsOts+".bak");
