@@ -121,8 +121,7 @@ public class TestOpenTimestamps {
 
         byte[] upgraded = OpenTimestamps.upgrade(incompleteOts);
         Long timestamp = OpenTimestamps.verify( upgraded, incomplete );
-        assertNull(timestamp);
-        //assertEquals(1473227803L, timestamp.longValue());
+        assertEquals(1473227803L, timestamp.longValue());
 
     }
 
