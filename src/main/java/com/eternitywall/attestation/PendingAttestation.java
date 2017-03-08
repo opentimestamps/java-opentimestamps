@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * it'd be better to have verifiers get the most recent status of such
  * information (possibly with appropriate negative response caching).
  *
- * @extends com.eternitywall.attestation.TimeAttestation
+ * @see com.eternitywall.attestation.TimeAttestation
  */
 public class PendingAttestation extends TimeAttestation {
 

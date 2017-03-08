@@ -7,7 +7,7 @@ import com.eternitywall.Utils;
 import java.util.logging.Logger;
 
 /**
- * com.eternitywall.Timestamp proof operations.
+ * @see com.eternitywall.Timestamp proof operations.
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 public class Op implements Comparable<Op> {

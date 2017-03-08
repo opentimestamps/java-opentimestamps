@@ -15,7 +15,7 @@ import com.eternitywall.crypto.RIPEMD160Digest;
  * the size of the result they return is fixed. Additionally, they're the only
  * type of operation that can be applied directly to a stream.
  *
- * @extends com.eternitywall.op.OpUnary
+ * @see com.eternitywall.op.OpUnary
  */
 public class OpCrypto extends OpUnary {
 

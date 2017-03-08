@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * Heck, even md5 is still secure enough for timestamping... but that's
  * pushing our luck...
  *
- * @extends CryptOp
+ * @see com.eternitywall.op.OpCrypto
  */
 public class OpSHA1 extends OpCrypto {
 

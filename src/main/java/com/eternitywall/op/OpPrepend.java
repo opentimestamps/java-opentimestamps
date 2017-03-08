@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Prepend a prefix to a message.
  *
- * @extends com.eternitywall.op.OpBinary
+ * @see com.eternitywall.op.OpBinary
  */
 public class OpPrepend extends OpBinary {
 

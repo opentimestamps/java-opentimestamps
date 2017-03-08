@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * Placeholder for attestations that don't support
  *
- * @extends com.eternitywall.attestation.TimeAttestation
+ * @see com.eternitywall.attestation.TimeAttestation
  */
 public class UnknownAttestation extends TimeAttestation {
 

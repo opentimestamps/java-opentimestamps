@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Append a suffix to a message.
  *
- * @extends com.eternitywall.op.OpBinary
+ * @see com.eternitywall.op.OpBinary
  */
 public class OpAppend extends OpBinary {
 

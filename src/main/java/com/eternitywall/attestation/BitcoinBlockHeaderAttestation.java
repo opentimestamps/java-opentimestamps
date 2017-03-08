@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * can't be verified rather than add almost-never tested code to handle that case
  * more gracefully.
  *
- * @extends com.eternitywall.attestation.TimeAttestation
+ * @see com.eternitywall.attestation.TimeAttestation
  */
 public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 

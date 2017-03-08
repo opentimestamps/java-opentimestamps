@@ -35,8 +35,8 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
 
     /**
      * Deserialize a general Time Attestation to the specific subclass Attestation.
-     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
-     * @return {Attestation} The specific subclass Attestation.
+     * @param ctx The stream deserialization context.
+     * @return The specific subclass Attestation.
      */
     public static TimeAttestation deserialize(StreamDeserializationContext ctx) {
         // console.log('attestation deserialize');
@@ -65,7 +65,7 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
 
     /**
      * Serialize a a general Time Attestation to the specific subclass Attestation.
-     * @param {com.eternitywall.StreamSerializationContext} ctx - The output stream serialization context.
+     * @param ctx The output stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
         ctx.writeBytes(this._TAG());

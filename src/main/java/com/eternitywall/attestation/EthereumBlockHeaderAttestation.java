@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Ethereum Block Header Attestation.
  *
- * @extends com.eternitywall.attestation.TimeAttestation
+ * @see com.eternitywall.attestation.TimeAttestation
  */
 public class EthereumBlockHeaderAttestation extends TimeAttestation {
 

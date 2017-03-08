@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 /**
  * Operations that act on a single message.
  *
- * @extends com.eternitywall.op.Op
+ * @see com.eternitywall.op.Op
  */
 public class OpUnary extends Op {
 

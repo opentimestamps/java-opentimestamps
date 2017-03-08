@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * Operations that act on a message and a single argument.
  *
- * @extends com.eternitywall.op.OpUnary
+ * @see com.eternitywall.op.OpUnary
  */
 public class OpBinary extends Op implements Comparable<Op> {
 
