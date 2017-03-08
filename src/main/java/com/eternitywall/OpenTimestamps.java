@@ -140,7 +140,7 @@ public class OpenTimestamps {
         Timestamp merkleTip = merkleRoot;
         List<String> calendarUrls = new ArrayList<String>();
         calendarUrls.add("https://alice.btc.calendar.opentimestamps.org");
-        calendarUrls.add("https://b.pool.opentimestamps.org");
+        calendarUrls.add("https://bob.btc.calendar.opentimestamps.org");
         calendarUrls.add("https://ots.eternitywall.it");
 
         Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarUrls);
@@ -413,11 +413,6 @@ public class OpenTimestamps {
     private static boolean upgradeTimestamp(Timestamp timestamp) {
         // Check remote calendars for upgrades.
         // This time we only check PendingAttestations - we can't be as agressive.
-
-        List<String> calendarUrls = new ArrayList<String>();
-        calendarUrls.add("https://alice.btc.calendar.opentimestamps.org");
-        // calendarUrls.append('https://b.pool.opentimestamps.org');
-        calendarUrls.add("https://ots.eternitywall.it");
 
         boolean upgraded = false;
 
