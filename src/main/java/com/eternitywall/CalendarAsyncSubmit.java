@@ -19,10 +19,15 @@ public class CalendarAsyncSubmit implements Callable<Timestamp> {
 
     private String url;
     private byte[] digest;
+    private BlockingQueue<Timestamp> queue;
 
     public CalendarAsyncSubmit(String url, byte[] digest) {
         this.url = url;
         this.digest=digest;
+    }
+
+    public void setQueue(BlockingQueue<Timestamp> queue) {
+        this.queue = queue;
     }
 
     @Override
@@ -42,6 +47,7 @@ public class CalendarAsyncSubmit implements Callable<Timestamp> {
 
         StreamDeserializationContext ctx = new StreamDeserializationContext(body);
         Timestamp timestamp = Timestamp.deserialize(ctx, digest);
+        queue.add(timestamp);
         return timestamp;
     }
 }

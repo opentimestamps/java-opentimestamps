@@ -140,7 +140,7 @@ public class OpenTimestamps {
         Timestamp merkleTip = merkleRoot;
         List<String> calendarUrls = new ArrayList<String>();
         calendarUrls.add("https://alice.btc.calendar.opentimestamps.org");
-        // calendarUrls.append('https://b.pool.opentimestamps.org');
+        calendarUrls.add("https://b.pool.opentimestamps.org");
         calendarUrls.add("https://ots.eternitywall.it");
 
         Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarUrls);
@@ -164,21 +164,34 @@ public class OpenTimestamps {
     private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls) {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        ArrayBlockingQueue<Future<Timestamp>> queue = new ArrayBlockingQueue<>(calendarUrls.size());
+        ArrayBlockingQueue<Timestamp> queue = new ArrayBlockingQueue<>(calendarUrls.size());
 
         for (final String calendarUrl : calendarUrls) {
 
             URL url = null;
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
-                queue.add(executor.submit(task));
-
-                for (Future<Timestamp> future : queue) {
-                    Timestamp stamp = future.get();
-                    timestamp.merge(stamp);
-                }
+                task.setQueue(queue);
+                executor.submit(task);
 
             } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        int count=0;
+        for (final String calendarUrl : calendarUrls) {
+
+            try {
+
+                Timestamp stamp = queue.take();
+                timestamp.merge(stamp);
+                count++;
+                if(count==2){
+                    break;
+                }
+
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
