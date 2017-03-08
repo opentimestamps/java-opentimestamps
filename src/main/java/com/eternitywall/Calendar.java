@@ -8,12 +8,19 @@ package com.eternitywall;
  */
 
 
+import com.eternitywall.http.Request;
+import com.eternitywall.http.Response;
+
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 /** Class representing Remote com.eternitywall.Calendar server interface */
-public class Calendar {
+public class Calendar{
 
     String url;
     private static Logger log = Logger.getLogger(Calendar.class.getName());
@@ -26,6 +33,21 @@ public class Calendar {
         this.url = url;
     }
 
+    public Timestamp submit1(byte[] digest) throws Exception {
+        URL obj = new URL(url + "/digest");
+        Request task = new Request(obj);
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        Future<Response> future = executor.submit(task);
+        byte[] body = future.get().getBytes();;
+        if (body.length > 10000) {
+            log.severe("com.eternitywall.Calendar response exceeded size limit");
+            return null;
+        }
+
+        StreamDeserializationContext ctx = new StreamDeserializationContext(body);
+        Timestamp timestamp = Timestamp.deserialize(ctx, digest);
+        return timestamp;
+    }
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.Timestamp committing to that digest.

@@ -3,6 +3,8 @@ package com.eternitywall;
 import com.eternitywall.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.attestation.PendingAttestation;
 import com.eternitywall.attestation.TimeAttestation;
+import com.eternitywall.http.Request;
+import com.eternitywall.http.Response;
 import com.eternitywall.op.Op;
 import com.eternitywall.op.OpAppend;
 import com.eternitywall.op.OpCrypto;
@@ -12,9 +14,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Time;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 /**
@@ -156,14 +162,30 @@ public class OpenTimestamps {
      * @return {Timestamp} The created timestamp.
      */
     private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls) {
-        List<Calendar> calendars = new ArrayList<Calendar>();
-        /*for (final String calendarUrl : calendarUrls) {
-            com.eternitywall.Calendar calendar = new com.eternitywall.Calendar(calendarUrl);
-            calendars.add(calendar.submit(timestamp.msg));
-        }*/
-        Calendar calendar = new Calendar(calendarUrls.get(0));
-        Timestamp resultTimestamp = calendar.submit(timestamp.msg);
-        timestamp.merge(resultTimestamp);
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ArrayBlockingQueue<Future<Timestamp>> queue = new ArrayBlockingQueue<>(calendarUrls.size());
+
+        for (final String calendarUrl : calendarUrls) {
+
+            URL url = null;
+            try {
+                CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
+                queue.add(executor.submit(task));
+
+                for (Future<Timestamp> future : queue) {
+                    Timestamp stamp = future.get();
+                    timestamp.merge(stamp);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //shut down the executor service now
+        executor.shutdown();
+
         return timestamp;
     }
 
