@@ -13,6 +13,8 @@ import com.eternitywall.http.Response;
 
 import java.net.*;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,22 +35,6 @@ public class Calendar{
         this.url = url;
     }
 
-    public Timestamp submit1(byte[] digest) throws Exception {
-        URL obj = new URL(url + "/digest");
-        Request task = new Request(obj);
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        Future<Response> future = executor.submit(task);
-        byte[] body = future.get().getBytes();;
-        if (body.length > 10000) {
-            log.severe("com.eternitywall.Calendar response exceeded size limit");
-            return null;
-        }
-
-        StreamDeserializationContext ctx = new StreamDeserializationContext(body);
-        Timestamp timestamp = Timestamp.deserialize(ctx, digest);
-        return timestamp;
-    }
-
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.Timestamp committing to that digest.
      * @param {byte[]} digest - The digest hash to send.
@@ -56,36 +42,18 @@ public class Calendar{
     public Timestamp submit(byte[] digest) {
         try {
 
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Accept","application/vnd.opentimestamps.v1");
+            headers.put("User-Agent","java-opentimestamps");
+            headers.put("Content-Type","application/x-www-form-urlencoded");
+
             URL obj = new URL(url + "/digest");
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
+            Request task = new Request(obj);
+            task.setData(new String(digest));
+            task.setHeaders(headers);
+            Response response = task.call();
+            byte[] body = response.getBytes();
 
-            //add request header
-            con.setRequestProperty("Accept", "application/vnd.opentimestamps.v1");
-            con.setRequestProperty("User-Agent", "java-opentimestamps");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            // Send post request
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(new String(digest));
-            wr.flush();
-            wr.close();
-
-            // Response
-            int responseCode = con.getResponseCode();
-            InputStream inputStream = con.getInputStream();
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            byte[] byteArray = new byte[bufferedInputStream.available()];
-            int current = bufferedInputStream.read(byteArray);
-            while (current > 0 ) {
-                byte[] buffer = new byte[bufferedInputStream.available()];
-                current = bufferedInputStream.read(buffer);
-                Utils.arraysConcat(byteArray, buffer);
-            }
-
-            // Response Hanlder
-            byte[] body = byteArray;
             if (body.length > 10000) {
                 log.severe("com.eternitywall.Calendar response exceeded size limit");
                 return null;
@@ -95,12 +63,6 @@ public class Calendar{
             Timestamp timestamp = Timestamp.deserialize(ctx, digest);
             return timestamp;
 
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -115,29 +77,17 @@ public class Calendar{
     public Timestamp getTimestamp(byte[] commitment) {
         try {
 
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Accept","application/vnd.opentimestamps.v1");
+            headers.put("User-Agent","java-opentimestamps");
+            headers.put("Content-Type","application/x-www-form-urlencoded");
+
             URL obj = new URL(url + "/timestamp/" + Utils.bytesToHex(commitment));
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
+            Request task = new Request(obj);
+            task.setHeaders(headers);
+            Response response = task.call();
+            byte[] body = response.getBytes();
 
-            //add request header
-            con.setRequestProperty("Accept", "application/vnd.opentimestamps.v1");
-            con.setRequestProperty("User-Agent", "java-opentimestamps");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            // Response
-            int responseCode = con.getResponseCode();
-            InputStream inputStream = con.getInputStream();
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            byte[] byteArray = new byte[bufferedInputStream.available()];
-            int current = bufferedInputStream.read(byteArray);
-            while (current > 0) {
-                byte[] buffer = new byte[bufferedInputStream.available()];
-                current = bufferedInputStream.read(buffer);
-                Utils.arraysConcat(byteArray, buffer);
-            }
-
-            // Response Hanlder
-            byte[] body = byteArray;
             if (body.length > 10000) {
                 log.severe("com.eternitywall.Calendar response exceeded size limit");
                 return null;

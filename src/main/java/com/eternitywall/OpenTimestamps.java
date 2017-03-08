@@ -398,8 +398,6 @@ public class OpenTimestamps {
             log.info("Timestamp not complete");
         }
 
-        log.info(detachedTimestamp.timestamp.toString(0));
-
         StreamSerializationContext css = new StreamSerializationContext();
         detachedTimestamp.serialize(css);
         return css.getOutput();
