@@ -6,7 +6,36 @@
 
     <groupId>com.eternitywall</groupId>
     <artifactId>java-opentimestamps</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+
+    <name>java-opentimestamps</name>
+    <description>The java implementation of the OpenTimestamps protocol</description>
+    <url>https://github.com/eternitywall/java-opentimestamps</url>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Riccardo Casatta</name>
+            <email>riccardo@eternitywall.com</email>
+            <organization>Eternity Wall</organization>
+            <organizationUrl>https://www.eternitywall.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Luca Vaccaro</name>
+            <email>luca@eternitywall.com</email>
+            <organization>Eternity Wall</organization>
+            <organizationUrl>https://www.eternitywall.com</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/eternitywall/java-opentimestamps.git</connection>
+        <developerConnection>scm:git:ssh://github.com/eternitywall/java-opentimestamps.git</developerConnection>
+        <url>http://github.com/eternitywall/java-opentimestamps/tree/master</url>
+    </scm>
 
 
     <properties>
