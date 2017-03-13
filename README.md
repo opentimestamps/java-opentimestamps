@@ -13,6 +13,16 @@ It is a based on the python implementation at https://github.com/opentimestamps/
 
 Java 1.7+
 
+## Maven dependency
+
+```xml
+<dependency>
+    <groupId>com.eternitywall</groupId>
+    <artifactId>java-opentimestamps</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
 ## Installation
 
 ```
