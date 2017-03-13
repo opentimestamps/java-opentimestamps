@@ -36,6 +36,7 @@ public class OpenTimestamps {
 
     private static Logger log = Logger.getLogger(OpenTimestamps.class.getName());
 
+
     /**
      * Show information on a timestamp.
      *
@@ -61,20 +62,49 @@ public class OpenTimestamps {
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
      * @param inputStream The input stream to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    public static byte[] stamp(InputStream inputStream) throws IOException {
+    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m) throws IOException {
+        // Parse parameters
+        if (inputStream == null) {
+            throw new IOException();
+        }
         // Read from file reader stream
         try {
             DetachedTimestampFile fileTimestamp;
             fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
-            return stamp(fileTimestamp);
+            return stamp(fileTimestamp,calendarsUrl,m);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             log.severe("Invalid InputStream");
             throw new IOException();
         }
+    }
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param inputStream The input stream to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+    public static byte[] stamp(InputStream inputStream) throws IOException {
+        return OpenTimestamps.stamp(inputStream, null, 0);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     * @param content The sha 256 of the file to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+
+    public static byte[] stamp(byte[] content, List<String> calendarsUrl, Integer m) throws IOException {
+        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m);
     }
 
     /**
@@ -85,7 +115,23 @@ public class OpenTimestamps {
      */
 
     public static byte[] stamp(byte[] content) throws IOException {
-        return stamp(new ByteArrayInputStream(content));
+        return OpenTimestamps.stamp(content,null , 0);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param hash The sha 256 of the file to stamp.
+     * @return The plain array buffer of stamped.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @throws IOException desc
+     */
+    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m) throws IOException {
+        // Read from file reader stream
+        DetachedTimestampFile fileTimestamp;
+        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
+        return stamp(fileTimestamp);
     }
 
     /**
@@ -96,10 +142,19 @@ public class OpenTimestamps {
      * @throws IOException desc
      */
     public static byte[] stamp(Hash hash) throws IOException {
-        // Read from file reader stream
-        DetachedTimestampFile fileTimestamp;
-        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
-        return stamp(fileTimestamp);
+        return OpenTimestamps.stamp(hash,null, 0);
+    }
+
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param fileTimestamp The Detached Timestamp File.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+    private static byte[] stamp(DetachedTimestampFile fileTimestamp) throws IOException {
+        return OpenTimestamps.stamp(fileTimestamp,null,0);
     }
 
     /**
@@ -109,7 +164,7 @@ public class OpenTimestamps {
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    private static byte[] stamp(DetachedTimestampFile fileTimestamp) throws IOException {
+    private static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m) throws IOException {
         /**
          * Add nonce:
          * Remember that the files - and their timestamps - might get separated
@@ -141,13 +196,21 @@ public class OpenTimestamps {
             nonceAppendedStamp.ops.put(opSHA256, merkleRoot);
         }
 
+        // Markle root
         Timestamp merkleTip = merkleRoot;
-        List<String> calendarUrls = new ArrayList<String>();
-        calendarUrls.add("https://alice.btc.calendar.opentimestamps.org");
-        calendarUrls.add("https://bob.btc.calendar.opentimestamps.org");
-        calendarUrls.add("https://ots.eternitywall.it");
 
-        Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarUrls);
+        // Parse parameters
+        if(calendarsUrl==null || calendarsUrl.size()==0) {
+            calendarsUrl = new ArrayList<String>();
+            calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
+            calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
+            calendarsUrl.add("https://ots.eternitywall.it");
+        }
+        if(m==null || m==0){
+            m=2;
+        }
+
+        Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarsUrl, m);
 
         if (resultTimestamp == null) {
             throw new IOException();
@@ -163,9 +226,10 @@ public class OpenTimestamps {
      *
      * @param timestamp The timestamp.
      * @param calendarUrls List of calendar's to use.
+     * @param m Number of calendars to use.
      * @return The created timestamp.
      */
-    private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls) {
+    private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls, Integer m) {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
         ArrayBlockingQueue<Timestamp> queue = new ArrayBlockingQueue<>(calendarUrls.size());
