@@ -45,7 +45,8 @@ public class OtsCli {
             // args are the arguments passed to the  the application via the main method
 
             if(line.hasOption("c")) {
-                calendarsUrl.add( line.getOptionValue("c") );
+                String[] cals = line.getOptionValues("c");
+                calendarsUrl.addAll( Arrays.asList(cals) );
             } else if(line.hasOption("m")) {
                 m = Integer.valueOf(line.getOptionValue("m"));
             } else if(line.hasOption("V")) {
