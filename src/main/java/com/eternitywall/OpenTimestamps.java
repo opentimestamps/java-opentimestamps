@@ -207,7 +207,13 @@ public class OpenTimestamps {
             calendarsUrl.add("https://ots.eternitywall.it");
         }
         if(m==null || m<=0){
-            m=2;
+            if(calendarsUrl.size() == 0 ) {
+                m = 2;
+            } else if(calendarsUrl.size() == 1 ) {
+                m = 1;
+            } else {
+                m = calendarsUrl.size();
+            }
         }
         if(m<0 || m > calendarsUrl.size()) {
             log.severe("m cannot be greater than available calendar neither less or equal 0");
