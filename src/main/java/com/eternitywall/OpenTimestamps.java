@@ -206,8 +206,12 @@ public class OpenTimestamps {
             calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://ots.eternitywall.it");
         }
-        if(m==null || m==0){
+        if(m==null || m<=0){
             m=2;
+        }
+        if(m<0 || m > calendarsUrl.size()) {
+            log.severe("m cannot be greater than available calendar neither less or equal 0");
+            throw new IOException();
         }
 
         Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarsUrl, m);
@@ -256,7 +260,7 @@ public class OpenTimestamps {
                 Timestamp stamp = queue.take();
                 timestamp.merge(stamp);
                 count++;
-                if(count==2){
+                if(count >= m){
                     break;
                 }
 
@@ -265,6 +269,9 @@ public class OpenTimestamps {
             }
         }
 
+        if(count < m ){
+            log.severe("Failed to create timestamp: requested "+ String.valueOf(m)+" attestation" + ((m>1)?"s":"")+" but received only "+String.valueOf(count));
+        }
         //shut down the executor service now
         executor.shutdown();
 
