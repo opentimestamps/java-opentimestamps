@@ -27,7 +27,7 @@ public class OtsCli {
     private static List<String> calendarsUrl = new ArrayList<>();
     private static List<String> files = new ArrayList<>();
     private static String cmd = null;
-    private static Integer m = 2;
+    private static Integer m = 0;
 
     public static void main(String[] args) {
 
