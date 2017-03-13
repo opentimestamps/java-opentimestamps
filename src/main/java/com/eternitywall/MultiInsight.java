@@ -29,6 +29,7 @@ public class MultiInsight {
         insightUrls.add("https://search.bitaccess.co/insight-api");
         insightUrls.add("https://www.localbitcoinschain.com/api");
         insightUrls.add("https://insight.bitpay.com/api");
+        insightUrls.add("https://ots.eternitywall.it/insight-api");
         queueBlockHeader = new ArrayBlockingQueue<>(insightUrls.size());
         queueBlockHash = new ArrayBlockingQueue<>(insightUrls.size());
         executor = Executors.newFixedThreadPool(insightUrls.size());
@@ -62,7 +63,7 @@ public class MultiInsight {
             blockHeader.setMerkleroot(merkleroot);
             blockHeader.setTime(time);
             blockHeader.setBlockHash(hash);
-            log.fine(take.getFromUrl() + " " + blockHeader);
+            log.info(take.getFromUrl() + " " + blockHeader);
 
             if (results.contains(blockHeader)){
                 return blockHeader;
@@ -93,7 +94,7 @@ public class MultiInsight {
             if(take.isValid()) {
                 JSONObject jsonObject = take.getJson();
                 String blockHash = jsonObject.getString("blockHash");
-                log.fine(take.getFromUrl() + " " + blockHash);
+                log.info(take.getFromUrl() + " " + blockHash);
 
                 if (results.contains(blockHash)) {
                     return blockHash;
