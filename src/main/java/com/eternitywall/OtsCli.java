@@ -140,6 +140,7 @@ public class OtsCli {
 
             String argsOts = argsFile + ".ots";
             Files.write(Paths.get(argsOts), infoResult);
+            System.out.println("The timestamp proof '" + argsOts + "' has been created!");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -163,6 +164,7 @@ public class OtsCli {
             String argsFile = argsOts.replace(".ots","");
             File file = new File(argsFile);
             fis = new FileInputStream(file);
+            System.out.println("Assuming target filename is '" + argsFile + "'");
             Long timestamp = OpenTimestamps.verify(byteOts,fis);
             if(timestamp==null){
                 System.out.println("Pending or Bad attestation");
