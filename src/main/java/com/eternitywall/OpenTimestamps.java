@@ -240,7 +240,7 @@ public class OpenTimestamps {
 
         for (final String calendarUrl : calendarUrls) {
 
-            System.out.println("ots: Submitting to remote calendar "+calendarUrl);
+            System.out.println("Submitting to remote calendar "+calendarUrl);
 
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
@@ -469,18 +469,21 @@ public class OpenTimestamps {
         } catch (Exception e) {
             log.severe("com.eternitywall.StreamDeserializationContext error");
         }
+        if (detachedTimestamp.timestamp.isTimestampComplete()) {
+            return ots;
+        }
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgradeTimestamp(detachedTimestamp.timestamp);
 
         if (changed) {
-            log.info("Timestamp upgraded");
+            System.out.println("Timestamp has been successfully upgraded!");
         }
 
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            log.info("Timestamp complete");
+            System.out.println("Timestamp is complete");
         } else {
-            log.info("Timestamp not complete");
+            System.out.println("Timestamp is not complete");
         }
 
         StreamSerializationContext css = new StreamSerializationContext();

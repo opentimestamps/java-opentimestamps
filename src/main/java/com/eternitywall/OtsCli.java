@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -185,15 +186,20 @@ public class OtsCli {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
+            if(Arrays.equals(byteOts, upgradeResult)) {
+                System.out.println("Timestamp is already complete");
+            } else {
+                byte[] byteBak = Files.readAllBytes(pathOts);
+                Path pathBak = Paths.get(argsOts+".bak");
+                Files.write(pathBak, byteBak);
+
+                // Write new Upgrade Result
+                Files.write(pathOts, upgradeResult);
+            }
             //System.out.println(Utils.bytesToHex(upgradeResult));
 
             // Copy Bak File
-            byte[] byteBak = Files.readAllBytes(pathOts);
-            Path pathBak = Paths.get(argsOts+".bak");
-            Files.write(pathBak, byteBak);
 
-            // Write new Upgrade Result
-            Files.write(pathOts, upgradeResult);
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
