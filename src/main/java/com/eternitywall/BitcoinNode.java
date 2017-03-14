@@ -116,7 +116,7 @@ public class BitcoinNode {
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", "Basic " + authString);
         request.setHeaders(headers);
-        request.setData(s);
+        request.setData(s.getBytes());
         Response response = null;  //sync call
         response = request.call();
         if(response==null)

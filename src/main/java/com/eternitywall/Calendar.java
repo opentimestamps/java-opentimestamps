@@ -50,7 +50,7 @@ public class Calendar{
 
             URL obj = new URL(url + "/digest");
             Request task = new Request(obj);
-            task.setData(new String(digest));
+            task.setData(digest);
             task.setHeaders(headers);
             Response response = task.call();
             byte[] body = response.getBytes();

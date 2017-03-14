@@ -18,7 +18,7 @@ public class Request implements Callable<Response> {
     private static Logger log = Logger.getLogger(MultiInsight.class.getName());
 
     private URL url;
-    private String data;
+    private byte[] data;
     private Map<String,String> headers;
     private BlockingQueue<Response> queue;
 
@@ -26,7 +26,7 @@ public class Request implements Callable<Response> {
         this.url = url;
     }
 
-    public void setData(String data) {
+    public void setData(byte[] data) {
         this.data = data;
     }
 
@@ -60,9 +60,9 @@ public class Request implements Callable<Response> {
             if (data != null) {
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setRequestProperty("Content-Length", "" + Integer.toString(this.data.length()));
+                httpURLConnection.setRequestProperty("Content-Length", "" + Integer.toString(this.data.length));
                 DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeBytes(this.data);
+                wr.write(this.data, 0, this.data.length);
                 wr.flush();
                 wr.close();
             } else {
