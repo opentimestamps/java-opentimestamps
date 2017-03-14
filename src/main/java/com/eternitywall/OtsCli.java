@@ -135,11 +135,11 @@ public class OtsCli {
 
             File file = new File(argsFile);
             fis = new FileInputStream(file);
-            byte[] infoResult = OpenTimestamps.stamp(fis,calendarsUrl,m);
-            //System.out.println(Utils.bytesToHex(infoResult));
+            byte[] stampResult = OpenTimestamps.stamp(fis,calendarsUrl,m);
+            //System.out.println(Utils.bytesToHex(stampResult));
 
             String argsOts = argsFile + ".ots";
-            Files.write(Paths.get(argsOts), infoResult);
+            Files.write(Paths.get(argsOts), stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
 
         } catch (IOException e) {
@@ -190,7 +190,7 @@ public class OtsCli {
             byte[] byteOts = Files.readAllBytes(pathOts);
             byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
             if(Arrays.equals(byteOts, upgradeResult)) {
-                System.out.println("Timestamp is already complete");
+                System.out.println("Timestamp not upgraded");
             } else {
                 byte[] byteBak = Files.readAllBytes(pathOts);
                 Path pathBak = Paths.get(argsOts+".bak");
