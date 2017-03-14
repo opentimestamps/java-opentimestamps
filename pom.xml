@@ -6,7 +6,7 @@
 
     <groupId>com.eternitywall</groupId>
     <artifactId>java-opentimestamps</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <name>java-opentimestamps</name>
     <description>The java implementation of the OpenTimestamps protocol</description>
