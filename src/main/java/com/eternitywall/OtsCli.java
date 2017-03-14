@@ -132,22 +132,24 @@ public class OtsCli {
     private static void stamp(String argsFile, List<String> calendarsUrl, Integer m) {
         FileInputStream fis = null;
         try {
-
+            String argsOts = argsFile + ".ots";
+            Path path = Paths.get(argsOts);
+            if(Files.exists(path)) {
+                System.out.println("File '" + argsOts + "' already exist");
+                return;
+            }
             File file = new File(argsFile);
             fis = new FileInputStream(file);
             byte[] stampResult = OpenTimestamps.stamp(fis,calendarsUrl,m);
-            //System.out.println(Utils.bytesToHex(stampResult));
-
-            String argsOts = argsFile + ".ots";
-            Files.write(Paths.get(argsOts), stampResult);
+            Files.write(path, stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
-
         } catch (IOException e) {
             e.printStackTrace();
             log.severe("No valid file");
         } finally {
             try {
-                fis.close();
+                if(fis!=null)
+                    fis.close();
             }catch  (IOException e) {
                 log.severe("No valid file");
             }
