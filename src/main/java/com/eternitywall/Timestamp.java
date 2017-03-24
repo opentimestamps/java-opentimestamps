@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * edges being operations acting on those messages. The leafs of the tree are
  * attestations that attest to the time that messages in the tree existed prior.
  */
-class Timestamp {
+public class Timestamp {
 
 
     private static Logger log = Logger.getLogger(Timestamp.class.getName());
