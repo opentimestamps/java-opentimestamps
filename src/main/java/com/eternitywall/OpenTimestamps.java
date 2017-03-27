@@ -405,7 +405,6 @@ public class OpenTimestamps {
      */
     private static Long verifyTimestamp(Timestamp timestamp) {
         Boolean found = false;
-
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
