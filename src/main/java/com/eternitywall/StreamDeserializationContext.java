@@ -58,9 +58,11 @@ public class StreamDeserializationContext {
             b = this.read(1)[0];
             value |= (b & 0b01111111) << shift;
             shift += 7;
-        } while ((b & 0b10000000) == 0b10000000);
+        } while ((b & 0b10000000) != 0b00000000);
+
         return value;
     }
+
 
     public byte[] readBytes(int expectedLength) {
         if (expectedLength == 0) {
@@ -84,6 +86,8 @@ public class StreamDeserializationContext {
         }
         return this.read(l);
     }
+
+
 
     public boolean assertMagic(byte[] expectedMagic) {
         byte[] actualMagic = this.read(expectedMagic.length);
