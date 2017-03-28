@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * A file containing a timestamp for another file.
  * Contains a timestamp, along with a header and the digest of the file.
  */
-class DetachedTimestampFile {
+public class DetachedTimestampFile {
 
     private static Logger log = Logger.getLogger(DetachedTimestampFile.class.getName());
 
@@ -41,7 +41,6 @@ class DetachedTimestampFile {
      * leave it out here: unlike Git commits round-tripping is an issue when
      * timestamps are upgraded, and we could end up with bugs related to not
      * saving/updating minor version numbers correctly.
-     * @type {int}
      * @default 1
      */
     static byte MAJOR_VERSION = 1;
@@ -56,7 +55,7 @@ class DetachedTimestampFile {
 
     /**
      * The digest of the file that was timestamped.
-     * @return {byte} The message inside the timestamp.
+     * @return The message inside the timestamp.
      */
     public byte[] fileDigest() {
         return this.timestamp.msg;
