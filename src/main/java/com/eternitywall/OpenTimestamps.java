@@ -175,6 +175,8 @@ public class OpenTimestamps {
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
      * @param fileTimestamp The timestamp to stamp.
+     * @param calendarsUrl desc
+     * @param m desc
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */

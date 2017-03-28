@@ -246,6 +246,7 @@ public class Timestamp {
 
     /**
      * Print as tree extended hierarchical object.
+     * @param timestamp - desc
      * @param indent - Initial hierarchical indention.
      * @return The output string.
      */

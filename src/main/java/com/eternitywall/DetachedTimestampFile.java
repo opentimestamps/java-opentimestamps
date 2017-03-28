@@ -29,7 +29,6 @@ public class DetachedTimestampFile {
     /**
      * Header magic bytes
      * Designed to be give the user some information in a hexdump, while being identified as 'data' by the file utility.
-     * @type {int[]}
      * @default \x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94
      */
     static byte[] HEADER_MAGIC = {(byte) 0x00, (byte) 0x4f, (byte) 0x70, (byte) 0x65, (byte) 0x6e, (byte) 0x54, (byte) 0x69, (byte) 0x6d, (byte) 0x65, (byte) 0x73,
@@ -64,7 +63,6 @@ public class DetachedTimestampFile {
     /**
      * Serialize a com.eternitywall.Timestamp File.
      * @param  ctx The stream serialization context.
-     * @return  The serialized com.eternitywall.DetachedTimestampFile object.
      */
     public void serialize(StreamSerializationContext ctx) {
         ctx.writeBytes(HEADER_MAGIC);
@@ -96,6 +94,7 @@ public class DetachedTimestampFile {
      * @param fileHashOp The file hash operation.
      * @param ctx The stream deserialization context.
      * @return  The generated com.eternitywall.DetachedTimestampFile object.
+     * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile fromBytes(OpCrypto fileHashOp, StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(ctx);
@@ -117,6 +116,8 @@ public class DetachedTimestampFile {
      * @param  fileHashOp The file hash operation.
      * @param  file The hash file.
      * @return The generated com.eternitywall.DetachedTimestampFile object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(file);
@@ -128,6 +129,8 @@ public class DetachedTimestampFile {
      * @param fileHashOp The file hash operation.
      * @param inputStream  The input stream file.
      * @return The generated com.eternitywall.DetachedTimestampFile object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, InputStream inputStream) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(inputStream);
