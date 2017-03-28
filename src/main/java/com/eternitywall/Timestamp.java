@@ -32,7 +32,7 @@ public class Timestamp {
 
     /**
      * Create a com.eternitywall.Timestamp object.
-     * @param {string} msg - The server url.
+     * @param msg - The server url.
      */
     Timestamp(byte[] msg) {
         this.msg = msg;
@@ -48,9 +48,9 @@ public class Timestamp {
      * The message you provide is assumed to be correct; if it causes a op to
      * raise MsgValueError when the results are being calculated (done
      * immediately, not lazily) DeserializationError is raised instead.
-     * @param {com.eternitywall.StreamDeserializationContext} ctx - The stream deserialization context.
-     * @param {initialMsg} initialMsg - The initial message.
-     * @return {com.eternitywall.Timestamp} The generated com.eternitywall.Timestamp.
+     * @param ctx - The stream deserialization context.
+     * @param initialMsg - The initial message.
+     * @return The generated com.eternitywall.Timestamp.
      */
     public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
         Timestamp self = new Timestamp(initialMsg);
@@ -82,7 +82,7 @@ public class Timestamp {
 
     /**
      * Create a Serialize object.
-     * @param {com.eternitywall.StreamSerializationContext} ctx - The stream serialization context.
+     * @param ctx - The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
 
@@ -129,7 +129,7 @@ public class Timestamp {
 
     /**
      * Add all operations and attestations from another timestamp to this one.
-     * @param {com.eternitywall.Timestamp} other - Initial other com.eternitywall.Timestamp to merge.
+     * @param other - Initial other com.eternitywall.Timestamp to merge.
      */
     void merge(Timestamp other) {
         if (!(other instanceof Timestamp)) {
@@ -160,8 +160,8 @@ public class Timestamp {
 
     /**
      * Print as memory hierarchical object.
-     * @param {int} indent - Initial hierarchical indention.
-     * @return {string} The output string.
+     * @param indent - Initial hierarchical indention.
+     * @return The output string.
      */
     public String toString(int indent) {
         String output = "";
@@ -192,8 +192,8 @@ public class Timestamp {
 
     /**
      * Indention function for printing tree.
-     * @param {int} pos - Initial hierarchical indention.
-     * @return {string} The output space string.
+     * @param pos - Initial hierarchical indention.
+     * @return The output space string.
      */
     public static String indention(int pos) {
         String output = "";
@@ -205,8 +205,8 @@ public class Timestamp {
 
     /**
      * Print as tree hierarchical object.
-     * @param {int} indent - Initial hierarchical indention.
-     * @return {string} The output string.
+     * @param indent - Initial hierarchical indention.
+     * @return The output string.
      */
     public String strTree(int indent) {
         String output = "";
@@ -246,8 +246,8 @@ public class Timestamp {
 
     /**
      * Print as tree extended hierarchical object.
-     * @param {int} indent - Initial hierarchical indention.
-     * @return {string} The output string.
+     * @param indent - Initial hierarchical indention.
+     * @return The output string.
      */
     public static String strTreeExtended(Timestamp timestamp, int indent) {
         String output = "";
@@ -291,7 +291,7 @@ public class Timestamp {
     }
 
     /** Set of al Attestations.
-     * @return {Array} Array of all sub timestamps with attestations.
+     * @return Array of all sub timestamps with attestations.
      */
     public List<Timestamp> directlyVerified() {
         if (this.attestations.size() > 0) {
@@ -312,7 +312,7 @@ public class Timestamp {
     }
 
     /** Set of al Attestations.
-     * @return {Set} Set of all timestamp attestations.
+     * @return Set of all timestamp attestations.
      */
     public Set<TimeAttestation> getAttestations() {
         Set set = new HashSet<TimeAttestation>();
@@ -325,7 +325,7 @@ public class Timestamp {
     }
 
     /** Determine if timestamp is complete and can be verified.
-     * @return {boolean} True if the timestamp is complete, False otherwise.
+     * @return True if the timestamp is complete, False otherwise.
      */
     public Boolean isTimestampComplete() {
         for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
@@ -340,7 +340,7 @@ public class Timestamp {
 
     /**
      * Iterate over all attestations recursively
-     * @return {HashMap} Returns iterable of (msg, attestation)
+     * @return Returns iterable of (msg, attestation)
      */
     public HashMap<byte[], TimeAttestation> allAttestations() {
         HashMap<byte[], TimeAttestation> map = new HashMap<byte[], TimeAttestation>();
