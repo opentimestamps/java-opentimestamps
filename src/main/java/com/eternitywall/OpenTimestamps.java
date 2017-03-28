@@ -57,6 +57,20 @@ public class OpenTimestamps {
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
         return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
     }
+    /**
+     * Show information on a timestamp.
+     *
+     * @param timestamp The timestamp buffered.
+     * @return the string representation of the timestamp
+     */
+    public static String info(Timestamp timestamp) {
+        if (timestamp == null) {
+            return "No timestamp";
+        }
+        String fileHash = Utils.bytesToHex(timestamp.msg);
+        String firstLine = "Hash: " + fileHash + '\n';
+        return firstLine + "Timestamp:\n" + timestamp.strTree(0);
+    }
 
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
@@ -164,7 +178,7 @@ public class OpenTimestamps {
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    private static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m) throws IOException {
+    public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m) throws IOException {
         /**
          * Add nonce:
          * Remember that the files - and their timestamps - might get separated
@@ -220,7 +234,7 @@ public class OpenTimestamps {
             throw new IOException();
         }
 
-        Timestamp resultTimestamp = OpenTimestamps.createTimestamp(merkleTip, calendarsUrl, m);
+        Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m);
 
         if (resultTimestamp == null) {
             throw new IOException();
@@ -239,7 +253,7 @@ public class OpenTimestamps {
      * @param m Number of calendars to use.
      * @return The created timestamp.
      */
-    private static Timestamp createTimestamp(Timestamp timestamp, List<String> calendarUrls, Integer m) {
+    private static Timestamp create(Timestamp timestamp, List<String> calendarUrls, Integer m) {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
         ArrayBlockingQueue<Timestamp> queue = new ArrayBlockingQueue<>(calendarUrls.size());
@@ -394,7 +408,7 @@ public class OpenTimestamps {
         }
 
         // console.log(com.eternitywall.Timestamp.strTreeExtended(detachedTimestamp.timestamp, 0));
-        return OpenTimestamps.verifyTimestamp(detachedTimestamp.timestamp);
+        return OpenTimestamps.verify(detachedTimestamp.timestamp);
     }
 
     /**
@@ -403,7 +417,7 @@ public class OpenTimestamps {
      * @param timestamp The timestamp.
      * @return unix timestamp if verified, undefined otherwise.
      */
-    private static Long verifyTimestamp(Timestamp timestamp) {
+    public static Long verify(Timestamp timestamp) {
         Boolean found = false;
 
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
@@ -480,7 +494,7 @@ public class OpenTimestamps {
         }
 
         // Upgrade timestamp
-        boolean changed = OpenTimestamps.upgradeTimestamp(detachedTimestamp.timestamp);
+        boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
 
         if (changed) {
             System.out.println("Timestamp has been successfully upgraded!");
@@ -505,7 +519,7 @@ public class OpenTimestamps {
      * @param timestamp The timestamp.
      * @return a boolean represnting if the timestamp has changed
      */
-    private static boolean upgradeTimestamp(Timestamp timestamp) {
+    public static boolean upgrade(Timestamp timestamp) {
         // Check remote calendars for upgrades.
         // This time we only check PendingAttestations - we can't be as agressive.
 
@@ -520,7 +534,7 @@ public class OpenTimestamps {
                     byte[] commitment = subStamp.msg;
 
                     Calendar calendar = new Calendar(calendarUrl);
-                    Timestamp upgradedStamp = OpenTimestamps.upgradeStamp(subStamp, calendar, commitment, existingAttestations);
+                    Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
                     if(upgradedStamp != null) {
                         subStamp.merge(upgradedStamp);
                         upgraded = true;
@@ -532,7 +546,7 @@ public class OpenTimestamps {
         return upgraded;
     }
 
-    private static Timestamp upgradeStamp(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
+    private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
         Timestamp upgradedStamp = calendar.getTimestamp(commitment);
         if (upgradedStamp == null) {
             return null;
