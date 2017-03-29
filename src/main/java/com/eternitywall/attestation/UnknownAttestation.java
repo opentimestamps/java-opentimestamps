@@ -17,7 +17,7 @@ public class UnknownAttestation extends TimeAttestation {
 
     byte[] payload;
 
-    public byte[] _TAG = new byte[]{};
+    public static byte[] _TAG = new byte[]{};
 
     @Override
     public byte[] _TAG() {

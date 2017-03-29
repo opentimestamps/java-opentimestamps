@@ -7,10 +7,10 @@ package com.eternitywall;
  * @license LPGL3
  */
 
-import com.eternitywall.attestation.BitcoinBlockHeaderAttestation;
-import com.eternitywall.attestation.TimeAttestation;
+import com.eternitywall.attestation.*;
 import com.eternitywall.op.Op;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -156,6 +156,61 @@ public class Timestamp {
             }
             ourOpStamp.merge(otherOpStamp);
         }
+    }
+
+    public TimeAttestation shrink() throws Exception {
+        // Get all attestations
+        HashMap<byte[], TimeAttestation> allAttestations = this.allAttestations();
+        if (allAttestations.size() == 0) {
+            throw new Exception();
+        } else if (allAttestations.size() == 1) {
+            return allAttestations.values().iterator().next();
+        }
+
+        if (this.ops.size() == 0) {
+            throw new Exception();
+        }
+
+        if (this.getAttestations().size() == 1) {
+            return this.getAttestations().iterator().next();
+        }
+
+        // Search first BitcoinBlockHeaderAttestation / EthereumBlockHeaderAttestation
+        TimeAttestation minAttestation = null;
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            Timestamp timestamp = entry.getValue();
+            Op op = entry.getKey();
+            TimeAttestation attestation = timestamp.shrink();
+
+            if (attestation instanceof BitcoinBlockHeaderAttestation ||
+                    attestation instanceof EthereumBlockHeaderAttestation) {
+
+                if (minAttestation == null) {
+                    minAttestation = attestation;
+                } else {
+                    if (minAttestation instanceof BitcoinBlockHeaderAttestation && attestation instanceof BitcoinBlockHeaderAttestation
+                            && ((BitcoinBlockHeaderAttestation) minAttestation).getHeight() > ((BitcoinBlockHeaderAttestation) attestation).getHeight()) {
+                        minAttestation = attestation;
+                    } else if (minAttestation instanceof EthereumBlockHeaderAttestation && attestation instanceof EthereumBlockHeaderAttestation
+                            && ((EthereumBlockHeaderAttestation) minAttestation).getHeight() > ((EthereumBlockHeaderAttestation) attestation).getHeight()) {
+                        minAttestation = attestation;
+                    }
+
+                }
+            }
+        }
+
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            Timestamp timestamp = entry.getValue();
+            Op op = entry.getKey();
+            TimeAttestation attestation = timestamp.shrink();
+            if (!minAttestation.equals(attestation)) {
+                this.ops.remove(op, timestamp);
+            }    
+        }
+
+        return this.getAttestations().iterator().next();
+
     }
 
     /**
