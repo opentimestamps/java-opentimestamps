@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import com.eternitywall.ots.BitcoinNode;
+import com.eternitywall.ots.BlockHeader;
 import org.json.JSONObject;
 import org.junit.Test;
 

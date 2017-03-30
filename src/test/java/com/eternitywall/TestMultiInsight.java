@@ -1,5 +1,7 @@
 package com.eternitywall;
 
+import com.eternitywall.ots.BlockHeader;
+import com.eternitywall.ots.MultiInsight;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

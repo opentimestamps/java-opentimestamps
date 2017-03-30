@@ -1,12 +1,14 @@
 package com.eternitywall;
 
-import com.eternitywall.attestation.PendingAttestation;
-import com.eternitywall.attestation.TimeAttestation;
-import org.junit.Assert;
+import com.eternitywall.ots.OpenTimestamps;
+import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.StreamSerializationContext;
+import com.eternitywall.ots.Timestamp;
+import com.eternitywall.ots.attestation.PendingAttestation;
+import com.eternitywall.ots.attestation.TimeAttestation;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 

@@ -1,5 +1,9 @@
 package com.eternitywall;
 
+import com.eternitywall.ots.DetachedTimestampFile;
+import com.eternitywall.ots.Hash;
+import com.eternitywall.ots.OpenTimestamps;
+import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import org.junit.After;

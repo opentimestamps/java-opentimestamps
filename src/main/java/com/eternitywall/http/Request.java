@@ -1,9 +1,8 @@
 package com.eternitywall.http;
 
-import com.eternitywall.MultiInsight;
+import com.eternitywall.ots.MultiInsight;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
