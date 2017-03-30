@@ -91,7 +91,7 @@ public class MultiInsight {
 
         for (int i = 0; i < insightUrls.size(); i++) {
             Response take = queueBlockHash.take();
-            if(take.isValid()) {
+            if(take.isOk()) {
                 JSONObject jsonObject = take.getJson();
                 String blockHash = jsonObject.getString("blockHash");
                 log.info(take.getFromUrl() + " " + blockHash);

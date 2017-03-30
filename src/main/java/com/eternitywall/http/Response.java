@@ -9,18 +9,29 @@ import java.nio.charset.StandardCharsets;
 public class Response {
     private InputStream stream;
     private String fromUrl;
-    private boolean valid=false;
+    private Integer status;
 
     public Response() {
     }
 
     public Response(InputStream stream) {
         this.stream = stream;
-        this.valid = true;
     }
 
-    public boolean isValid() {
-        return valid;
+    public void setStream(InputStream stream) {
+        this.stream = stream;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public boolean isOk() {
+        return getStatus()!=null && 200==getStatus();
     }
 
     public String getFromUrl() {

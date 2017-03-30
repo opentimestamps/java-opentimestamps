@@ -45,6 +45,7 @@ public class Request implements Callable<Response> {
 
     @Override
     public Response call() throws Exception {
+        Response response = new Response();
 
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -67,24 +68,22 @@ public class Request implements Callable<Response> {
             } else {
                 httpURLConnection.setRequestMethod("GET");
             }
+            httpURLConnection.connect();
 
+            int responseCode = httpURLConnection.getResponseCode();
+            response.setStatus(responseCode);
+            response.setFromUrl(url.toString());
             InputStream is = httpURLConnection.getInputStream();
-            Response response = new Response(is);
-
+            response.setStream(is);
+        }catch (Exception e) {
+            log.warning(url.toString() + " exception " + e);
+        } finally {
             if(queue!=null) {
-                response.setFromUrl(url.toString());
                 queue.offer(response);
             }
-            return response;
-
-        }catch (Exception e) {
-            log.fine(url.toString() + " exception " + e);
-            if(queue!=null) {
-                queue.offer(new Response()); //FIXME
-
-            }
         }
-        return null;
+
+        return response;
     }
 
     public static String urlEncodeUTF8(String s) {
