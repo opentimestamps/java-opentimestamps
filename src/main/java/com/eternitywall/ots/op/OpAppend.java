@@ -1,7 +1,7 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.Utils;
+import com.eternitywall.ots.Utils;
 
 import java.util.logging.Logger;
 

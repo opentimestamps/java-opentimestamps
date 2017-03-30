@@ -1,15 +1,13 @@
 package com.eternitywall;
 
-import com.eternitywall.ots.DetachedTimestampFile;
-import com.eternitywall.ots.Hash;
-import com.eternitywall.ots.OpenTimestamps;
-import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.*;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -99,7 +97,7 @@ public class TestOpenTimestamps {
         StreamDeserializationContext ctx2 = new StreamDeserializationContext(ots2);
         DetachedTimestampFile detachedTimestampFile2 = DetachedTimestampFile.deserialize(ctx2);
         byte[] digest2 = detachedTimestampFile2.fileDigest();
-        assertTrue(Arrays.equals(digest2, Utils.hexToBytes(helloWorldHashHex)));
+        assertTrue(Arrays.equals(digest2, DatatypeConverter.parseHexBinary(helloWorldHashHex)));
 
         byte[] ots3 = OpenTimestamps.stamp(new ByteArrayInputStream(helloworld));  //testing input stream
         StreamDeserializationContext ctx3 = new StreamDeserializationContext(ots3);

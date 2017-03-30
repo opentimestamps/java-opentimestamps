@@ -7,11 +7,11 @@ package com.eternitywall.ots;
  * @license LPGL3
  */
 
-import com.eternitywall.Utils;
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.op.Op;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -166,7 +166,7 @@ public class Timestamp {
      */
     public String toString(int indent) {
         String output = "";
-        output += Timestamp.indention(indent) + "msg: " + Utils.bytesToHex(this.msg) + "\n";
+        output += Timestamp.indention(indent) + "msg: " + DatatypeConverter.printHexBinary(this.msg).toLowerCase() + "\n";
         output += Timestamp.indention(indent) + this.attestations.size() + " attestations: \n";
         int i = 0;
         for (final TimeAttestation attestation : this.attestations) {
@@ -237,7 +237,7 @@ public class Timestamp {
                 Op op = entry.getKey();
                 output += Timestamp.indention(indent);
                 output += op.toString() + '\n';
-                // output += ' ( ' + com.eternitywall.Utils.bytesToHex(this.msg) + ' ) ';
+                // output += ' ( ' + com.eternitywall.ots.Utils.bytesToHex(this.msg) + ' ) ';
                 // output += '\n';
                 output += timestamp.strTree(indent);
             }
@@ -258,8 +258,8 @@ public class Timestamp {
             for (final TimeAttestation attestation : timestamp.attestations) {
                 output += Timestamp.indention(indent);
                 output += "verify " + attestation.toString();
-                output += " (" + Utils.bytesToHex(timestamp.msg) + ") ";
-                // output += " ["+com.eternitywall.Utils.bytesToHex(timestamp.msg)+"] ";
+                output += " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ";
+                // output += " ["+com.eternitywall.ots.Utils.bytesToHex(timestamp.msg)+"] ";
                 output += '\n';
             }
         }
@@ -272,7 +272,7 @@ public class Timestamp {
                 output += Timestamp.indention(indent);
                 output += " -> ";
                 output += op.toString();
-                output += " (" + Utils.bytesToHex(timestamp.msg) + ") ";
+                output += " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ";
                 output += '\n';
                 output += Timestamp.strTreeExtended(ts, indent + 1);
             }
@@ -284,7 +284,7 @@ public class Timestamp {
                 output += Timestamp.indention(indent);
                 output += op.toString();
 
-                output += " ( " + Utils.bytesToHex(timestamp.msg) + " ) ";
+                output += " ( " + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + " ) ";
                 output += '\n';
                 output += Timestamp.strTreeExtended(ts, indent);
             }

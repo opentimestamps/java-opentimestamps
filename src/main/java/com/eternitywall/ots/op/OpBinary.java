@@ -2,8 +2,9 @@ package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
-import com.eternitywall.Utils;
+import com.eternitywall.ots.Utils;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.logging.Logger;
 
 /**
@@ -60,7 +61,7 @@ public class OpBinary extends Op implements Comparable<Op> {
 
     @Override
     public String toString() {
-        return this._TAG_NAME() + ' ' + Utils.bytesToHex(this.arg);
+        return this._TAG_NAME() + ' ' + DatatypeConverter.printHexBinary(this.arg).toLowerCase();
     }
 
 

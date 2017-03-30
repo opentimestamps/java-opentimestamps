@@ -10,7 +10,7 @@ package com.eternitywall.ots.attestation;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
-import com.eternitywall.Utils;
+import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -42,10 +42,10 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
         // console.log('attestation deserialize');
 
         byte[] tag = ctx.readBytes(_TAG_SIZE);
-        // console.log('tag: ', com.eternitywall.Utils.bytesToHex(tag));
+        // console.log('tag: ', com.eternitywall.ots.Utils.bytesToHex(tag));
 
         byte[] serializedAttestation = ctx.readVarbytes(_MAX_PAYLOAD_SIZE);
-        // console.log('serializedAttestation: ', com.eternitywall.Utils.bytesToHex(serializedAttestation));
+        // console.log('serializedAttestation: ', com.eternitywall.ots.Utils.bytesToHex(serializedAttestation));
 
         StreamDeserializationContext ctxPayload = new StreamDeserializationContext(serializedAttestation);
 

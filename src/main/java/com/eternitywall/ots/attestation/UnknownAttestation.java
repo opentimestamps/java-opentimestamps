@@ -2,7 +2,7 @@ package com.eternitywall.ots.attestation;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
-import com.eternitywall.Utils;
+import com.eternitywall.ots.Utils;
 
 import java.util.logging.Logger;
 

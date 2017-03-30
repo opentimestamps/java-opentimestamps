@@ -8,10 +8,10 @@ package com.eternitywall.ots;
  */
 
 
-import com.eternitywall.Utils;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 
+import javax.xml.bind.DatatypeConverter;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class Calendar{
             headers.put("User-Agent","java-opentimestamps");
             headers.put("Content-Type","application/x-www-form-urlencoded");
 
-            URL obj = new URL(url + "/timestamp/" + Utils.bytesToHex(commitment));
+            URL obj = new URL(url + "/timestamp/" + DatatypeConverter.printHexBinary(commitment).toLowerCase());
             Request task = new Request(obj);
             task.setHeaders(headers);
             Response response = task.call();

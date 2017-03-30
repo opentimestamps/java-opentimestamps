@@ -1,6 +1,5 @@
 package com.eternitywall.ots;
 
-import com.eternitywall.Utils;
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.PendingAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
@@ -9,6 +8,7 @@ import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class OpenTimestamps {
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
         DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
 
-        String fileHash = Utils.bytesToHex(detachedTimestampFile.timestamp.msg);
+        String fileHash = DatatypeConverter.printHexBinary(detachedTimestampFile.timestamp.msg).toLowerCase();
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._TAG_NAME();
 
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
@@ -63,7 +63,7 @@ public class OpenTimestamps {
         if (timestamp == null) {
             return "No timestamp";
         }
-        String fileHash = Utils.bytesToHex(timestamp.msg);
+        String fileHash = DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase();
         String firstLine = "Hash: " + fileHash + '\n';
         return firstLine + "Timestamp:\n" + timestamp.strTree(0);
     }
@@ -400,7 +400,7 @@ public class OpenTimestamps {
 
         byte[] detachedFileDigest = detachedTimestamp.fileDigest();
         if (!Arrays.equals(actualFileDigest.getValue(), detachedFileDigest)) {
-            log.severe("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()));
+            log.severe("Expected digest " + DatatypeConverter.printHexBinary(detachedTimestamp.fileDigest()).toLowerCase());
             log.severe("File does not match original!");
 
         }
@@ -449,11 +449,11 @@ public class OpenTimestamps {
                         }
                     }
 
-                    byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
+                    byte[] merkle = DatatypeConverter.parseHexBinary(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);
 
-                    // console.log('merkleroot: ' + com.eternitywall.Utils.bytesToHex(merkle));
-                    // console.log('msg: ' + com.eternitywall.Utils.bytesToHex(message));
+                    // console.log('merkleroot: ' + com.eternitywall.ots.Utils.bytesToHex(merkle));
+                    // console.log('msg: ' + com.eternitywall.ots.Utils.bytesToHex(message));
                     // console.log('Time: ' + (new Date(blockInfo.time * 1000)));
 
                     // One Bitcoin attestation is enought

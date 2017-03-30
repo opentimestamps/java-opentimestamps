@@ -1,7 +1,9 @@
 package com.eternitywall;
 
+import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
+import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -17,7 +19,7 @@ public class TestUtils {
 
     @Test
     public void arraysCopy() throws Exception {
-        byte[] arr = Utils.hexToBytes("001100");
+        byte[] arr = DatatypeConverter.parseHexBinary("001100");
         byte[] arr2 = Utils.arraysCopy(arr);
         assertTrue( Utils.compare(arr,arr2)==0 );
         assertFalse(arr==arr2);
@@ -39,7 +41,7 @@ public class TestUtils {
     @Test
     public void bytesToHex() {
         byte[] array = " 0aZ".getBytes();
-        String anObject = Utils.bytesToHex(array);
+        String anObject = DatatypeConverter.printHexBinary(array).toLowerCase();
         assertTrue("2030615a".equals(anObject));
     }
 
@@ -70,32 +72,32 @@ public class TestUtils {
     @Test
     public void testHexBytes() {
         try {
-            Utils.hexToBytes("0");
+            DatatypeConverter.parseHexBinary("0");
             assertFalse(true);
         } catch (IllegalArgumentException e) {
 
         }
 
         try {
-            Utils.hexToBytes("xx");
+            DatatypeConverter.parseHexBinary("xx");
             assertFalse(true);
         } catch (IllegalArgumentException e) {
 
         }
 
-        byte[] arr=Utils.hexToBytes("0000");
-        assertTrue("0000".equals(Utils.bytesToHex(arr)));
+        byte[] arr=DatatypeConverter.parseHexBinary("0000");
+        assertTrue("0000".equals(DatatypeConverter.printHexBinary(arr).toLowerCase()));
 
 
-        byte[] arr2=Utils.hexToBytes("0aef");
-        assertTrue("0aef".equals(Utils.bytesToHex(arr2)));
+        byte[] arr2= DatatypeConverter.parseHexBinary("0aef");
+        assertTrue("0aef".equals(DatatypeConverter.printHexBinary(arr2).toLowerCase()));
     }
 
     @Test
     public void testArrayFill() {
         byte[] a = new byte[10];
         Utils.arrayFill(a, (byte)0);
-        assertEquals("00000000000000000000", Utils.bytesToHex(a));
+        assertEquals("00000000000000000000", DatatypeConverter.printHexBinary(a).toLowerCase());
 
     }
 }
