@@ -48,7 +48,7 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return height;
     }
 
-    BitcoinBlockHeaderAttestation(int height_) {
+    public BitcoinBlockHeaderAttestation(int height_) {
         super();
         this.height = height_;
     }
