@@ -207,8 +207,8 @@ public class Timestamp {
             Op op = entry.getKey();
             TimeAttestation attestation = timestamp.shrink();
             if (!minAttestation.equals(attestation)) {
-                this.ops.remove(op, timestamp);
-            }    
+                this.ops.remove(op);
+            }
         }
 
         return this.getAttestations().iterator().next();
