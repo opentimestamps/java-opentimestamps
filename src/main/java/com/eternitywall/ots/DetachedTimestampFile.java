@@ -47,7 +47,7 @@ public class DetachedTimestampFile {
     Op fileHashOp;
     Timestamp timestamp;
 
-    DetachedTimestampFile(Op fileHashOp, Timestamp timestamp) {
+    public DetachedTimestampFile(Op fileHashOp, Timestamp timestamp) {
         this.fileHashOp = fileHashOp;
         this.timestamp = timestamp;
     }
