@@ -43,11 +43,14 @@ public class CalendarAsyncSubmit implements Callable<Timestamp> {
         task.setData(digest);
         task.setHeaders(headers);
         Response response = task.call();
-        byte[] body = response.getBytes();
+        if(response.isOk()) {
+            byte[] body = response.getBytes();
 
-        StreamDeserializationContext ctx = new StreamDeserializationContext(body);
-        Timestamp timestamp = Timestamp.deserialize(ctx, digest);
-        queue.add(timestamp);
-        return timestamp;
+            StreamDeserializationContext ctx = new StreamDeserializationContext(body);
+            Timestamp timestamp = Timestamp.deserialize(ctx, digest);
+            queue.add(timestamp);
+            return timestamp;
+        }
+        return null;
     }
 }

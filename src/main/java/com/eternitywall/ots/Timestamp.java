@@ -133,7 +133,7 @@ public class Timestamp {
      * Add all operations and attestations from another timestamp to this one.
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
      */
-    void merge(Timestamp other) {
+    public void merge(Timestamp other) {
         if (!(other instanceof Timestamp)) {
             log.severe("Can only merge Timestamps together");
             return;

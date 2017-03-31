@@ -120,11 +120,24 @@ public class TestOpenTimestamps {
     }
 
     @Test
-    public void upgrade() throws ExecutionException, InterruptedException, IOException {
+    public void upgrade() throws ExecutionException, InterruptedException, IOException, NoSuchAlgorithmException {
 
         byte[] upgraded = OpenTimestamps.upgrade(incompleteOts);
         Long timestamp = OpenTimestamps.verify( upgraded, incomplete );
         assertEquals(1473227803L, timestamp.longValue());
+
+        byte[] hashBytes = Utils.randBytes(32);
+        byte[] stamp = OpenTimestamps.stamp(new Hash(hashBytes));
+
+        StreamDeserializationContext streamSerializationContext = new StreamDeserializationContext(stamp);
+        Timestamp timestamp1 = Timestamp.deserialize(streamSerializationContext, hashBytes);
+        boolean changed = OpenTimestamps.upgrade(timestamp1);
+        assertFalse(changed);
+
+
+        //byte[] upgrade = OpenTimestamps.upgrade(stamp);
+        //assertTrue( Arrays.equals(stamp,upgrade) );   //FIXME this doesn't work, should it?
+
     }
 
     @Test

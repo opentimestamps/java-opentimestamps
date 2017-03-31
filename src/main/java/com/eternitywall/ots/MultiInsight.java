@@ -56,19 +56,21 @@ public class MultiInsight {
 
         for (int i = 0; i < insightUrls.size(); i++) {
             Response take = queueBlockHeader.take();
-            JSONObject jsonObject = take.getJson();
-            String merkleroot = jsonObject.getString("merkleroot");
-            String time = String.valueOf(jsonObject.getInt("time"));
-            BlockHeader blockHeader = new BlockHeader();
-            blockHeader.setMerkleroot(merkleroot);
-            blockHeader.setTime(time);
-            blockHeader.setBlockHash(hash);
-            log.info(take.getFromUrl() + " " + blockHeader);
+            if(take.isOk()) {
+                JSONObject jsonObject = take.getJson();
+                String merkleroot = jsonObject.getString("merkleroot");
+                String time = String.valueOf(jsonObject.getInt("time"));
+                BlockHeader blockHeader = new BlockHeader();
+                blockHeader.setMerkleroot(merkleroot);
+                blockHeader.setTime(time);
+                blockHeader.setBlockHash(hash);
+                log.info(take.getFromUrl() + " " + blockHeader);
 
-            if (results.contains(blockHeader)){
-                return blockHeader;
+                if (results.contains(blockHeader)) {
+                    return blockHeader;
+                }
+                results.add(blockHeader);
             }
-            results.add(blockHeader);
         }
 
         return null;
