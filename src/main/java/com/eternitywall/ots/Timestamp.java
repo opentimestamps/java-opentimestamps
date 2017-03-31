@@ -34,9 +34,9 @@ public class Timestamp {
 
     /**
      * Create a com.eternitywall.ots.Timestamp object.
-     * @param msg - The server url.
+     * @param msg - Desc
      */
-    Timestamp(byte[] msg) {
+    public Timestamp(byte[] msg) {
         this.msg = msg;
         this.attestations = new ArrayList<TimeAttestation>();
         this.ops = new HashMap<Op, Timestamp>();
