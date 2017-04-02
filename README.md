@@ -19,7 +19,7 @@ Java 1.7+
 <dependency>
     <groupId>com.eternitywall</groupId>
     <artifactId>java-opentimestamps</artifactId>
-    <version>1.0</version>
+    <version>1.9</version>
 </dependency>
 ```
 
