@@ -258,7 +258,7 @@ public class OpenTimestamps {
 
         for (final String calendarUrl : calendarUrls) {
 
-            System.out.println("Submitting to remote calendar "+calendarUrl);
+            log.info("Submitting to remote calendar "+calendarUrl);
 
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
@@ -405,7 +405,6 @@ public class OpenTimestamps {
 
         }
 
-        // console.log(com.eternitywall.ots.Timestamp.strTreeExtended(detachedTimestamp.timestamp, 0));
         return OpenTimestamps.verify(detachedTimestamp.timestamp);
     }
 
@@ -441,7 +440,7 @@ public class OpenTimestamps {
                             String blockHash = null;
                             blockHash = insight.blockHash(height);
                             blockInfo = insight.block(blockHash);
-                            System.out.println("Lite-client verification, assuming block " + blockHash + " is valid");
+                            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
                             insight.getExecutor().shutdown();
                         } catch (Exception e2) {
                             e2.printStackTrace();
@@ -451,10 +450,6 @@ public class OpenTimestamps {
 
                     byte[] merkle = DatatypeConverter.parseHexBinary(blockInfo.getMerkleroot());
                     byte[] message = Utils.arrayReverse(msg);
-
-                    // console.log('merkleroot: ' + com.eternitywall.ots.Utils.bytesToHex(merkle));
-                    // console.log('msg: ' + com.eternitywall.ots.Utils.bytesToHex(message));
-                    // console.log('Time: ' + (new Date(blockInfo.time * 1000)));
 
                     // One Bitcoin attestation is enought
                     if (Arrays.equals(merkle, message)) {
@@ -495,13 +490,13 @@ public class OpenTimestamps {
         boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
 
         if (changed) {
-            System.out.println("Timestamp has been successfully upgraded!");
+            log.info("Timestamp has been successfully upgraded!");
         }
 
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            System.out.println("Timestamp is complete");
+            log.info("Timestamp is complete");
         } else {
-            System.out.println("Timestamp is not complete");
+            log.info("Timestamp is not complete");
         }
 
         StreamSerializationContext css = new StreamSerializationContext();

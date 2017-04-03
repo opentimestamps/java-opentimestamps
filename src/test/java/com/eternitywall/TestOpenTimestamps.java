@@ -146,22 +146,20 @@ public class TestOpenTimestamps {
         byte []ots = DatatypeConverter.parseHexBinary("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
         byte []digest= DatatypeConverter.parseHexBinary("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
         Logger log = Logger.getLogger(MultiInsight.class.getName());
-        log.info("ots hex: " + DatatypeConverter.printHexBinary(ots));
+        //log.info("ots hex: " + DatatypeConverter.printHexBinary(ots));
 
         StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(ots);
         Timestamp timestamp = Timestamp.deserialize(streamDeserializationContext, digest);
-        log.info(Timestamp.strTreeExtended(timestamp,2));
+        //log.info(Timestamp.strTreeExtended(timestamp,2));
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         timestamp.serialize(streamSerializationContext);
         byte []otsBefore = streamSerializationContext.getOutput();
-        log.info("fullOts hex: " + DatatypeConverter.printHexBinary(otsBefore));
+        //log.info("fullOts hex: " + DatatypeConverter.printHexBinary(otsBefore));
 
-        log.info("upgrading " + OpenTimestamps.info(timestamp));
+        //log.info("upgrading " + OpenTimestamps.info(timestamp));
         boolean changed = OpenTimestamps.upgrade(timestamp);
-        if(changed){
-            log.info("Equals timestamps");
-        }
+        assertTrue(changed);
 
         //streamSerializationContext = new StreamSerializationContext();
         //timestamp.serialize(streamSerializationContext);
@@ -169,8 +167,6 @@ public class TestOpenTimestamps {
         //if (!Arrays.equals(ots, otsAfter)) {
         //}
 
-
-        log.info("saved");
     }
 
 
