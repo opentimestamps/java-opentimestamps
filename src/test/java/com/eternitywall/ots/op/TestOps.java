@@ -8,10 +8,9 @@ import org.junit.Test;
 import javax.xml.bind.DatatypeConverter;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 /**
  * Created by casatta on 06/03/17.
@@ -64,34 +63,34 @@ public class TestOps {
     @Test
     public void test1M() throws Exception{
         String hash = "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58";
-        int size = 100 * 1024 * 1024;
+        int size = 1 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertArrayEquals(DatatypeConverter.parseHexBinary(hash), fileDigest);
+        assertTrue(Arrays.equals(DatatypeConverter.parseHexBinary(hash), fileDigest));
     }
 
     @Test
     public void test10M() throws Exception{
-        String hash = "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58";
-        int size = 100 * 1024 * 1024;
+        String hash = "e5b844cc57f57094ea4585e235f36c78c1cd222262bb89d53c94dcb4d6b3e55d";
+        int size = 10 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertArrayEquals(DatatypeConverter.parseHexBinary(hash), fileDigest);
+        assertTrue(Arrays.equals(DatatypeConverter.parseHexBinary(hash), fileDigest));
     }
 
     @Test
     public void test100M() throws Exception{
-        String hash = "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58";
+        String hash = "20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e";
         int size = 100 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertArrayEquals(DatatypeConverter.parseHexBinary(hash), fileDigest);
+        assertTrue(Arrays.equals(DatatypeConverter.parseHexBinary(hash), fileDigest));
     }
 
 }

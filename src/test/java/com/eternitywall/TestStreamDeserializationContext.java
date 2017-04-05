@@ -59,14 +59,14 @@ public class TestStreamDeserializationContext {
 
         StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(ots);
         Timestamp timestamp = Timestamp.deserialize(streamDeserializationContext, digest);
-        System.out.println(Timestamp.strTreeExtended(timestamp,2));
+        //System.out.println(Timestamp.strTreeExtended(timestamp,2));
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         timestamp.serialize(streamSerializationContext);
         byte []otsSerialized = streamSerializationContext.getOutput();
         //System.out.println("fullOts hex:" + DatatypeConverter.printHexBinary(otsSerialized));
 
-        assertArrayEquals(ots,otsSerialized);
+        assertTrue(Arrays.equals(ots, otsSerialized));
 
     }
 }

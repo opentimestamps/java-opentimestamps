@@ -1,4 +1,4 @@
-package java.com.eternitywall;
+package com.eternitywall;
 
 import com.eternitywall.TestBitcoin;
 import com.eternitywall.ots.Calendar;
