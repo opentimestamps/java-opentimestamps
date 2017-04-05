@@ -36,7 +36,7 @@ public class StreamSerializationContext {
     }
 
     public void writeVaruint(int value) {
-        if ((value&0xff) == 0) {
+        if ((value) == 0b00000000) {
             this.writeByte((byte) 0x00);
         } else {
             while (value != 0) {
