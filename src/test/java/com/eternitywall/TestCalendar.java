@@ -81,7 +81,61 @@ public class TestCalendar {
             try {
                 Optional<Timestamp> stamp = queue.take();
                 //timestamp.merge(stamp);
-                count++;
+                if(stamp.isPresent()) {
+                    count++;
+                }
+                if (count >= m) {
+                    break;
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (count < m) {
+            log.severe("Failed to create timestamp: requested " + String.valueOf(m) + " attestation" + ((m > 1) ? "s" : "") + " but received only " + String.valueOf(count));
+        }
+        assertFalse(count < m);
+
+        //shut down the executor service now
+        executor.shutdown();
+    }
+
+
+
+    @Test
+    public void TestMultiWithInvalidCalendar() throws Exception {
+
+        List<String> calendarsUrl = new ArrayList<String>();
+        calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
+        calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
+        calendarsUrl.add("");
+        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
+        ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
+        int m=2;
+
+        for (final String calendarUrl : calendarsUrl) {
+            try {
+                CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
+                task.setQueue(queue);
+                executor.submit(task);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        int count = 0;
+        for (final String calendarUrl : calendarsUrl) {
+
+            try {
+                Optional<Timestamp> stamp = queue.take();
+                //timestamp.merge(stamp);
+                if(stamp.isPresent()) {
+                    count++;
+                }
                 if (count >= m) {
                     break;
                 }
