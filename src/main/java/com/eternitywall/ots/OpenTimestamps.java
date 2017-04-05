@@ -254,7 +254,7 @@ public class OpenTimestamps {
     private static Timestamp create(Timestamp timestamp, List<String> calendarUrls, Integer m) {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        ArrayBlockingQueue<Timestamp> queue = new ArrayBlockingQueue<>(calendarUrls.size());
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarUrls.size());
 
         for (final String calendarUrl : calendarUrls) {
 
@@ -275,9 +275,11 @@ public class OpenTimestamps {
 
             try {
 
-                Timestamp stamp = queue.take();
-                timestamp.merge(stamp);
-                count++;
+                Optional<Timestamp> optionalStamp = queue.take();
+                if(optionalStamp.isPresent()) {
+                    timestamp.merge(optionalStamp.get());
+                    count++;
+                }
                 if(count >= m){
                     break;
                 }

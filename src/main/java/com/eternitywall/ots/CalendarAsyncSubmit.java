@@ -13,25 +13,25 @@ import java.util.logging.Logger;
 /**
  * Created by luca on 08/03/2017.
  */
-public class CalendarAsyncSubmit implements Callable<Timestamp> {
+public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     private static Logger log = Logger.getLogger(CalendarAsyncSubmit.class.getName());
 
     private String url;
     private byte[] digest;
-    private BlockingQueue<Timestamp> queue;
+    private BlockingQueue<Optional<Timestamp>> queue;
 
     public CalendarAsyncSubmit(String url, byte[] digest) {
         this.url = url;
         this.digest=digest;
     }
 
-    public void setQueue(BlockingQueue<Timestamp> queue) {
+    public void setQueue(BlockingQueue<Optional<Timestamp>> queue) {
         this.queue = queue;
     }
 
     @Override
-    public Timestamp call() throws Exception {
+    public Optional<Timestamp> call() throws Exception {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept","application/vnd.opentimestamps.v1");
@@ -48,9 +48,11 @@ public class CalendarAsyncSubmit implements Callable<Timestamp> {
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             Timestamp timestamp = Timestamp.deserialize(ctx, digest);
-            queue.add(timestamp);
-            return timestamp;
+            Optional<Timestamp> of = Optional.of(timestamp);
+            queue.add(of);
+            return of;
         }
-        return null;
+        queue.add(Optional.<Timestamp>absent());
+        return Optional.absent();
     }
 }
