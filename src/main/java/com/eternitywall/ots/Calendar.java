@@ -27,7 +27,7 @@ public class Calendar{
      * Create a RemoteCalendar.
      * @param url The server url.
      */
-    Calendar(String url) {
+    public Calendar(String url) {
         this.url = url;
     }
 
