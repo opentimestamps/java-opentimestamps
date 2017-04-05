@@ -215,6 +215,14 @@ public class Timestamp {
 
     }
 
+    /*
+     * Print the digest of the timestamp.
+     * @return The byte[] digest string.
+     */
+    public byte[] getDigest(){
+        return this.msg;
+    }
+
     /**
      * Print as memory hierarchical object.
      * @param indent - Initial hierarchical indention.
