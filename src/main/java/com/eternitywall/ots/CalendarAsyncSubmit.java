@@ -23,7 +23,7 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
     private String url;
     private byte[] digest;
     private BlockingQueue<Optional<Timestamp>> queue;
-    ECKey key;
+    private ECKey key;
 
     public CalendarAsyncSubmit(String url, byte[] digest) {
         this.url = url;
@@ -31,11 +31,19 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
     }
 
     /**
-     * Create a RemoteCalendar.
-     * @param key The server key.
+     * Set private key.
+     * @param key The private key.
      */
     public void setKey(ECKey key) {
         this.key = key;
+    }
+
+    /**
+     * Get private key.
+     * @return The private key.
+     */
+    public ECKey getKey() {
+        return this.key;
     }
 
     public void setQueue(BlockingQueue<Optional<Timestamp>> queue) {

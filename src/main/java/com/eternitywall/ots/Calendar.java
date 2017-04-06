@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 /** Class representing Remote com.eternitywall.ots.Calendar server interface */
 public class Calendar{
 
-    String url;
-    ECKey key;
+    private String url;
+    private ECKey key;
 
     private static Logger log = Logger.getLogger(Calendar.class.getName());
 
@@ -36,11 +36,19 @@ public class Calendar{
     }
 
     /**
-     * Create a RemoteCalendar.
-     * @param key The server key.
+     * Set private key.
+     * @param key The private key.
      */
     public void setKey(ECKey key) {
         this.key = key;
+    }
+
+    /**
+     * Get private key.
+     * @return The private key.
+     */
+    public ECKey getKey() {
+        return this.key;
     }
 
 
