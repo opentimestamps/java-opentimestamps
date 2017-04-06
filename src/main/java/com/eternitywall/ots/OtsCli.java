@@ -50,6 +50,7 @@ public class OtsCli {
             }
             if(line.hasOption("k")) {
                 signatureFile = line.getOptionValue("k");
+                calendarsUrl.clear();
             }
             if(line.hasOption("V")) {
                 System.out.println("Version: " + title + " v." + version + '\n');
