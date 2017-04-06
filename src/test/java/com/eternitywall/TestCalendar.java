@@ -3,7 +3,9 @@ package com.eternitywall;
 import com.eternitywall.ots.*;
 import com.eternitywall.ots.Calendar;
 import com.eternitywall.ots.Optional;
+import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.NetworkParameters;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
@@ -64,9 +66,49 @@ public class TestCalendar {
             String calendarUrl = "https://"+entry.getKey();
             String signature = entry.getValue();
 
-            BigInteger privKey = new BigInteger(signature);
             Calendar calendar = new Calendar(calendarUrl);
-            ECKey key = ECKey.fromPrivate(privKey);
+            ECKey key;
+            try {
+                BigInteger privKey = new BigInteger(signature);
+                key = ECKey.fromPrivate(privKey);
+            }catch (Exception e){
+                DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+                key = dumpedPrivateKey.getKey();
+            }
+            calendar.setKey(key);
+            Timestamp timestamp = calendar.submit(digest);
+            assertTrue(timestamp != null);
+            assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+        }
+
+    }
+
+    @Test
+    public void TestPrivateWif() throws Exception {
+        byte[] digest = Utils.randBytes(32);
+        Path path = Paths.get("signature.wif");
+        if(!Files.exists(path)){
+            assertTrue(true);
+            return;
+        }
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("signature.wif"));
+        HashMap<String,String> privateUrls = new HashMap<>();
+        for(String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            privateUrls.put(key,value);
+        }
+        assertFalse(privateUrls.size() == 0);
+
+        for(Map.Entry<String, String> entry : privateUrls.entrySet()) {
+            String calendarUrl = "https://"+entry.getKey();
+            String signature = entry.getValue();
+
+            Calendar calendar = new Calendar(calendarUrl);
+            ECKey key;
+            DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+            key = dumpedPrivateKey.getKey();
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);
             assertTrue(timestamp != null);
@@ -114,9 +156,10 @@ public class TestCalendar {
             String calendarUrl = "https://"+entry.getKey();
             String signature = entry.getValue();
 
-            BigInteger privKey = new BigInteger(signature);
             CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
-            ECKey key = ECKey.fromPrivate(privKey);
+            ECKey key;
+            BigInteger privKey = new BigInteger(signature);
+            key = ECKey.fromPrivate(privKey);
             task.setKey(key);
             task.setQueue(queue);
             task.call();

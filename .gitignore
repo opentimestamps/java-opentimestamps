@@ -5,3 +5,4 @@ target/
 settings.xml
 deploy.sh
 signature.key
+signature.wif

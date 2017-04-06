@@ -7,7 +7,9 @@ import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
+import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.NetworkParameters;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
@@ -330,8 +332,18 @@ public class OpenTimestamps {
             log.info("Submitting to remote private calendar "+calendarUrl);
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
-                BigInteger privKey = new BigInteger(signature);
-                ECKey key = ECKey.fromPrivate(privKey);
+                ECKey key = null;
+                try {
+                    BigInteger privKey = new BigInteger(signature);
+                    key = ECKey.fromPrivate(privKey);
+                }catch (Exception e){
+                    try {
+                        DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+                        key = dumpedPrivateKey.getKey();
+                    }catch (Exception err){
+                        log.severe("Invalid private key");
+                    }
+                }
                 task.setKey(key);
                 task.setQueue(queue);
                 executor.submit(task);
