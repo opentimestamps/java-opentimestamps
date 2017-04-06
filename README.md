@@ -1,7 +1,9 @@
 # java-opentimestamps
 
+[![OpenTimestamps logo][2]][1]
 
-![OpenTimestamps logo](https://raw.githubusercontent.com/opentimestamps/logo/master/white-bg/website-horizontal-350x75.png)
+[1]: https://opentimestamps.org
+[2]: https://raw.githubusercontent.com/opentimestamps/logo/master/white-bg/website-horizontal-350x75.png (OpenTimestamps logo)
 
 [![Build Status](https://travis-ci.org/eternitywall/java-opentimestamps.svg?branch=master)](https://travis-ci.org/eternitywall/java-opentimestamps)
 
@@ -78,7 +80,7 @@ To mitigate the risks, answer from block explorer is considered only if two diff
 
 #### Upgrade
 
-Upgrade incomplete remote calendar timestamps to be independently verifiable. This command overwrite the file `examples/incomplete.txt.ots` if needed and make a backup of the old content at `examples/incomplete.txt.ots`. 
+Upgrade incomplete remote calendar timestamps to be independently verifiable. This command overwrite the file `examples/incomplete.txt.ots` if needed and make a backup of the old content at `examples/incomplete.txt.ots`.
 
 ```shell
 $ java -jar target/OtsCli.jar upgrade examples/incomplete.txt.ots
@@ -99,7 +101,7 @@ System.out.println(infoResult);
 ```
 
 #### Verify
- 
+
 Verify the timestamp attestations.
 
 ```java
@@ -113,7 +115,7 @@ if(timestamp==null){
 }
 ```
 
-Variable `file` created from the hex representation of the file `test/hello-world.txt.ots` while `fileOts` contains `test/hello-world.txt` 
+Variable `file` created from the hex representation of the file `test/hello-world.txt.ots` while `fileOts` contains `test/hello-world.txt`
 
 #### Upgrade
 
@@ -123,7 +125,7 @@ Upgrade incomplete remote calendar timestamps to be indipendently verifiable.
 byte[] ots = Utils.hexToBytes("004f70656e54696d657374616d7073000050726f6f6600bf89e2e884e89294010805c4f616a8e5310d19d938cfd769864d7f4ccdc2ca8b479b10af83564b097af9f010e754bf93806a7ebaa680ef7bd0114bf408f010b573e8850cfd9e63d1f043fbb6fc250e08f10457cfa5c4f0086fb1ac8d4e4eb0e70083dfe30d2ef90c8e2e2d68747470733a2f2f616c6963652e6274632e63616c656e6461722e6f70656e74696d657374616d70732e6f7267");
 byte[] upgradedOts = OpenTimestamps.upgrade(ots);
 if(Arrays.equals(ots, upgradedOts)) {
-   System.out.println("Timestamp not upgraded"); 
+   System.out.println("Timestamp not upgraded");
 } else {
    System.out.println("Timestamp upgraded");
 }
@@ -139,4 +141,3 @@ mvn test
 ## License
 
 LGPL3
-
