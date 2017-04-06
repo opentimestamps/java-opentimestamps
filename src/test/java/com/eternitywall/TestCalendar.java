@@ -1,18 +1,20 @@
 package com.eternitywall;
 
 import com.eternitywall.ots.*;
+import com.eternitywall.ots.Calendar;
+import com.eternitywall.ots.Optional;
 import org.bitcoinj.core.ECKey;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,22 +44,35 @@ public class TestCalendar {
 
     @Test
     public void TestPrivate() throws Exception {
-        String calendarUrl = "https://api.eternitywall.com";
         byte[] digest = Utils.randBytes(32);
-
         Path path = Paths.get("signature.key");
         if(!Files.exists(path)){
             assertTrue(true);
             return;
         }
-        byte[] signature = Files.readAllBytes(path);
-        BigInteger privKey = new BigInteger(new String(signature));
-        Calendar calendar = new Calendar(calendarUrl);
-        ECKey key = ECKey.fromPrivate(privKey);
-        calendar.setKey(key);
-        Timestamp timestamp = calendar.submit(digest);
-        assertTrue(timestamp != null);
-        assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("signature.key"));
+        HashMap<String,String> privateUrls = new HashMap<>();
+        for(String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            privateUrls.put(key,value);
+        }
+        assertFalse(privateUrls.size() == 0);
+
+        for(Map.Entry<String, String> entry : privateUrls.entrySet()) {
+            String calendarUrl = "https://"+entry.getKey();
+            String signature = entry.getValue();
+
+            BigInteger privKey = new BigInteger(signature);
+            Calendar calendar = new Calendar(calendarUrl);
+            ECKey key = ECKey.fromPrivate(privKey);
+            calendar.setKey(key);
+            Timestamp timestamp = calendar.submit(digest);
+            assertTrue(timestamp != null);
+            assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+        }
+
     }
 
     @Test
@@ -77,26 +92,41 @@ public class TestCalendar {
 
     @Test
     public void TestSingleAsyncPrivate() throws Exception {
-        String calendarUrl = "https://ots.eternitywall.it";
-        byte[] digest = Utils.randBytes(32);
-        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
 
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
+        byte[] digest = Utils.randBytes(32);
         Path path = Paths.get("signature.key");
         if(!Files.exists(path)){
             assertTrue(true);
             return;
         }
-        byte[] signature = Files.readAllBytes(path);
-        BigInteger privKey = new BigInteger(new String(signature));
-        CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
-        ECKey key = ECKey.fromPrivate(privKey);
-        task.setKey(key);
-        task.setQueue(queue);
-        task.call();
-        Optional<Timestamp> timestamp = queue.take();
-        assertTrue(timestamp.isPresent());
-        assertTrue(timestamp.get() != null);
-        assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("signature.key"));
+        HashMap<String,String> privateUrls = new HashMap<>();
+        for(String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            privateUrls.put(key,value);
+        }
+        assertFalse(privateUrls.size() == 0);
+
+        for(Map.Entry<String, String> entry : privateUrls.entrySet()) {
+            String calendarUrl = "https://"+entry.getKey();
+            String signature = entry.getValue();
+
+            BigInteger privKey = new BigInteger(signature);
+            CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
+            ECKey key = ECKey.fromPrivate(privKey);
+            task.setKey(key);
+            task.setQueue(queue);
+            task.call();
+            Optional<Timestamp> timestamp = queue.take();
+            assertTrue(timestamp.isPresent());
+            assertTrue(timestamp.get() != null);
+            assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
+        }
+
+
     }
 
     @Test
