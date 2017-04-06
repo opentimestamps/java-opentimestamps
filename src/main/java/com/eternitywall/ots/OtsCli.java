@@ -44,20 +44,24 @@ public class OtsCli {
             if(line.hasOption("c")) {
                 String[] cals = line.getOptionValues("c");
                 calendarsUrl.addAll( Arrays.asList(cals) );
-            } else if(line.hasOption("m")) {
+            }
+            if(line.hasOption("m")) {
                 m = Integer.valueOf(line.getOptionValue("m"));
-            } else if(line.hasOption("k")) {
+            }
+            if(line.hasOption("k")) {
                 signatureFile = line.getOptionValue("k");
-            } else if(line.hasOption("V")) {
+            }
+            if(line.hasOption("V")) {
                 System.out.println("Version: " + title + " v." + version + '\n');
                 return;
-            } else if(line.hasOption("h")) {
+            }
+            if(line.hasOption("h")) {
                 showHelp();
                 return;
             }
 
             if(line.getArgList().size()<=1){
-                System.out.println(title + ": bad options number ");
+                showHelp();
                 return;
             }
 
