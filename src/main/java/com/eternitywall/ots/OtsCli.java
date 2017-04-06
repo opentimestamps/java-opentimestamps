@@ -11,10 +11,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class OtsCli {
@@ -26,12 +23,14 @@ public class OtsCli {
     private static List<String> files = new ArrayList<>();
     private static String cmd = null;
     private static Integer m = 0;
+    private static String signatureFile = "";
 
     public static void main(String[] args) {
 
         // Create the Options
         Options options = new Options();
         options.addOption( "c", "calendar", true, "Create timestamp with the aid of a remote calendar. May be specified multiple times." );
+        options.addOption( "k", "key", true, "Signature key file of private remote calendars." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
         options.addOption( "V", "version", false, "print " + title + " version." );
         options.addOption( "h", "help", false, "print this help." );
@@ -47,6 +46,8 @@ public class OtsCli {
                 calendarsUrl.addAll( Arrays.asList(cals) );
             } else if(line.hasOption("m")) {
                 m = Integer.valueOf(line.getOptionValue("m"));
+            } else if(line.hasOption("k")) {
+                signatureFile = line.getOptionValue("k");
             } else if(line.hasOption("V")) {
                 System.out.println("Version: " + title + " v." + version + '\n');
                 return;
@@ -86,7 +87,7 @@ public class OtsCli {
                     System.out.println(title + ": bad options number ");
                     break;
                 }
-                stamp(files.get(0), calendarsUrl, m);
+                stamp(files.get(0), calendarsUrl, m, signatureFile);
                 break;
             case "verify":
             case "v":
@@ -112,7 +113,20 @@ public class OtsCli {
 
     }
 
-
+    private static HashMap<String,String> readSignature(String file) throws Exception {
+        Path path = Paths.get("signature.key");
+        if(!Files.exists(path)){
+            throw new Exception();
+        }
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(file));
+        HashMap<String,String> privateUrls = new HashMap<>();
+        for(String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            privateUrls.put(key,value);
+        }
+        return privateUrls;
+    }
 
 
     public static void info (String argsOts) {
@@ -127,7 +141,7 @@ public class OtsCli {
         }
     }
 
-    private static void stamp(String argsFile, List<String> calendarsUrl, Integer m) {
+    private static void stamp(String argsFile, List<String> calendarsUrl, Integer m, String signatureFile) {
         FileInputStream fis = null;
         try {
             String argsOts = argsFile + ".ots";
@@ -138,7 +152,17 @@ public class OtsCli {
             }
             File file = new File(argsFile);
             fis = new FileInputStream(file);
-            byte[] stampResult = OpenTimestamps.stamp(fis,calendarsUrl,m);
+
+            HashMap<String, String> privateUrls = new HashMap<String, String>();
+            if(signatureFile != null && signatureFile != "") {
+                try {
+                    privateUrls = readSignature(signatureFile);
+                } catch (Exception e) {
+                    log.severe("No valid signature file");
+                }
+            }
+            byte[] stampResult = OpenTimestamps.stamp(fis, calendarsUrl, m, privateUrls);
+
             Files.write(path, stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (IOException e) {
@@ -224,7 +248,8 @@ public class OtsCli {
                 "u, upgrade FILE_OTS\tUpgrade remote calendar timestamps to be locally verifiable.\n\n" +
                 "Options:\n" +
                         "-c, --calendar \tCreate timestamp with the aid of a remote calendar. May be specified multiple times.\n" +
-                        "-m     \tCommitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied.\n" +
+                        "-k, --key \tSignature key file of private remote calendars.\n"+
+                        "-m     \t\tCommitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied.\n" +
                         "-V, --version  \tprint " + title + " version.\n" +
                         "-h, --help     \tprint this help.\n" +
                         "\nLicense: LGPL."

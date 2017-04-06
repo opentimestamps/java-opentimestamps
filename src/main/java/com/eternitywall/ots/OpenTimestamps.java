@@ -89,7 +89,7 @@ public class OpenTimestamps {
         try {
             DetachedTimestampFile fileTimestamp;
             fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
-            return stamp(fileTimestamp, calendarsUrl, m, null);
+            return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             log.severe("Invalid InputStream");
@@ -274,29 +274,29 @@ public class OpenTimestamps {
         Timestamp merkleTip = merkleRoot;
 
         // Parse parameters
-        if(calendarsUrl==null || calendarsUrl.size()==0) {
+        if(privateCalendarsUrl == null) {
+            privateCalendarsUrl = new HashMap<>();
+        }
+        if((calendarsUrl==null || calendarsUrl.size()==0) && (privateCalendarsUrl.size() == 0) ) {
             calendarsUrl = new ArrayList<String>();
             calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://ots.eternitywall.it");
         }
         if(m==null || m<=0){
-            if(calendarsUrl.size() == 0 ) {
+            if(calendarsUrl.size() + privateCalendarsUrl.size() == 0 ) {
                 m = 2;
-            } else if(calendarsUrl.size() == 1 ) {
+            } else if(calendarsUrl.size() + privateCalendarsUrl.size() == 1 ) {
                 m = 1;
             } else {
-                m = calendarsUrl.size();
+                m = calendarsUrl.size() + privateCalendarsUrl.size();
             }
         }
-        if(m<0 || m > calendarsUrl.size()) {
+        if(m<0 || m > calendarsUrl.size() + privateCalendarsUrl.size()) {
             log.severe("m cannot be greater than available calendar neither less or equal 0");
             throw new IOException();
         }
 
-        if(privateCalendarsUrl==null) {
-            privateCalendarsUrl = new HashMap<>();
-        }
         Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m, privateCalendarsUrl);
 
         if (resultTimestamp == null) {
@@ -318,8 +318,10 @@ public class OpenTimestamps {
      */
     private static Timestamp create(Timestamp timestamp, List<String> calendarUrls, Integer m, HashMap<String,String> privateCalendarUrls) {
 
+        int capacity = calendarUrls.size()+privateCalendarUrls.size();
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarUrls.size());
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(capacity);
+
 
         // Submit to all private calendars with the signature key
         for(Map.Entry<String, String> entry : privateCalendarUrls.entrySet()) {
@@ -333,6 +335,7 @@ public class OpenTimestamps {
                 task.setKey(key);
                 task.setQueue(queue);
                 executor.submit(task);
+                capacity++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -347,17 +350,16 @@ public class OpenTimestamps {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
                 task.setQueue(queue);
                 executor.submit(task);
-
+                capacity++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         int count=0;
-        for (final String calendarUrl : calendarUrls) {
+        for (int i=0; i < capacity; i++) {
 
             try {
-
                 Optional<Timestamp> optionalStamp = queue.take();
                 if(optionalStamp.isPresent()) {
                     timestamp.merge(optionalStamp.get());
