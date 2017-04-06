@@ -2,8 +2,11 @@ package com.eternitywall.ots;
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
+import org.bitcoinj.core.ECKey;
 
+import javax.xml.bind.DatatypeConverter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -20,10 +23,19 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
     private String url;
     private byte[] digest;
     private BlockingQueue<Optional<Timestamp>> queue;
+    ECKey key;
 
     public CalendarAsyncSubmit(String url, byte[] digest) {
         this.url = url;
         this.digest=digest;
+    }
+
+    /**
+     * Create a RemoteCalendar.
+     * @param key The server key.
+     */
+    public void setKey(ECKey key) {
+        this.key = key;
     }
 
     public void setQueue(BlockingQueue<Optional<Timestamp>> queue) {
@@ -37,6 +49,11 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
         headers.put("Accept","application/vnd.opentimestamps.v1");
         headers.put("User-Agent","java-opentimestamps");
         headers.put("Content-Type","application/x-www-form-urlencoded");
+
+        if (key != null ) {
+            String signature = key.signMessage(new String(digest, StandardCharsets.US_ASCII));
+            headers.put("x-signature", signature);
+        }
 
         URL obj = new URL(url + "/digest");
         Request task = new Request(obj);

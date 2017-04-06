@@ -1,12 +1,15 @@
 package com.eternitywall;
 
-import com.eternitywall.ots.Calendar;
-import com.eternitywall.ots.CalendarAsyncSubmit;
-import com.eternitywall.ots.Optional;
-import com.eternitywall.ots.Timestamp;
+import com.eternitywall.ots.*;
+import org.bitcoinj.core.ECKey;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.File;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +32,29 @@ public class TestCalendar {
     @Test
     public void TestSingle() throws Exception {
         String calendarUrl = "https://ots.eternitywall.it";
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
+        byte[] digest = Utils.randBytes(32);
         Calendar calendar = new Calendar(calendarUrl);
+        Timestamp timestamp = calendar.submit(digest);
+        assertTrue(timestamp != null);
+        assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+    }
+
+
+    @Test
+    public void TestPrivate() throws Exception {
+        String calendarUrl = "https://api.eternitywall.com";
+        byte[] digest = Utils.randBytes(32);
+
+        Path path = Paths.get("signature.key");
+        if(!Files.exists(path)){
+            assertTrue(true);
+            return;
+        }
+        byte[] signature = Files.readAllBytes(path);
+        BigInteger privKey = new BigInteger(new String(signature));
+        Calendar calendar = new Calendar(calendarUrl);
+        ECKey key = ECKey.fromPrivate(privKey);
+        calendar.setKey(key);
         Timestamp timestamp = calendar.submit(digest);
         assertTrue(timestamp != null);
         assertTrue(Arrays.equals(timestamp.getDigest() , digest));
@@ -39,7 +63,7 @@ public class TestCalendar {
     @Test
     public void TestSingleAsync() throws Exception {
         String calendarUrl = "https://ots.eternitywall.it";
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
+        byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
 
         CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
@@ -51,6 +75,29 @@ public class TestCalendar {
         assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
     }
 
+    @Test
+    public void TestSingleAsyncPrivate() throws Exception {
+        String calendarUrl = "https://ots.eternitywall.it";
+        byte[] digest = Utils.randBytes(32);
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
+
+        Path path = Paths.get("signature.key");
+        if(!Files.exists(path)){
+            assertTrue(true);
+            return;
+        }
+        byte[] signature = Files.readAllBytes(path);
+        BigInteger privKey = new BigInteger(new String(signature));
+        CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
+        ECKey key = ECKey.fromPrivate(privKey);
+        task.setKey(key);
+        task.setQueue(queue);
+        task.call();
+        Optional<Timestamp> timestamp = queue.take();
+        assertTrue(timestamp.isPresent());
+        assertTrue(timestamp.get() != null);
+        assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
+    }
 
     @Test
     public void TestMulti() throws Exception {
@@ -59,7 +106,7 @@ public class TestCalendar {
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://ots.eternitywall.it");
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
+        byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
         int m=calendarsUrl.size();
@@ -111,7 +158,7 @@ public class TestCalendar {
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
         calendarsUrl.add("");
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
+        byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
         int m=2;

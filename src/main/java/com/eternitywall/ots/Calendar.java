@@ -10,9 +10,11 @@ package com.eternitywall.ots;
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
+import org.bitcoinj.core.ECKey;
 
 import javax.xml.bind.DatatypeConverter;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,6 +23,8 @@ import java.util.logging.Logger;
 public class Calendar{
 
     String url;
+    ECKey key;
+
     private static Logger log = Logger.getLogger(Calendar.class.getName());
 
     /**
@@ -30,6 +34,15 @@ public class Calendar{
     public Calendar(String url) {
         this.url = url;
     }
+
+    /**
+     * Create a RemoteCalendar.
+     * @param key The server key.
+     */
+    public void setKey(ECKey key) {
+        this.key = key;
+    }
+
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.ots.Timestamp committing to that digest.
@@ -43,6 +56,11 @@ public class Calendar{
             headers.put("Accept","application/vnd.opentimestamps.v1");
             headers.put("User-Agent","java-opentimestamps");
             headers.put("Content-Type","application/x-www-form-urlencoded");
+
+            if (key != null ) {
+                String signature = key.signMessage(new String(digest, StandardCharsets.US_ASCII));
+                headers.put("x-signature", signature);
+            }
 
             URL obj = new URL(url + "/digest");
             Request task = new Request(obj);
