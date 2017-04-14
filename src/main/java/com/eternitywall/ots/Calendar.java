@@ -116,6 +116,10 @@ public class Calendar{
                 log.severe("com.eternitywall.ots.Calendar response exceeded size limit");
                 return null;
             }
+            if(!response.isOk()) {
+                log.severe("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
+                return null;
+            }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             Timestamp timestamp = Timestamp.deserialize(ctx, commitment);
