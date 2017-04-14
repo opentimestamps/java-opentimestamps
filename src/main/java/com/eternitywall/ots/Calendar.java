@@ -117,7 +117,7 @@ public class Calendar{
                 return null;
             }
             if(!response.isOk()) {
-                log.severe("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
+                log.info("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
                 return null;
             }
 
