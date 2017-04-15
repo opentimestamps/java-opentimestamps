@@ -66,7 +66,7 @@ public class Calendar{
             headers.put("Content-Type","application/x-www-form-urlencoded");
 
             if (key != null ) {
-                String signature = key.signMessage(new String(digest, StandardCharsets.US_ASCII));
+                String signature = key.signMessage(DatatypeConverter.printHexBinary(digest).toLowerCase());
                 headers.put("x-signature", signature);
             }
 
