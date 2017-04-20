@@ -18,7 +18,7 @@ public class TestHttps {
         String string = request.call().getString();
         assertNotNull(string);
         /* here casatta machine fails only on ots.eternitywall.it */
-        /*Request request2 = new Request(new URL("https://ots.eternitywall.it"));
+        /*Request request2 = new Request(new URL("https://finney.calendar.eternitywall.com"));
         String string1 = request2.call().getString();
         assertNotNull(string1);*/
     }

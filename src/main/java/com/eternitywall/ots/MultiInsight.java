@@ -29,7 +29,7 @@ public class MultiInsight {
         insightUrls.add("https://search.bitaccess.co/insight-api");
         insightUrls.add("https://www.localbitcoinschain.com/api");
         insightUrls.add("https://insight.bitpay.com/api");
-        insightUrls.add("https://ots.eternitywall.it/insight-api");
+        insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
         queueBlockHeader = new ArrayBlockingQueue<>(insightUrls.size());
         queueBlockHash = new ArrayBlockingQueue<>(insightUrls.size());
         executor = Executors.newFixedThreadPool(insightUrls.size());

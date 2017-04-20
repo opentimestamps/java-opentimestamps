@@ -28,7 +28,7 @@ public class TestCalendar {
 
     @Test
     public void TestSingle() throws Exception {
-        String calendarUrl = "https://ots.eternitywall.it";
+        String calendarUrl = "https://finney.calendar.eternitywall.com";
         byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
         Calendar calendar = new Calendar(calendarUrl);
         Timestamp timestamp = calendar.submit(digest);
@@ -38,7 +38,7 @@ public class TestCalendar {
 
     @Test
     public void TestSingleAsync() throws Exception {
-        String calendarUrl = "https://ots.eternitywall.it";
+        String calendarUrl = "https://finney.calendar.eternitywall.com";
         byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
 
@@ -58,7 +58,7 @@ public class TestCalendar {
         List<String> calendarsUrl = new ArrayList<String>();
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
-        calendarsUrl.add("https://ots.eternitywall.it");
+        calendarsUrl.add("https://finney.calendar.eternitywall.com");
         byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());

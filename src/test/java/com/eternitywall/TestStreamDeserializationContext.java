@@ -36,7 +36,7 @@ public class TestStreamDeserializationContext {
     }
     @Test
     public void testReadvaruint() {
-        final byte[] uri = "https://ots.eternitywall.it".getBytes(StandardCharsets.US_ASCII);
+        final byte[] uri = "https://finney.calendar.eternitywall.com".getBytes(StandardCharsets.US_ASCII);
         PendingAttestation pendingAttestation=new PendingAttestation(uri);
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();

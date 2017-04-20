@@ -216,7 +216,7 @@ public class OpenTimestamps {
             calendarsUrl = new ArrayList<String>();
             calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
-            calendarsUrl.add("https://ots.eternitywall.it");
+            calendarsUrl.add("https://finney.calendar.eternitywall.com");
         }
         if(m==null || m<=0){
             if(calendarsUrl.size() == 0 ) {

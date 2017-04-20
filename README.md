@@ -41,7 +41,7 @@ Create timestamp `README.md.ots` from this `README.md` with the aid of a remote 
 $ java -jar target/OtsCli.jar stamp README.md
 Submitting to remote calendar https://alice.btc.calendar.opentimestamps.org
 Submitting to remote calendar https://bob.btc.calendar.opentimestamps.org
-Submitting to remote calendar https://ots.eternitywall.it
+Submitting to remote calendar https://finney.calendar.eternitywall.com
 The timestamp proof 'README.md.ots' has been created!
 ```
 
