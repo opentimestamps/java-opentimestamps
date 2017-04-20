@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,6 +25,7 @@ public class OtsCli {
     private static String cmd = null;
     private static Integer m = 0;
     private static String signatureFile = "";
+    private static byte[] shasum;
 
     public static void main(String[] args) {
 
@@ -31,6 +33,7 @@ public class OtsCli {
         Options options = new Options();
         options.addOption( "c", "calendar", true, "Create timestamp with the aid of a remote calendar. May be specified multiple times." );
         options.addOption( "k", "key", true, "Signature key file of private remote calendars." );
+        options.addOption( "H", "hash", true, "Pass the shasum of the document to timestamp." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
         options.addOption( "V", "version", false, "print " + title + " version." );
         options.addOption( "h", "help", false, "print this help." );
@@ -60,8 +63,12 @@ public class OtsCli {
                 showHelp();
                 return;
             }
+            if(line.hasOption("H")) {
+                shasum = DatatypeConverter.parseHexBinary(line.getOptionValue("H"));
+            }
 
-            if(line.getArgList().size()<=1){
+
+            if(line.getArgList().size()<1){
                 showHelp();
                 return;
             }
@@ -87,12 +94,14 @@ public class OtsCli {
                 break;
             case "stamp":
             case "s":
-                if (files.size() == 0) {
+                if(files.size() > 0) {
+                    stamp(files.get(0), calendarsUrl, m, signatureFile);
+                } else if (shasum != null){
+                    stamp(shasum, calendarsUrl, m, signatureFile);
+                } else {
                     System.out.println("Create timestamp with the aid of a remote calendar.\n");
                     System.out.println(title + ": bad options number ");
-                    break;
                 }
-                stamp(files.get(0), calendarsUrl, m, signatureFile);
                 break;
             case "verify":
             case "v":
@@ -146,6 +155,32 @@ public class OtsCli {
         }
     }
 
+    private static void stamp(byte[] shasum, List<String> calendarsUrl, Integer m, String signatureFile) {
+        HashMap<String, String> privateUrls = new HashMap<String, String>();
+        if (signatureFile != null && signatureFile != "") {
+            try {
+                privateUrls = readSignature(signatureFile);
+            } catch (Exception e) {
+                log.severe("No valid signature file");
+            }
+        }
+
+        String argsOts = DatatypeConverter.printHexBinary(shasum) + ".ots";
+        Path path = Paths.get(argsOts);
+        if(Files.exists(path)) {
+            System.out.println("File '" + argsOts + "' already exist");
+            return;
+        }
+
+        try {
+            byte[] stampResult = OpenTimestamps.stamp(shasum, calendarsUrl, m, privateUrls);
+            Files.write(path, stampResult);
+            System.out.println("The timestamp proof '" + argsOts + "' has been created!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("Invalid shasum");
+        }
+    }
     private static void stamp(String argsFile, List<String> calendarsUrl, Integer m, String signatureFile) {
         FileInputStream fis = null;
         try {
@@ -254,6 +289,7 @@ public class OtsCli {
                 "Options:\n" +
                         "-c, --calendar \tCreate timestamp with the aid of a remote calendar. May be specified multiple times.\n" +
                         "-k, --key \tSignature key file of private remote calendars.\n"+
+                        "-H, --hash \tPass the shasum of the document to timestamp.\n"+
                         "-m     \t\tCommitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied.\n" +
                         "-V, --version  \tprint " + title + " version.\n" +
                         "-h, --help     \tprint this help.\n" +
