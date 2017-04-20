@@ -35,13 +35,8 @@ public class TestCalendar {
 
     @Test
     public void TestSingle() throws Exception {
-<<<<<<< HEAD
         String calendarUrl = "https://finney.calendar.eternitywall.com";
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
-=======
-        String calendarUrl = "https://ots.eternitywall.it";
         byte[] digest = Utils.randBytes(32);
->>>>>>> 27d67a898cb3ac7f032dc90f5d5ed399d8be3bfc
         Calendar calendar = new Calendar(calendarUrl);
         Timestamp timestamp = calendar.submit(digest);
         assertTrue(timestamp != null);
@@ -124,13 +119,8 @@ public class TestCalendar {
 
     @Test
     public void TestSingleAsync() throws Exception {
-<<<<<<< HEAD
         String calendarUrl = "https://finney.calendar.eternitywall.com";
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
-=======
-        String calendarUrl = "https://ots.eternitywall.it";
         byte[] digest = Utils.randBytes(32);
->>>>>>> 27d67a898cb3ac7f032dc90f5d5ed399d8be3bfc
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
 
         CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
@@ -188,13 +178,8 @@ public class TestCalendar {
         List<String> calendarsUrl = new ArrayList<String>();
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
-<<<<<<< HEAD
         calendarsUrl.add("https://finney.calendar.eternitywall.com");
-        byte[] digest = DatatypeConverter.parseHexBinary("57cfa5c46716df9bd9e83595bce439c58108d8fcc1678f30d4c6731c3f1fa6c79ed712c66fb1ac8d4e4eb0e7");
-=======
-        calendarsUrl.add("https://ots.eternitywall.it");
         byte[] digest = Utils.randBytes(32);
->>>>>>> 27d67a898cb3ac7f032dc90f5d5ed399d8be3bfc
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
         int m=calendarsUrl.size();
