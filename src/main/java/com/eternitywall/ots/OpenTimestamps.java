@@ -7,12 +7,16 @@ import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
+import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.NetworkParameters;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -74,10 +78,11 @@ public class OpenTimestamps {
      * @param inputStream The input stream to stamp.
      * @param calendarsUrl The list of calendar urls.
      * @param m The number of calendar to use.
+     * @param privateCalendarsUrl The list of private calendar urls with signature.
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m) throws IOException {
+    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Parse parameters
         if (inputStream == null) {
             throw new IOException();
@@ -86,13 +91,14 @@ public class OpenTimestamps {
         try {
             DetachedTimestampFile fileTimestamp;
             fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
-            return stamp(fileTimestamp,calendarsUrl,m);
+            return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             log.severe("Invalid InputStream");
             throw new IOException();
         }
     }
+
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
@@ -101,7 +107,45 @@ public class OpenTimestamps {
      * @throws IOException desc
      */
     public static byte[] stamp(InputStream inputStream) throws IOException {
-        return OpenTimestamps.stamp(inputStream, null, 0);
+        return OpenTimestamps.stamp(inputStream, null, 0, null);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param inputStream The input stream to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m) throws IOException {
+        return OpenTimestamps.stamp(inputStream, calendarsUrl, m, null);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     * @param content The sha 256 of the file to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @param privateCalendarsUrl The list of private calendar urls with signature.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+
+    public static byte[] stamp(byte[] content, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
+        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m, privateCalendarsUrl);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     * @param content The sha 256 of the file to stamp.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+
+    public static byte[] stamp(byte[] content) throws IOException {
+        return OpenTimestamps.stamp(content,null , 0, null);
     }
 
     /**
@@ -114,18 +158,7 @@ public class OpenTimestamps {
      */
 
     public static byte[] stamp(byte[] content, List<String> calendarsUrl, Integer m) throws IOException {
-        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @param content The sha 256 of the file to stamp.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-
-    public static byte[] stamp(byte[] content) throws IOException {
-        return OpenTimestamps.stamp(content,null , 0);
+        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m, null);
     }
 
     /**
@@ -135,13 +168,14 @@ public class OpenTimestamps {
      * @return The plain array buffer of stamped.
      * @param calendarsUrl The list of calendar urls.
      * @param m The number of calendar to use.
+     * @param privateCalendarsUrl The list of private calendar urls with signature.
      * @throws IOException desc
      */
-    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m) throws IOException {
+    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Read from file reader stream
         DetachedTimestampFile fileTimestamp;
         fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
-        return stamp(fileTimestamp);
+        return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
     }
 
     /**
@@ -152,7 +186,23 @@ public class OpenTimestamps {
      * @throws IOException desc
      */
     public static byte[] stamp(Hash hash) throws IOException {
-        return OpenTimestamps.stamp(hash,null, 0);
+        return OpenTimestamps.stamp(hash,null, 0, null);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param hash The sha 256 of the file to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m) throws IOException {
+        // Read from file reader stream
+        DetachedTimestampFile fileTimestamp;
+        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
+        return stamp(fileTimestamp, calendarsUrl, m, null);
     }
 
 
@@ -164,19 +214,33 @@ public class OpenTimestamps {
      * @throws IOException desc
      */
     private static byte[] stamp(DetachedTimestampFile fileTimestamp) throws IOException {
-        return OpenTimestamps.stamp(fileTimestamp,null,0);
+        return OpenTimestamps.stamp(fileTimestamp,null,0, null);
+    }
+
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param fileTimestamp The Detached Timestamp File.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
+    private static byte[] stamp(DetachedTimestampFile fileTimestamp, List<String> calendarsUrl, Integer m) throws IOException {
+        return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
     }
 
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
      * @param fileTimestamp The timestamp to stamp.
-     * @param calendarsUrl desc
-     * @param m desc
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @param privateCalendarsUrl The list of private calendar urls with signature.
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m) throws IOException {
+    public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         /**
          * Add nonce:
          * Remember that the files - and their timestamps - might get separated
@@ -212,27 +276,30 @@ public class OpenTimestamps {
         Timestamp merkleTip = merkleRoot;
 
         // Parse parameters
-        if(calendarsUrl==null || calendarsUrl.size()==0) {
+        if(privateCalendarsUrl == null) {
+            privateCalendarsUrl = new HashMap<>();
+        }
+        if((calendarsUrl==null || calendarsUrl.size()==0) && (privateCalendarsUrl.size() == 0) ) {
             calendarsUrl = new ArrayList<String>();
             calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://finney.calendar.eternitywall.com");
         }
         if(m==null || m<=0){
-            if(calendarsUrl.size() == 0 ) {
+            if(calendarsUrl.size() + privateCalendarsUrl.size() == 0 ) {
                 m = 2;
-            } else if(calendarsUrl.size() == 1 ) {
+            } else if(calendarsUrl.size() + privateCalendarsUrl.size() == 1 ) {
                 m = 1;
             } else {
-                m = calendarsUrl.size();
+                m = calendarsUrl.size() + privateCalendarsUrl.size();
             }
         }
-        if(m<0 || m > calendarsUrl.size()) {
+        if(m<0 || m > calendarsUrl.size() + privateCalendarsUrl.size()) {
             log.severe("m cannot be greater than available calendar neither less or equal 0");
             throw new IOException();
         }
 
-        Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m);
+        Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m, privateCalendarsUrl);
 
         if (resultTimestamp == null) {
             throw new IOException();
@@ -251,11 +318,42 @@ public class OpenTimestamps {
      * @param m Number of calendars to use.
      * @return The created timestamp.
      */
-    private static Timestamp create(Timestamp timestamp, List<String> calendarUrls, Integer m) {
+    private static Timestamp create(Timestamp timestamp, List<String> calendarUrls, Integer m, HashMap<String,String> privateCalendarUrls) {
 
+        int capacity = calendarUrls.size()+privateCalendarUrls.size();
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarUrls.size());
+        ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(capacity);
 
+
+        // Submit to all private calendars with the signature key
+        for(Map.Entry<String, String> entry : privateCalendarUrls.entrySet()) {
+            String calendarUrl = "https://" + entry.getKey();
+            String signature = entry.getValue();
+            log.info("Submitting to remote private calendar "+calendarUrl);
+            try {
+                CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
+                ECKey key = null;
+                try {
+                    BigInteger privKey = new BigInteger(signature);
+                    key = ECKey.fromPrivate(privKey);
+                }catch (Exception e){
+                    try {
+                        DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+                        key = dumpedPrivateKey.getKey();
+                    }catch (Exception err){
+                        log.severe("Invalid private key");
+                    }
+                }
+                task.setKey(key);
+                task.setQueue(queue);
+                executor.submit(task);
+                capacity++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Submit to all public calendars
         for (final String calendarUrl : calendarUrls) {
 
             log.info("Submitting to remote calendar "+calendarUrl);
@@ -264,17 +362,16 @@ public class OpenTimestamps {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
                 task.setQueue(queue);
                 executor.submit(task);
-
+                capacity++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         int count=0;
-        for (final String calendarUrl : calendarUrls) {
+        for (int i=0; i < capacity; i++) {
 
             try {
-
                 Optional<Timestamp> optionalStamp = queue.take();
                 if(optionalStamp.isPresent()) {
                     timestamp.merge(optionalStamp.get());

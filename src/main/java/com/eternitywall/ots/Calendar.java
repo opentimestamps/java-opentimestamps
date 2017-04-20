@@ -10,9 +10,11 @@ package com.eternitywall.ots;
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
+import org.bitcoinj.core.ECKey;
 
 import javax.xml.bind.DatatypeConverter;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,7 +22,9 @@ import java.util.logging.Logger;
 /** Class representing Remote com.eternitywall.ots.Calendar server interface */
 public class Calendar{
 
-    String url;
+    private String url;
+    private ECKey key;
+
     private static Logger log = Logger.getLogger(Calendar.class.getName());
 
     /**
@@ -30,6 +34,23 @@ public class Calendar{
     public Calendar(String url) {
         this.url = url;
     }
+
+    /**
+     * Set private key.
+     * @param key The private key.
+     */
+    public void setKey(ECKey key) {
+        this.key = key;
+    }
+
+    /**
+     * Get private key.
+     * @return The private key.
+     */
+    public ECKey getKey() {
+        return this.key;
+    }
+
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.ots.Timestamp committing to that digest.
@@ -43,6 +64,11 @@ public class Calendar{
             headers.put("Accept","application/vnd.opentimestamps.v1");
             headers.put("User-Agent","java-opentimestamps");
             headers.put("Content-Type","application/x-www-form-urlencoded");
+
+            if (key != null ) {
+                String signature = key.signMessage(DatatypeConverter.printHexBinary(digest).toLowerCase());
+                headers.put("x-signature", signature);
+            }
 
             URL obj = new URL(url + "/digest");
             Request task = new Request(obj);
@@ -88,6 +114,10 @@ public class Calendar{
 
             if (body.length > 10000) {
                 log.severe("com.eternitywall.ots.Calendar response exceeded size limit");
+                return null;
+            }
+            if(!response.isOk()) {
+                log.info("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
                 return null;
             }
 
