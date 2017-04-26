@@ -105,12 +105,15 @@ public class OtsCli {
                 break;
             case "verify":
             case "v":
-                if (files.size() == 0) {
+                if(files.size() > 0) {
+                    verify(files.get(0), null);
+                } else if (shasum != null){
+                    Hash hash = new Hash(shasum);
+                    verify(files.get(0), hash);
+                } else {
                     System.out.println("Verify the timestamp attestations given as argument.\n");
                     System.out.println(title + ": bad options number ");
-                    break;
                 }
-                verify(files.get(0));
                 break;
             case "upgrade":
             case "u":
@@ -218,19 +221,28 @@ public class OtsCli {
         }
     }
 
-    public static void verify (String argsOts) {
+    public static void verify (String argsOts, Hash hash) {
         FileInputStream fis = null;
         try {
 
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
+            Long timestamp = null;
 
-            String argsFile = argsOts.replace(".ots","");
-            File file = new File(argsFile);
-            fis = new FileInputStream(file);
-            System.out.println("Assuming target filename is '" + argsFile + "'");
-            Long timestamp = OpenTimestamps.verify(byteOts,fis);
-            if(timestamp==null){
+            if (shasum == null){
+                // Read from file
+                String argsFile = argsOts.replace(".ots","");
+                File file = new File(argsFile);
+                fis = new FileInputStream(file);
+                System.out.println("Assuming target filename is '" + argsFile + "'");
+                timestamp = OpenTimestamps.verify(byteOts,fis);
+            } else {
+                // Read from hash option
+                System.out.println("Assuming target hash is '" + DatatypeConverter.printHexBinary(hash.getValue()) + "'");
+                timestamp = OpenTimestamps.verify(byteOts,hash);
+            }
+
+            if(timestamp == null){
                 System.out.println("Pending or Bad attestation");
             }else {
                 System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
