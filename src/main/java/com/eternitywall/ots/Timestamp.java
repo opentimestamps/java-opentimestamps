@@ -38,8 +38,8 @@ public class Timestamp {
      */
     public Timestamp(byte[] msg) {
         this.msg = msg;
-        this.attestations = new ArrayList<TimeAttestation>();
-        this.ops = new HashMap<Op, Timestamp>();
+        this.attestations = new ArrayList<>();
+        this.ops = new HashMap<>();
     }
 
     /**
@@ -98,13 +98,13 @@ public class Timestamp {
                 sortedAttestations.get(i).serialize(ctx);
             }
         }
-        if (this.ops.size() == 0) {
+        if (this.ops.isEmpty()) {
             ctx.writeByte((byte) 0x00);
-            if (sortedAttestations.size() > 0) {
+            if (!sortedAttestations.isEmpty()) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
-        } else if (this.ops.size() > 0) {
-            if (sortedAttestations.size() > 0) {
+        } else if (!this.ops.isEmpty()) {
+            if (!sortedAttestations.isEmpty()) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
@@ -134,10 +134,6 @@ public class Timestamp {
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
      */
     public void merge(Timestamp other) {
-        if (!(other instanceof Timestamp)) {
-            log.severe("Can only merge Timestamps together");
-            return;
-        }
         if (!Arrays.equals(this.msg, other.msg)) {
             log.severe("Can\'t merge timestamps for different messages together");
             return;
@@ -181,7 +177,7 @@ public class Timestamp {
         TimeAttestation minAttestation = null;
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp timestamp = entry.getValue();
-            Op op = entry.getKey();
+            //Op op = entry.getKey();
             TimeAttestation attestation = timestamp.shrink();
 
             if (attestation instanceof BitcoinBlockHeaderAttestation ||
@@ -229,30 +225,30 @@ public class Timestamp {
      * @return The output string.
      */
     public String toString(int indent) {
-        String output = "";
-        output += Timestamp.indention(indent) + "msg: " + DatatypeConverter.printHexBinary(this.msg).toLowerCase() + "\n";
-        output += Timestamp.indention(indent) + this.attestations.size() + " attestations: \n";
+        StringBuilder builder = new StringBuilder();
+        builder.append( Timestamp.indention(indent) + "msg: " + DatatypeConverter.printHexBinary(this.msg).toLowerCase() + "\n");
+        builder.append( Timestamp.indention(indent) + this.attestations.size() + " attestations: \n");
         int i = 0;
         for (final TimeAttestation attestation : this.attestations) {
-            output += Timestamp.indention(indent) + "[" + i + "] " + attestation.toString() + "\n";
+            builder.append( Timestamp.indention(indent) + "[" + i + "] " + attestation.toString() + "\n");
             i++;
         }
 
         i = 0;
-        output += Timestamp.indention(indent) + this.ops.size() + " ops: \n";
+        builder.append( Timestamp.indention(indent) + this.ops.size() + " ops: \n");
 
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp stamp = entry.getValue();
             Op op = entry.getKey();
 
-            output += Timestamp.indention(indent) + "[" + i + "] op: " + op.toString() + "\n";
-            output += Timestamp.indention(indent) + "[" + i + "] timestamp: \n";
-            output += stamp.toString(indent + 1);
+            builder.append( Timestamp.indention(indent) + "[" + i + "] op: " + op.toString() + "\n");
+            builder.append( Timestamp.indention(indent) + "[" + i + "] timestamp: \n");
+            builder.append( stamp.toString(indent + 1));
             i++;
         }
 
-        output += '\n';
-        return output;
+        builder.append( '\n' );
+        return builder.toString();
     }
 
     /**
@@ -261,11 +257,11 @@ public class Timestamp {
      * @return The output space string.
      */
     public static String indention(int pos) {
-        String output = "";
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < pos; i++) {
-            output += "    ";
+            builder.append("    ");
         }
-        return output;
+        return builder.toString();
     }
 
     /**
@@ -274,11 +270,11 @@ public class Timestamp {
      * @return The output string.
      */
     public String strTree(int indent) {
-        String output = "";
-        if (this.attestations.size() > 0) {
+        StringBuilder builder = new StringBuilder();
+        if (!this.attestations.isEmpty()) {
             for (final TimeAttestation attestation : this.attestations) {
-                output += Timestamp.indention(indent);
-                output += "verify " + attestation.toString() + '\n';
+                builder.append( Timestamp.indention(indent));
+                builder.append( "verify " + attestation.toString() + '\n');
 
             }
         }
@@ -289,24 +285,24 @@ public class Timestamp {
             for (Map.Entry<Op, Timestamp> entry : ordered.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
-                output += Timestamp.indention(indent);
-                output += " -> ";
-                output += op.toString() + '\n';
-                output += timestamp.strTree(indent + 1);
+                builder.append( Timestamp.indention(indent));
+                builder.append( " -> ");
+                builder.append( op.toString() + '\n');
+                builder.append( timestamp.strTree(indent + 1));
             }
         } else if (this.ops.size() > 0) {
             // output += com.eternitywall.ots.Timestamp.indention(indent);
             for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
-                output += Timestamp.indention(indent);
-                output += op.toString() + '\n';
+                builder.append( Timestamp.indention(indent));
+                builder.append( op.toString() + '\n');
                 // output += ' ( ' + com.eternitywall.ots.Utils.bytesToHex(this.msg) + ' ) ';
                 // output += '\n';
-                output += timestamp.strTree(indent);
+                builder.append( timestamp.strTree(indent));
             }
         }
-        return output;
+        return builder.toString();
     }
 
     /**
@@ -316,15 +312,15 @@ public class Timestamp {
      * @return The output string.
      */
     public static String strTreeExtended(Timestamp timestamp, int indent) {
-        String output = "";
+        StringBuilder builder = new StringBuilder();
 
-        if (timestamp.attestations.size() > 0) {
+        if (!timestamp.attestations.isEmpty()) {
             for (final TimeAttestation attestation : timestamp.attestations) {
-                output += Timestamp.indention(indent);
-                output += "verify " + attestation.toString();
-                output += " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ";
-                // output += " ["+com.eternitywall.ots.Utils.bytesToHex(timestamp.msg)+"] ";
-                output += '\n';
+                builder.append( Timestamp.indention(indent))
+                    .append( "verify " + attestation.toString())
+                    .append( " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ")
+                    //.append( " ["+com.eternitywall.ots.Utils.bytesToHex(timestamp.msg)+"] ")
+                    .append( '\n');
             }
         }
 
@@ -333,43 +329,42 @@ public class Timestamp {
             for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
                 Timestamp ts = entry.getValue();
                 Op op = entry.getKey();
-                output += Timestamp.indention(indent);
-                output += " -> ";
-                output += op.toString();
-                output += " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ";
-                output += '\n';
-                output += Timestamp.strTreeExtended(ts, indent + 1);
+                builder.append( Timestamp.indention(indent))
+                    .append( " -> ")
+                    .append( op.toString())
+                    .append( " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ")
+                    .append( '\n')
+                    .append( Timestamp.strTreeExtended(ts, indent + 1));
             }
         } else if (timestamp.ops.size() > 0) {
-            output += Timestamp.indention(indent);
+            builder.append( Timestamp.indention(indent));
             for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
                 Timestamp ts = entry.getValue();
                 Op op = entry.getKey();
-                output += Timestamp.indention(indent);
-                output += op.toString();
-
-                output += " ( " + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + " ) ";
-                output += '\n';
-                output += Timestamp.strTreeExtended(ts, indent);
+                builder.append( Timestamp.indention(indent))
+                    .append( op.toString())
+                    .append( " ( " + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + " ) ")
+                    .append( '\n')
+                    .append( Timestamp.strTreeExtended(ts, indent));
             }
         }
-        return output;
+        return builder.toString();
     }
 
     /** Set of al Attestations.
      * @return Array of all sub timestamps with attestations.
      */
     public List<Timestamp> directlyVerified() {
-        if (this.attestations.size() > 0) {
-            List<Timestamp> list = new ArrayList<Timestamp>();
+        if (!this.attestations.isEmpty()) {
+            List<Timestamp> list = new ArrayList<>();
             list.add(this);
             return list;
         }
-        List<Timestamp> list = new ArrayList<Timestamp>();
+        List<Timestamp> list = new ArrayList<>();
 
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp ts = entry.getValue();
-            Op op = entry.getKey();
+            //Op op = entry.getKey();
 
             List<Timestamp> result = ts.directlyVerified();
             list.addAll(result);
@@ -383,7 +378,7 @@ public class Timestamp {
     public Set<TimeAttestation> getAttestations() {
         Set set = new HashSet<TimeAttestation>();
         for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
-            byte[] msg = item.getKey();
+            //byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
             set.add(attestation);
         }
@@ -395,7 +390,7 @@ public class Timestamp {
      */
     public Boolean isTimestampComplete() {
         for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
-            byte[] msg = item.getKey();
+            //byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
             if (attestation instanceof BitcoinBlockHeaderAttestation) {
                 return true;
@@ -409,13 +404,13 @@ public class Timestamp {
      * @return Returns iterable of (msg, attestation)
      */
     public HashMap<byte[], TimeAttestation> allAttestations() {
-        HashMap<byte[], TimeAttestation> map = new HashMap<byte[], TimeAttestation>();
+        HashMap<byte[], TimeAttestation> map = new HashMap<>();
         for (TimeAttestation attestation : this.attestations) {
             map.put(this.msg, attestation);
         }
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp ts = entry.getValue();
-            Op op = entry.getKey();
+            //Op op = entry.getKey();
 
             HashMap<byte[], TimeAttestation> subMap = ts.allAttestations();
             for (Map.Entry<byte[], TimeAttestation> item : subMap.entrySet()) {

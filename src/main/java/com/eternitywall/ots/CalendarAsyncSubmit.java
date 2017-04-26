@@ -18,8 +18,6 @@ import java.util.logging.Logger;
  */
 public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
-    private static Logger log = Logger.getLogger(CalendarAsyncSubmit.class.getName());
-
     private String url;
     private byte[] digest;
     private BlockingQueue<Optional<Timestamp>> queue;

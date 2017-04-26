@@ -23,9 +23,6 @@ import java.util.logging.Logger;
  */
 public class DetachedTimestampFile {
 
-    private static Logger log = Logger.getLogger(DetachedTimestampFile.class.getName());
-
-
     /**
      * Header magic bytes
      * Designed to be give the user some information in a hexdump, while being identified as 'data' by the file utility.

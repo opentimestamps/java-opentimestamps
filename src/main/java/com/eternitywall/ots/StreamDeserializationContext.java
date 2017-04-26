@@ -101,7 +101,7 @@ public class StreamDeserializationContext {
     }
 
     public String toString() {
-        return this.buffer.toString();
+        return Arrays.toString(this.buffer);
     }
 
 

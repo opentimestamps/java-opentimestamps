@@ -68,7 +68,7 @@ public class OtsCli {
             }
 
 
-            if(line.getArgList().size()<1){
+            if(line.getArgList().isEmpty()){
                 showHelp();
                 return;
             }
@@ -77,7 +77,6 @@ public class OtsCli {
             files = line.getArgList().subList(1,line.getArgList().size());
 
         } catch(Exception e) {
-            e.printStackTrace();
             System.out.println(title + ": invalid parameters ");
         }
 
@@ -85,7 +84,7 @@ public class OtsCli {
         switch (cmd) {
             case "info":
             case "i":
-                if (files.size() == 0) {
+                if (files.isEmpty()) {
                     System.out.println("Show information on a timestamp given as argument.\n");
                     System.out.println(title + " info: bad options number ");
                     break;
@@ -94,7 +93,7 @@ public class OtsCli {
                 break;
             case "stamp":
             case "s":
-                if(files.size() > 0) {
+                if(!files.isEmpty()) {
                     stamp(files.get(0), calendarsUrl, m, signatureFile);
                 } else if (shasum != null){
                     stamp(shasum, calendarsUrl, m, signatureFile);
@@ -105,7 +104,7 @@ public class OtsCli {
                 break;
             case "verify":
             case "v":
-                if(files.size() > 0) {
+                if(!files.isEmpty()) {
                     verify(files.get(0), null);
                 } else if (shasum != null){
                     Hash hash = new Hash(shasum);
@@ -117,7 +116,7 @@ public class OtsCli {
                 break;
             case "upgrade":
             case "u":
-                if (files.size() == 0) {
+                if (!files.isEmpty()) {
                     System.out.println("Upgrade remote calendar timestamps to be locally verifiable.\n");
                     System.out.println(title + ": bad options number ");
                     break;
@@ -132,7 +131,7 @@ public class OtsCli {
 
     private static HashMap<String,String> readSignature(String file) throws Exception {
         Path path = Paths.get("signature.key");
-        if(!Files.exists(path)){
+        if(!path.toFile().exists()){
             throw new Exception();
         }
         Properties properties = new Properties();
@@ -153,13 +152,12 @@ public class OtsCli {
             String infoResult = OpenTimestamps.info(byteOts);
             System.out.println(infoResult);
         } catch (IOException e) {
-            e.printStackTrace();
             log.severe("No valid file");
         }
     }
 
     private static void stamp(byte[] shasum, List<String> calendarsUrl, Integer m, String signatureFile) {
-        HashMap<String, String> privateUrls = new HashMap<String, String>();
+        HashMap<String, String> privateUrls = new HashMap<>();
         if (signatureFile != null && signatureFile != "") {
             try {
                 privateUrls = readSignature(signatureFile);
@@ -170,7 +168,7 @@ public class OtsCli {
 
         String argsOts = DatatypeConverter.printHexBinary(shasum) + ".ots";
         Path path = Paths.get(argsOts);
-        if(Files.exists(path)) {
+        if(path.toFile().exists()) {
             System.out.println("File '" + argsOts + "' already exist");
             return;
         }
@@ -180,7 +178,6 @@ public class OtsCli {
             Files.write(path, stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (IOException e) {
-            e.printStackTrace();
             log.severe("Invalid shasum");
         }
     }
@@ -196,7 +193,7 @@ public class OtsCli {
             File file = new File(argsFile);
             fis = new FileInputStream(file);
 
-            HashMap<String, String> privateUrls = new HashMap<String, String>();
+            HashMap<String, String> privateUrls = new HashMap<>();
             if(signatureFile != null && signatureFile != "") {
                 try {
                     privateUrls = readSignature(signatureFile);
@@ -209,7 +206,6 @@ public class OtsCli {
             Files.write(path, stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (IOException e) {
-            e.printStackTrace();
             log.severe("No valid file");
         } finally {
             try {
@@ -248,8 +244,7 @@ public class OtsCli {
                 System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             log.severe("No valid file");
         } finally {
             try {
@@ -280,7 +275,6 @@ public class OtsCli {
             // Copy Bak File
 
         } catch (IOException e) {
-            e.printStackTrace();
             log.severe("No valid file");
         }
     }

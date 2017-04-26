@@ -20,7 +20,7 @@ public class Optional<T> {
     }
 
     public static<T> Optional<T> absent() {
-        return new Optional<T>();
+        return new Optional<>();
     }
 
     public boolean isPresent() {

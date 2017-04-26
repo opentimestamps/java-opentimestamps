@@ -79,7 +79,7 @@ public class StreamSerializationContext {
     }
 
     public String toString() {
-        return Arrays.copyOf(this.buffer, this.length).toString();
+        return Arrays.toString(Arrays.copyOf(this.buffer, this.length));
     }
 
 }

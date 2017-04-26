@@ -83,11 +83,10 @@ public class Calendar{
             }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
-            Timestamp timestamp = Timestamp.deserialize(ctx, digest);
-            return timestamp;
+            return Timestamp.deserialize(ctx, digest);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //log.severe(e.getMessage());
             return null;
         }
     }
@@ -122,11 +121,10 @@ public class Calendar{
             }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
-            Timestamp timestamp = Timestamp.deserialize(ctx, commitment);
-            return timestamp;
+            return Timestamp.deserialize(ctx, commitment);
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            //log.severe(e.getMessage());
             return null;
         }
     }

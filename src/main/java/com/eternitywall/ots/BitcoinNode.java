@@ -19,12 +19,17 @@ public class BitcoinNode {
     private String authString;
     private String urlString;
 
+    private static String RPCCONNECT = "rpcconnect";
+    private static String RPCUSER = "rpcuser";
+    private static String RPCPORT = "rpcport";
+    private static String RPCPASSWORD = "rpcpassword";
+
     private BitcoinNode() {
     }
 
     public BitcoinNode(Properties bitcoinConf) {
-        authString = String.valueOf(Base64Coder.encode( String.format("%s:%s",bitcoinConf.getProperty("rpcuser"), bitcoinConf.getProperty("rpcpassword")).getBytes()));
-        urlString = String.format("http://%s:%s", bitcoinConf.getProperty("rpcconnect"), bitcoinConf.getProperty("rpcport"));
+        authString = String.valueOf(Base64Coder.encode( String.format("%s:%s",bitcoinConf.getProperty(RPCUSER), bitcoinConf.getProperty(RPCPASSWORD)).getBytes()));
+        urlString = String.format("http://%s:%s", bitcoinConf.getProperty(RPCCONNECT), bitcoinConf.getProperty(RPCPORT));
     }
 
     public static Properties readBitcoinConf() throws Exception {
@@ -43,11 +48,11 @@ public class BitcoinNode {
                 prop.load(input);
 
                 // get the property value and print it out
-                if(prop.getProperty("rpcuser")!=null && prop.getProperty("rpcpassword")!=null) {
-                    if(prop.getProperty("rpcconnect")==null)
-                        prop.setProperty("rpcconnect","127.0.0.1");
-                    if(prop.getProperty("rpcport")==null)
-                        prop.setProperty("rpcport","8332");
+                if(prop.getProperty(RPCUSER)!=null && prop.getProperty(RPCPASSWORD)!=null) {
+                    if(prop.getProperty(RPCCONNECT)==null)
+                        prop.setProperty(RPCCONNECT,"127.0.0.1");
+                    if(prop.getProperty(RPCPORT)==null)
+                        prop.setProperty(RPCPORT,"8332");
                     return prop;
                 }
 
