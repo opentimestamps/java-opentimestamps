@@ -116,7 +116,7 @@ public class OtsCli {
                 break;
             case "upgrade":
             case "u":
-                if (!files.isEmpty()) {
+                if (files.isEmpty()) {
                     System.out.println("Upgrade remote calendar timestamps to be locally verifiable.\n");
                     System.out.println(title + ": bad options number ");
                     break;
