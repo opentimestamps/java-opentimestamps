@@ -6,3 +6,6 @@ settings.xml
 deploy.sh
 signature.key
 signature.wif
+/.settings/
+/.classpath
+/.project
