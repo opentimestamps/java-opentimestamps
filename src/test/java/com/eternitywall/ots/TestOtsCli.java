@@ -10,13 +10,14 @@ import org.junit.Test;
 public class TestOtsCli {
 
   @Test
-  public void testCommandLineHandlesUpgradeCommandWithWrongFileName() throws IOException {
+  public void testCommandLineHandlesUpgradeCommandWithWrongFileName() throws Exception {
     StringLoggerForTest loggerForTest = new StringLoggerForTest();
     
     OtsCli.main(new String[]{"upgrade", "some_non_existent_file.name"});
     
     final String logContents = loggerForTest.contents();
-    assertTrue(logContents.contains("GRAVE: No valid file"));
+    assertTrue("Upgrade with non existent file should log 'No valid file' error", 
+               logContents.contains("No valid file"));
   }
   
   private class StringLoggerForTest {
@@ -32,8 +33,9 @@ public class TestOtsCli {
       logger.addHandler(this.sh);
     }
     
-    public String contents() throws UnsupportedEncodingException {
+    public String contents() throws Exception {
       this.sh.flush();
+      this.baos.close();
       return this.baos.toString();
     }
   }
