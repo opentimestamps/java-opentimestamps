@@ -39,7 +39,7 @@ public class TestOpenTimestamps {
     private String helloWorldHashHex="03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
     
     
-    private String baseUrl = "https://raw.githubusercontent.com/eternitywall/java-opentimestamps/master";
+    private String baseUrl = "https://raw.githubusercontent.com/opentimestamps/java-opentimestamps/master";
 
     @Before
     public void loadData() throws ExecutionException, InterruptedException, IOException {
