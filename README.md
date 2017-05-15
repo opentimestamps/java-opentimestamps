@@ -5,7 +5,7 @@
 [1]: https://opentimestamps.org
 [2]: https://raw.githubusercontent.com/opentimestamps/logo/master/white-bg/website-horizontal-350x75.png (OpenTimestamps logo)
 
-[![Build Status](https://travis-ci.org/eternitywall/java-opentimestamps.svg?branch=master)](https://travis-ci.org/eternitywall/java-opentimestamps)
+[![Build Status](https://travis-ci.org/opentimestamps/java-opentimestamps.svg?branch=master)](https://travis-ci.org/opentimestamps/java-opentimestamps)
 
 This repo host the Java implementation of OpenTimestamps.
 
@@ -28,7 +28,7 @@ Java 1.7+
 ## Installation
 
 ```
-git clone https://github.com/eternitywall/java-opentimestamps
+git clone https://github.com/opentimestamps/java-opentimestamps
 cd java-opentimestamps
 mvn install
 ```
