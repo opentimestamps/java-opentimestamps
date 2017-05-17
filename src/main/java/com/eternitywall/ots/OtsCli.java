@@ -130,7 +130,7 @@ public class OtsCli {
     }
 
     private static HashMap<String,String> readSignature(String file) throws Exception {
-        Path path = Paths.get("signature.key");
+        Path path = Paths.get(file);
         if(!path.toFile().exists()){
             throw new Exception();
         }
