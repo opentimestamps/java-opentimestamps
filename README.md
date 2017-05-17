@@ -33,6 +33,10 @@ cd java-opentimestamps
 mvn install
 ```
 
+#### SSL errors
+
+If you get `SSLHandshakeException` during `mvn install` please refer to the following [issue](https://github.com/opentimestamps/java-opentimestamps/issues/1).
+
 ## Command line
 
 #### Stamp
@@ -137,6 +141,8 @@ if(Arrays.equals(ots, upgradedOts)) {
 cd java-opentimestamps
 mvn test
 ```
+
+
 
 ## License
 
