@@ -30,12 +30,12 @@ public class OpPrepend extends OpBinary {
         return "prepend";
     }
 
-    OpPrepend() {
+    public OpPrepend() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpPrepend(byte[] arg_) {
+    public OpPrepend(byte[] arg_) {
         super(arg_);
         this.arg = arg_;
     }
