@@ -374,7 +374,11 @@ public class OpenTimestamps {
             try {
                 Optional<Timestamp> optionalStamp = queue.take();
                 if(optionalStamp.isPresent()) {
-                    timestamp.merge(optionalStamp.get());
+                    try {
+                        timestamp.merge(optionalStamp.get());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     count++;
                 }
                 if(count >= m){
@@ -686,7 +690,11 @@ public class OpenTimestamps {
                     Calendar calendar = new Calendar(calendarUrl);
                     Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
                     if(upgradedStamp != null) {
-                        subStamp.merge(upgradedStamp);
+                        try {
+                            subStamp.merge(upgradedStamp);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         upgraded = true;
                         return upgraded;
                     }

@@ -29,7 +29,7 @@ public class Timestamp {
     private static Logger log = Logger.getLogger(Timestamp.class.getName());
 
     byte[] msg;
-    List<TimeAttestation> attestations;
+    public List<TimeAttestation> attestations;
     HashMap<Op, Timestamp> ops;
 
     /**
@@ -41,6 +41,7 @@ public class Timestamp {
         this.attestations = new ArrayList<>();
         this.ops = new HashMap<>();
     }
+
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp.
@@ -133,10 +134,10 @@ public class Timestamp {
      * Add all operations and attestations from another timestamp to this one.
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
      */
-    public void merge(Timestamp other) {
+    public void merge(Timestamp other) throws Exception {
         if (!Arrays.equals(this.msg, other.msg)) {
-            log.severe("Can\'t merge timestamps for different messages together");
-            return;
+            //log.severe("Can\'t merge timestamps for different messages together");
+            throw new Exception("Can\'t merge timestamps for different messages together");
         }
 
         for (final TimeAttestation attestation : other.attestations) {
@@ -442,6 +443,24 @@ public class Timestamp {
             }
         }
         return set;
+    }
+
+    /**
+     * Compare timestamps
+     * @return Returns true if timestamps are equals
+     */
+    public boolean equals(Timestamp timestamp){
+        // #TODO more checks
+        if (Arrays.equals(this.getDigest(),timestamp.getDigest()) == false){
+            return false;
+        }
+        if(this.attestations.size() != timestamp.attestations.size()){
+            return false;
+        }
+        if(this.ops.size() != timestamp.ops.size()){
+            return false;
+        }
+        return true;
     }
 
 }

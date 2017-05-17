@@ -45,11 +45,11 @@ public class Merkle {
         return res;
     }
 
-    static Timestamp catSha256(Timestamp left, Timestamp right) {
+    public static Timestamp catSha256(Timestamp left, Timestamp right) {
         return Merkle.catThenUnaryOp( left, right);
     }
 
-    static Timestamp catSha256d(Timestamp left, Timestamp right) {
+    public static Timestamp catSha256d(Timestamp left, Timestamp right) {
         Timestamp sha256Timestamp = Merkle.catSha256(left, right);
         // res = sha256Timestamp.ops.add(OpSHA256());
         OpSHA256 opSHA256 = new OpSHA256();
