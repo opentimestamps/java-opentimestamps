@@ -4,11 +4,9 @@ import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpPrepend;
 import com.eternitywall.ots.op.OpSHA256;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jdk.nashorn.internal.objects.Global.undefined;
 
 public class Merkle {
     /** Concatenate left and right, then perform a unary operation on them left and right can be either timestamps or bytes.
