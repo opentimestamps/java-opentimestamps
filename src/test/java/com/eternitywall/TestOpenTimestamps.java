@@ -3,6 +3,10 @@ package com.eternitywall;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import com.eternitywall.ots.*;
+import com.eternitywall.ots.op.OpSHA256;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,6 +109,32 @@ public class TestOpenTimestamps {
         DetachedTimestampFile detachedTimestampFile3 = DetachedTimestampFile.deserialize(ctx3);
         byte[] digest3 = detachedTimestampFile3.fileDigest();
         assertTrue(Arrays.equals(digest3, digest2));
+    }
+
+    @Test
+    public void merkle() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+
+        List<byte[]> files = new ArrayList<>();
+        files.add(helloworld);
+        files.add(merkle2Ots);
+        files.add(incomplete);
+
+        List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
+        for (byte[] file : files){
+            InputStream is = new ByteArrayInputStream(helloworld);
+            DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.from(new OpSHA256(), is);
+            fileTimestamps.add( detachedTimestampFile );
+        }
+
+        Timestamp merkleTip = OpenTimestamps.makeMerkleTree(fileTimestamps);
+        // For each fileTimestamps check the tip
+        for (DetachedTimestampFile fileTimestamp : fileTimestamps){
+            Set<byte[]> tips = fileTimestamp.getTimestamp().allTips();
+            for (byte[] tip : tips){
+                assertTrue( Arrays.equals(tip, merkleTip.getDigest()) );
+            }
+        }
+
     }
 
     @Test

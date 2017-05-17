@@ -272,7 +272,7 @@ public class OpenTimestamps {
             nonceAppendedStamp.ops.put(opSHA256, merkleRoot);
         }
 
-        // Markle root
+        // Merkle root
         Timestamp merkleTip = merkleRoot;
 
         // Parse parameters
@@ -400,7 +400,7 @@ public class OpenTimestamps {
     /**
      * Make Merkle Tree.
      * @param hashes The list of Hash to merklefy.
-     * @return markle tip timestamp.
+     * @return merkle tip timestamp.
      */
     public static Timestamp makeMerkleTree(List<Hash> hashes, OpCrypto opCrypto){
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
@@ -417,7 +417,7 @@ public class OpenTimestamps {
     /**
      * Make Merkle Tree.
      * @param fileTimestamps The list of DetachedTimestampFile.
-     * @return markle tip timestamp.
+     * @return merkle tip timestamp.
      */
     public static Timestamp makeMerkleTree(List<DetachedTimestampFile> fileTimestamps){
         List<Timestamp> merkleRoots = new ArrayList<>();

@@ -422,4 +422,26 @@ public class Timestamp {
         return map;
     }
 
+    /**
+     * Iterate over all tips recursively
+     * @return Returns iterable of (msg, attestation)
+     */
+    public Set<byte[]> allTips() {
+
+        Set<byte[]> set = new HashSet<>();
+        if (this.ops.size() == 0){
+            set.add(this.msg);
+        }
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            Timestamp ts = entry.getValue();
+            //Op op = entry.getKey();
+
+            Set<byte[]> subSet = ts.allTips();
+            for (byte[] msg : subSet) {
+                set.add(msg);
+            }
+        }
+        return set;
+    }
+
 }
