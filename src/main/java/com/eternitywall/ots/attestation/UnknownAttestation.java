@@ -4,6 +4,8 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import java.sql.Time;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -49,5 +51,18 @@ public class UnknownAttestation extends TimeAttestation {
     public int compareTo(TimeAttestation o) {
         UnknownAttestation ota = (UnknownAttestation) o;
         return Utils.compare(this.payload, ota.payload) ;
+    }
+
+    public boolean equals(TimeAttestation attestation){
+        if(!(attestation instanceof UnknownAttestation)){
+            return false;
+        }
+        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+            return false;
+        }
+        if(!Arrays.equals(this.payload, ((UnknownAttestation) attestation).payload)){
+            return false;
+        }
+        return true;
     }
 }

@@ -1,14 +1,25 @@
 package com.eternitywall;
 
 import com.eternitywall.ots.Merkle;
+import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Timestamp;
 import com.eternitywall.ots.attestation.PendingAttestation;
+import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.op.Op;
+import com.eternitywall.ots.op.OpAppend;
+import com.eternitywall.ots.op.OpPrepend;
+import com.eternitywall.ots.op.OpSHA256;
+import com.sun.tools.javac.util.Assert;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import javax.xml.bind.DatatypeConverter;
@@ -20,7 +31,126 @@ public class TestTimestamp {
 
 
   @Test
-  public void merge() throws Exception {
+  public void addOp() {
+    //Adding operations to timestamps
+    Timestamp t = new Timestamp(Utils.toBytes("abcd", "UTF-8"));
+
+    OpAppend opAppend = new OpAppend(Utils.toBytes("efgh", "UTF-8"));
+    t.ops.put(opAppend, new Timestamp(opAppend.call(t.msg)) );
+
+    // The second add should succeed with the timestamp unchanged
+    t.ops.put(opAppend, new Timestamp(opAppend.call(t.msg)) );
+    Timestamp tComplete = new Timestamp(Utils.toBytes("abcdefgh", "UTF-8"));
+    assertTrue( t.ops.get(opAppend).equals( tComplete) );
+  }
+
+  @Test
+  public void setResultTimestamp() {
+    //Setting an op result timestamp
+    Timestamp t1 = new Timestamp(Utils.toBytes("foo", "UTF-8"));
+    OpAppend opAppend1 = new OpAppend(Utils.toBytes("bar", "UTF-8"));
+    OpAppend opAppend2 = new OpAppend(Utils.toBytes("baz", "UTF-8"));
+    Timestamp t2 = t1.ops.put(opAppend1, new Timestamp(opAppend1.call(t1.msg)) );
+    Timestamp t3 = t2.ops.put(opAppend2, new Timestamp(opAppend1.call(t2.msg)) );
+    assertTrue( Arrays.equals( t1.ops.get(opAppend1).ops.get(opAppend2).msg, Utils.toBytes("foobarbaz", "UTF-8")) );
+
+    t1.ops.put(opAppend1, new Timestamp(Utils.toBytes("foobar", "UTF-8")) );
+    for (Map.Entry<Op, Timestamp> entry : t1.ops.get(opAppend1).ops.entrySet()) {
+      Timestamp timestamp = entry.getValue();
+      Op op = entry.getKey();
+      assertFalse(op.equals(opAppend2));
+    }
+  }
+
+
+  void Tserialize(Timestamp expected_instance, byte[] expected_serialized){
+    StreamSerializationContext ssc = new StreamSerializationContext();
+    expected_instance.serialize(ssc);
+    byte[] actual_serialized = ssc.getOutput();
+
+    assertTrue(Arrays.equals(expected_serialized,actual_serialized));
+
+    StreamDeserializationContext sdc = new StreamDeserializationContext(expected_serialized);
+    Timestamp actual_instance = Timestamp.deserialize(sdc,expected_instance.msg);
+    assertTrue(expected_instance.equals(actual_instance));
+  }
+
+
+  @Test
+  public void serialization() throws IOException {
+    // Timestamp serialization/deserialization
+
+    Timestamp stamp = new Timestamp(Utils.toBytes("foo", "UTF-8"));
+    stamp.attestations.add(new PendingAttestation(Utils.toBytes("foobar", "UTF-8")));
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    Tserialize(stamp, baos.toByteArray());
+
+    stamp.attestations.add(new PendingAttestation(Utils.toBytes("barfoo", "UTF-8")));
+
+    baos = new ByteArrayOutputStream();
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("barfoo", "UTF-8"));
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    Tserialize(stamp, baos.toByteArray());
+
+    stamp.attestations.add(new PendingAttestation(Utils.toBytes("foobaz", "UTF-8")));
+
+    baos = new ByteArrayOutputStream();
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("barfoo", "UTF-8"));
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobaz", "UTF-8"));
+    Tserialize(stamp, baos.toByteArray());
+
+    //Timestamp sha256Stamp = stamp.ops.put(new OpSHA256(), null);
+    // Should fail - empty timestamps can't be serialized
+    //StreamSerializationContext ssc = new StreamSerializationContext();
+    //stamp.serialize(ssc);
+
+    byte[] voids = new byte[0];
+    OpSHA256 opSHA256 = new OpSHA256(voids);
+    Timestamp sha256Stamp = stamp.ops.put(opSHA256, new Timestamp(opSHA256.call(voids)) );
+    PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("deeper", "UTF-8"));
+    sha256Stamp.attestations.add( pendingAttestation );
+
+    baos = new ByteArrayOutputStream();
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("barfoo", "UTF-8"));
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    baos.write(0xff);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("foobaz", "UTF-8"));
+    baos.write(0x08);
+    baos.write(0x00);
+    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.toBytes("deeper", "UTF-8"));
+    Tserialize(stamp, baos.toByteArray());
+
+  }
+
+  @Test
+  public void merge() {
     //Merging timestamps
 
     Timestamp stampA = new Timestamp(Utils.toBytes("a", "UTF-8"));

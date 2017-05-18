@@ -87,4 +87,8 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
             return deltaTag;
         }
     }
+
+    public boolean equals(TimeAttestation attestation){
+        return attestation.equals(this);
+    }
 }

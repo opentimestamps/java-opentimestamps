@@ -5,6 +5,7 @@ import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -91,5 +92,18 @@ public class PendingAttestation extends TimeAttestation {
     public int compareTo(TimeAttestation o) {
         PendingAttestation opa = (PendingAttestation) o;
         return Utils.compare(this.uri, opa.uri) ;
+    }
+
+    public boolean equals(TimeAttestation attestation){
+        if(!(attestation instanceof PendingAttestation)){
+            return false;
+        }
+        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+            return false;
+        }
+        if(!Arrays.equals(this.uri, ((PendingAttestation) attestation).uri)){
+            return false;
+        }
+        return true;
     }
 }

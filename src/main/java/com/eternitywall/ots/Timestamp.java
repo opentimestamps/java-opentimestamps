@@ -28,9 +28,9 @@ public class Timestamp {
 
     private static Logger log = Logger.getLogger(Timestamp.class.getName());
 
-    byte[] msg;
+    public byte[] msg;
     public List<TimeAttestation> attestations;
-    HashMap<Op, Timestamp> ops;
+    public HashMap<Op, Timestamp> ops;
 
     /**
      * Create a com.eternitywall.ots.Timestamp object.
@@ -94,7 +94,7 @@ public class Timestamp {
         Collections.sort(sortedAttestations);
         
         if (sortedAttestations.size() > 1) {
-            for (int i = 0; i < sortedAttestations.size(); i++) {
+            for (int i = 0; i < sortedAttestations.size() - 1; i++) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(i).serialize(ctx);
             }
@@ -450,15 +450,27 @@ public class Timestamp {
      * @return Returns true if timestamps are equals
      */
     public boolean equals(Timestamp timestamp){
-        // #TODO more checks
         if (Arrays.equals(this.getDigest(),timestamp.getDigest()) == false){
             return false;
         }
         if(this.attestations.size() != timestamp.attestations.size()){
             return false;
         }
+        for (int i=0 ; i < this.attestations.size(); i++){
+            TimeAttestation ta1 = this.attestations.get(i);
+            TimeAttestation ta2 = timestamp.attestations.get(i);
+            if(ta1.equals( ta2 )==false){
+                return false;
+            }
+        }
+
         if(this.ops.size() != timestamp.ops.size()){
             return false;
+        }
+        for (int i=0 ; i < this.ops.size(); i++){
+            if(this.ops.get(i).equals( timestamp.ops.get(i) )==false){
+                return false;
+            }
         }
         return true;
     }
