@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  *
  * @see com.eternitywall.ots.op.Op
  */
-public class OpUnary extends Op {
+public abstract class OpUnary extends Op {
 
 
     private static Logger log = Logger.getLogger(OpUnary.class.getName());

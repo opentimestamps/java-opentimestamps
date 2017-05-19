@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
-public class Op implements Comparable<Op> {
+public abstract class Op implements Comparable<Op> {
 
 
     private static Logger log = Logger.getLogger(Op.class.getName());

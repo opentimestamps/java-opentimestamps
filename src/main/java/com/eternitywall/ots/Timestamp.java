@@ -112,13 +112,11 @@ public class Timestamp {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
 
-            // all op/stamp
             int counter = 0;
-
-            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            List<Map.Entry<Op, Timestamp>> list = sortToList(this.ops.entrySet());
+            for (Map.Entry<Op, Timestamp> entry : list){
                 Timestamp stamp = entry.getValue();
                 Op op = entry.getKey();
-
                 if (counter < this.ops.size() - 1) {
                     ctx.writeBytes(new byte[]{(byte) 0xff});
                     counter++;
@@ -126,7 +124,6 @@ public class Timestamp {
 
                 op.serialize(ctx);
                 stamp.serialize(ctx);
-
             }
 
         }
@@ -455,39 +452,39 @@ public class Timestamp {
         if (Arrays.equals(this.getDigest(),timestamp.getDigest()) == false){
             return false;
         }
+
+        // Check attestations
         if(this.attestations.size() != timestamp.attestations.size()){
             return false;
         }
         for (int i=0 ; i < this.attestations.size(); i++){
             TimeAttestation ta1 = this.attestations.get(i);
             TimeAttestation ta2 = timestamp.attestations.get(i);
-            if(ta1.equals( ta2 )==false){
+            if(!(ta1.equals( ta2 ))){
                 return false;
             }
         }
 
+        // Check operations
         if (this.ops.size() != timestamp.ops.size()){
             return false;
         }
 
-        Iterator<Entry<Op, Timestamp>> it1 = this.ops.entrySet().iterator();
-        Iterator<Entry<Op, Timestamp>> it2 = timestamp.ops.entrySet().iterator();
-        while(it1.hasNext()){
-            Entry<Op,Timestamp> entry1 = it1.next();
-            Entry<Op,Timestamp> entry2 = it2.next();
-            Op op1 = entry1.getKey();
-            Op op2 = entry2.getKey();
-            Timestamp t1 = entry1.getValue();
-            Timestamp t2 = entry1.getValue();
-
+        // Order list of operations
+        List<Map.Entry<Op, Timestamp>> list1 = sortToList(this.ops.entrySet());
+        List<Map.Entry<Op, Timestamp>> list2 = sortToList(this.ops.entrySet());
+        for (int i=0 ; i<list1.size() ; i++){
+            Op op1 = list1.get(i).getKey();
+            Op op2 = list2.get(i).getKey();
             if (!op1.equals(op2)){
                 return false;
             }
+            Timestamp t1 = list1.get(i).getValue();
+            Timestamp t2 = list2.get(i).getValue();
             if (!t1.equals(t2)){
                 return false;
             }
         }
-
         return true;
     }
 
@@ -497,7 +494,7 @@ public class Timestamp {
      * @return Returns the sub timestamp
      */
     public Timestamp add(Op op){
-        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
+        // nonce_appended_stamp = timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
         //Op opAppend = new OpAppend(bytes);
 
         if (this.ops.containsKey(op)) {
@@ -507,6 +504,23 @@ public class Timestamp {
         Timestamp stamp = new Timestamp(op.call(this.msg));
         this.ops.put(op, stamp);
         return stamp;
+    }
+
+
+    /**
+     * Retrieve
+     * @param setEntries - The entries set of ops hashmap
+     * @return Returns the sorted list of map entries
+     */
+    public List<Map.Entry<Op, Timestamp>> sortToList(Set<Entry<Op, Timestamp>> setEntries){
+        List<Map.Entry<Op, Timestamp>> entries = new ArrayList<>(setEntries);
+        Collections.sort(entries, new Comparator<Map.Entry<Op, Timestamp>>() {
+            @Override
+            public int compare(Entry<Op, Timestamp> a, Entry<Op, Timestamp> b) {
+                return a.getKey().compareTo(b.getKey());
+            }
+        });
+        return entries;
     }
 
 }

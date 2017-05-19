@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @see com.eternitywall.ots.op.OpUnary
  */
-public class OpBinary extends Op implements Comparable<Op> {
+public abstract class OpBinary extends Op implements Comparable<Op> {
 
     private static Logger log = Logger.getLogger(OpBinary.class.getName());
 
