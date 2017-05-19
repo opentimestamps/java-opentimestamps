@@ -36,10 +36,10 @@ public class TestTimestamp {
     Timestamp t = new Timestamp(Utils.toBytes("abcd", "UTF-8"));
 
     OpAppend opAppend = new OpAppend(Utils.toBytes("efgh", "UTF-8"));
-    t.ops.put(opAppend, new Timestamp(opAppend.call(t.msg)) );
+    t.add(opAppend);
 
     // The second add should succeed with the timestamp unchanged
-    t.ops.put(opAppend, new Timestamp(opAppend.call(t.msg)) );
+    t.add(opAppend);
     Timestamp tComplete = new Timestamp(Utils.toBytes("abcdefgh", "UTF-8"));
     assertTrue( t.ops.get(opAppend).equals( tComplete) );
   }
@@ -50,8 +50,8 @@ public class TestTimestamp {
     Timestamp t1 = new Timestamp(Utils.toBytes("foo", "UTF-8"));
     OpAppend opAppend1 = new OpAppend(Utils.toBytes("bar", "UTF-8"));
     OpAppend opAppend2 = new OpAppend(Utils.toBytes("baz", "UTF-8"));
-    Timestamp t2 = t1.ops.put(opAppend1, new Timestamp(opAppend1.call(t1.msg)) );
-    Timestamp t3 = t2.ops.put(opAppend2, new Timestamp(opAppend1.call(t2.msg)) );
+    Timestamp t2 = t1.add(opAppend1);
+    Timestamp t3 = t2.add(opAppend2);
     assertTrue( Arrays.equals( t1.ops.get(opAppend1).ops.get(opAppend2).msg, Utils.toBytes("foobarbaz", "UTF-8")) );
 
     t1.ops.put(opAppend1, new Timestamp(Utils.toBytes("foobar", "UTF-8")) );
@@ -121,10 +121,10 @@ public class TestTimestamp {
     // Should fail - empty timestamps can't be serialized
     //StreamSerializationContext ssc = new StreamSerializationContext();
     //stamp.serialize(ssc);
-
     byte[] voids = new byte[0];
     OpSHA256 opSHA256 = new OpSHA256(voids);
-    Timestamp sha256Stamp = stamp.ops.put(opSHA256, new Timestamp(opSHA256.call(voids)) );
+    Timestamp sha256Stamp = stamp.add(opSHA256);
+
     PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("deeper", "UTF-8"));
     sha256Stamp.attestations.add( pendingAttestation );
 

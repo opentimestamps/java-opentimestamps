@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
 import java.util.logging.Logger;
 
@@ -74,4 +75,16 @@ public class OpBinary extends Op implements Comparable<Op> {
 
     }
 
+    public boolean equals(Op o){
+        if(this._TAG() != o._TAG()){
+            return false;
+        }
+        if(!(o instanceof OpBinary)) {
+            return false;
+        }
+        if(!Arrays.equals(this.arg,((OpBinary)o).arg)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -3,6 +3,7 @@ package com.eternitywall.ots.op;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -131,5 +132,15 @@ public class Op implements Comparable<Op> {
     @Override
     public int compareTo(Op o) {
         return this._TAG()-o._TAG();
+    }
+
+    public boolean equals(Op o){
+        if(this._TAG() != o._TAG()){
+            return false;
+        }
+        if(o instanceof OpBinary || o instanceof OpUnary) {
+            return o.equals(this);
+        }
+        return true;
     }
 }

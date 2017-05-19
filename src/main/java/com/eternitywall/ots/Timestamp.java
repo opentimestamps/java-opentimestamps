@@ -12,6 +12,8 @@ import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.attestation.*;
+import com.eternitywall.ots.op.OpAppend;
+import java.util.Map.Entry;
 import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 import java.util.logging.Logger;
@@ -464,15 +466,45 @@ public class Timestamp {
             }
         }
 
-        if(this.ops.size() != timestamp.ops.size()){
+        if (this.ops.size() != timestamp.ops.size()){
             return false;
         }
-        for (int i=0 ; i < this.ops.size(); i++){
-            if(this.ops.get(i).equals( timestamp.ops.get(i) )==false){
+
+        Iterator<Entry<Op, Timestamp>> it1 = this.ops.entrySet().iterator();
+        Iterator<Entry<Op, Timestamp>> it2 = timestamp.ops.entrySet().iterator();
+        while(it1.hasNext()){
+            Entry<Op,Timestamp> entry1 = it1.next();
+            Entry<Op,Timestamp> entry2 = it2.next();
+            Op op1 = entry1.getKey();
+            Op op2 = entry2.getKey();
+            Timestamp t1 = entry1.getValue();
+            Timestamp t2 = entry1.getValue();
+
+            if (!op1.equals(op2)){
+                return false;
+            }
+            if (!t1.equals(t2)){
                 return false;
             }
         }
+
         return true;
+    }
+
+    /**
+     * Add Op to current timestamp and return the sub stamp
+     * @param op - The operation to insert
+     * @return Returns the sub timestamp
+     */
+    public Timestamp add(Op op){
+        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
+        //Op opAppend = new OpAppend(bytes);
+        Timestamp stamp = this.ops.get(op);
+        if (stamp == null) {
+            stamp = new Timestamp(op.call(this.msg));
+            this.ops.put(op, stamp);
+        }
+        return stamp;
     }
 
 }

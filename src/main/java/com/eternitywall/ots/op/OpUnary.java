@@ -2,6 +2,7 @@ package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -54,5 +55,18 @@ public class OpUnary extends Op {
     @Override
     public String toString() {
         return this._TAG_NAME();
+    }
+
+    public boolean equals(Op o){
+        if(this._TAG() != o._TAG()){
+            return false;
+        }
+        if(!(o instanceof OpUnary)) {
+            return false;
+        }
+        if(!Arrays.equals(this.arg,((OpUnary)o).arg)) {
+            return false;
+        }
+        return true;
     }
 }
