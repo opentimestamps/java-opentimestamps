@@ -45,13 +45,8 @@ public class OpSHA1 extends OpCrypto {
 
     OpSHA1() {
         super();
-        this.arg = new byte[]{};
     }
 
-    OpSHA1(byte[] arg_) {
-        super(new byte[]{});
-        this.arg = arg_;
-    }
 
     @Override
     public byte[] call(byte[] msg) {

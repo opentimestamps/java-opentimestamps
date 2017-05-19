@@ -88,6 +88,11 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals((TimeAttestation)obj);
+    }
+
     public boolean equals(TimeAttestation attestation){
         return attestation.equals(this);
     }

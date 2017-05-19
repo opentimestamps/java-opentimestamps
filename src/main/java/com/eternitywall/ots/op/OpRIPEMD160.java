@@ -40,12 +40,6 @@ public class OpRIPEMD160 extends OpCrypto {
 
     OpRIPEMD160() {
         super();
-        this.arg = new byte[]{};
-    }
-
-    OpRIPEMD160(byte[] arg_) {
-        super(arg_);
-        this.arg = arg_;
     }
 
     @Override

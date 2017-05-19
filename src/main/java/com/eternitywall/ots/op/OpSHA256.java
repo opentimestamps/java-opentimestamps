@@ -40,12 +40,6 @@ public class OpSHA256 extends OpCrypto {
 
     public OpSHA256() {
         super();
-        this.arg = new byte[]{};
-    }
-
-    public OpSHA256(byte[] arg_) {
-        super(new byte[]{});
-        this.arg = arg_;
     }
 
     @Override

@@ -41,12 +41,6 @@ public class OpKECCAK256 extends OpCrypto {
 
     OpKECCAK256() {
         super();
-        this.arg = new byte[]{};
-    }
-
-    OpKECCAK256(byte[] arg_) {
-        super(arg_);
-        this.arg = arg_;
     }
 
     @Override
