@@ -2,6 +2,8 @@ package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -51,4 +53,8 @@ public class OpSHA256 extends OpCrypto {
         return OpCrypto.deserializeFromTag(ctx, tag);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof OpSHA256);
+    }
 }

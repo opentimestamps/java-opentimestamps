@@ -134,13 +134,4 @@ public class Op implements Comparable<Op> {
         return this._TAG()-o._TAG();
     }
 
-    public boolean equals(Op o){
-        if(this._TAG() != o._TAG()){
-            return false;
-        }
-        if(o instanceof OpBinary || o instanceof OpUnary) {
-            return o.equals(this);
-        }
-        return true;
-    }
 }

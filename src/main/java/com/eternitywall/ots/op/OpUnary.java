@@ -41,19 +41,9 @@ public class OpUnary extends Op {
         }
     }
 
-
     @Override
     public String toString() {
         return this._TAG_NAME();
     }
 
-    public boolean equals(Op o){
-        if(this._TAG() != o._TAG()){
-            return false;
-        }
-        if(!(o instanceof OpUnary)) {
-            return false;
-        }
-        return true;
-    }
 }

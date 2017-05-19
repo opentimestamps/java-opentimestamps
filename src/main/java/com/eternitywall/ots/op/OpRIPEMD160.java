@@ -55,4 +55,9 @@ public class OpRIPEMD160 extends OpCrypto {
         return OpCrypto.deserializeFromTag(ctx, tag);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof OpRIPEMD160);
+    }
+
 }

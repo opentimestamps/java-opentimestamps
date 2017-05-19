@@ -3,6 +3,8 @@ package com.eternitywall.ots.op;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -46,5 +48,13 @@ public class OpAppend extends OpBinary {
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         return OpBinary.deserializeFromTag(ctx, tag);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof OpAppend)){
+            return false;
+        }
+        return Arrays.equals(this.arg,((OpAppend)obj).arg);
     }
 }

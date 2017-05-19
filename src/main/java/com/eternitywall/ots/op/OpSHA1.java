@@ -57,4 +57,9 @@ public class OpSHA1 extends OpCrypto {
         return OpCrypto.deserializeFromTag(ctx, tag);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof OpSHA1);
+    }
+
 }
