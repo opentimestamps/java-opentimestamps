@@ -499,11 +499,13 @@ public class Timestamp {
     public Timestamp add(Op op){
         // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
         //Op opAppend = new OpAppend(bytes);
-        Timestamp stamp = this.ops.get(op);
-        if (stamp == null) {
-            stamp = new Timestamp(op.call(this.msg));
-            this.ops.put(op, stamp);
+
+        if (this.ops.containsKey(op)) {
+            return this.ops.get(op);
         }
+
+        Timestamp stamp = new Timestamp(op.call(this.msg));
+        this.ops.put(op, stamp);
         return stamp;
     }
 

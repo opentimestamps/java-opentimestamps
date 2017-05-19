@@ -247,7 +247,6 @@ public class OpenTimestamps {
          * later, so if we didn't use a nonce for every file, the timestamp
          * would leak information on the digests of adjacent files.
          */
-        Timestamp merkleRoot;
         byte[] bytesRandom16 = new byte[16];
         try {
             bytesRandom16 = Utils.randBytes(16);
@@ -257,21 +256,9 @@ public class OpenTimestamps {
         }
 
         // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
-        Op opAppend = new OpAppend(bytesRandom16);
-        Timestamp nonceAppendedStamp = fileTimestamp.timestamp.ops.get(opAppend);
-        if (nonceAppendedStamp == null) {
-            nonceAppendedStamp = new Timestamp(opAppend.call(fileTimestamp.timestamp.msg));
-            fileTimestamp.timestamp.ops.put(opAppend, nonceAppendedStamp);
-        }
-
+        Timestamp nonceAppendedStamp = fileTimestamp.timestamp.add(new OpAppend(bytesRandom16));
         // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.ots.op.OpSHA256())
-        Op opSHA256 = new OpSHA256();
-        merkleRoot = nonceAppendedStamp.ops.get(opSHA256);
-        if (merkleRoot == null) {
-            merkleRoot = new Timestamp(opSHA256.call(nonceAppendedStamp.msg));
-            nonceAppendedStamp.ops.put(opSHA256, merkleRoot);
-        }
-
+        Timestamp merkleRoot = nonceAppendedStamp.add(new OpSHA256());
         // Merkle root
         Timestamp merkleTip = merkleRoot;
 
@@ -435,21 +422,9 @@ public class OpenTimestamps {
                 e.printStackTrace();
             }
             // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
-            Op opAppend = new OpAppend(bytesRandom16);
-            Timestamp nonceAppendedStamp = fileTimestamp.timestamp.ops.get(opAppend);
-            if (nonceAppendedStamp == null) {
-                nonceAppendedStamp = new Timestamp(opAppend.call(fileTimestamp.timestamp.msg));
-                fileTimestamp.timestamp.ops.put(opAppend, nonceAppendedStamp);
-            }
-
+            Timestamp nonceAppendedStamp = fileTimestamp.timestamp.add(new OpAppend(bytesRandom16));
             // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.ots.op.OpSHA256())
-            Op opSHA256 = new OpSHA256();
-            Timestamp merkleRoot = nonceAppendedStamp.ops.get(opSHA256);
-            if (merkleRoot == null) {
-                merkleRoot = new Timestamp(opSHA256.call(nonceAppendedStamp.msg));
-                nonceAppendedStamp.ops.put(opSHA256, merkleRoot);
-            }
-
+            Timestamp merkleRoot = nonceAppendedStamp.add(new OpSHA256());
             merkleRoots.add(merkleRoot);
         }
 
