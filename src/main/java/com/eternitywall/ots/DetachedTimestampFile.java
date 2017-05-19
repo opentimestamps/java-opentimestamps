@@ -58,6 +58,14 @@ public class DetachedTimestampFile {
     }
 
     /**
+     * Retrieve the internal timestamp.
+     * @return the timestamp.
+     */
+    public Timestamp getTimestamp() {
+        return this.timestamp;
+    }
+
+    /**
      * Serialize a com.eternitywall.ots.Timestamp File.
      * @param  ctx The stream serialization context.
      */

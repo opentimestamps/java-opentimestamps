@@ -45,13 +45,8 @@ public class OpSHA1 extends OpCrypto {
 
     OpSHA1() {
         super();
-        this.arg = new byte[]{};
     }
 
-    OpSHA1(byte[] arg_) {
-        super(new byte[]{});
-        this.arg = arg_;
-    }
 
     @Override
     public byte[] call(byte[] msg) {
@@ -60,6 +55,11 @@ public class OpSHA1 extends OpCrypto {
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         return OpCrypto.deserializeFromTag(ctx, tag);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof OpSHA1);
     }
 
 }

@@ -5,6 +5,7 @@ package com.eternitywall.ots.attestation; /**
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -72,5 +73,19 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
     public int compareTo(TimeAttestation o) {
         BitcoinBlockHeaderAttestation ob = (BitcoinBlockHeaderAttestation) o;
         return this.height - ob.height;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof BitcoinBlockHeaderAttestation)){
+            return false;
+        }
+        if(!Arrays.equals(this._TAG(), ((BitcoinBlockHeaderAttestation) obj)._TAG())){
+            return false;
+        }
+        if(this.height != ((BitcoinBlockHeaderAttestation) obj).height){
+            return false;
+        }
+        return true;
     }
 }

@@ -41,12 +41,6 @@ public class OpKECCAK256 extends OpCrypto {
 
     OpKECCAK256() {
         super();
-        this.arg = new byte[]{};
-    }
-
-    OpKECCAK256(byte[] arg_) {
-        super(arg_);
-        this.arg = arg_;
     }
 
     @Override
@@ -59,6 +53,10 @@ public class OpKECCAK256 extends OpCrypto {
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         return OpCrypto.deserializeFromTag(ctx, tag);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof OpKECCAK256);
     }
 
 }

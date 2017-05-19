@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 /** Class representing com.eternitywall.ots.Timestamp signature verification */
-public class TimeAttestation  implements Comparable<TimeAttestation> {
+public abstract class TimeAttestation  implements Comparable<TimeAttestation> {
 
 
     private static Logger log = Logger.getLogger(TimeAttestation.class.getName());
@@ -87,4 +87,5 @@ public class TimeAttestation  implements Comparable<TimeAttestation> {
             return deltaTag;
         }
     }
+
 }

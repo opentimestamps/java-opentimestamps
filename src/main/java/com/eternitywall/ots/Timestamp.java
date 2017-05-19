@@ -12,6 +12,8 @@ import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.attestation.*;
+import com.eternitywall.ots.op.OpAppend;
+import java.util.Map.Entry;
 import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 import java.util.logging.Logger;
@@ -28,9 +30,9 @@ public class Timestamp {
 
     private static Logger log = Logger.getLogger(Timestamp.class.getName());
 
-    byte[] msg;
-    List<TimeAttestation> attestations;
-    HashMap<Op, Timestamp> ops;
+    public byte[] msg;
+    public List<TimeAttestation> attestations;
+    public HashMap<Op, Timestamp> ops;
 
     /**
      * Create a com.eternitywall.ots.Timestamp object.
@@ -41,6 +43,7 @@ public class Timestamp {
         this.attestations = new ArrayList<>();
         this.ops = new HashMap<>();
     }
+
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp.
@@ -93,7 +96,7 @@ public class Timestamp {
         Collections.sort(sortedAttestations);
         
         if (sortedAttestations.size() > 1) {
-            for (int i = 0; i < sortedAttestations.size(); i++) {
+            for (int i = 0; i < sortedAttestations.size() - 1; i++) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(i).serialize(ctx);
             }
@@ -109,13 +112,11 @@ public class Timestamp {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
 
-            // all op/stamp
             int counter = 0;
-
-            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            List<Map.Entry<Op, Timestamp>> list = sortToList(this.ops.entrySet());
+            for (Map.Entry<Op, Timestamp> entry : list){
                 Timestamp stamp = entry.getValue();
                 Op op = entry.getKey();
-
                 if (counter < this.ops.size() - 1) {
                     ctx.writeBytes(new byte[]{(byte) 0xff});
                     counter++;
@@ -123,7 +124,6 @@ public class Timestamp {
 
                 op.serialize(ctx);
                 stamp.serialize(ctx);
-
             }
 
         }
@@ -133,10 +133,10 @@ public class Timestamp {
      * Add all operations and attestations from another timestamp to this one.
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
      */
-    public void merge(Timestamp other) {
+    public void merge(Timestamp other) throws Exception {
         if (!Arrays.equals(this.msg, other.msg)) {
-            log.severe("Can\'t merge timestamps for different messages together");
-            return;
+            //log.severe("Can\'t merge timestamps for different messages together");
+            throw new Exception("Can\'t merge timestamps for different messages together");
         }
 
         for (final TimeAttestation attestation : other.attestations) {
@@ -420,6 +420,107 @@ public class Timestamp {
             }
         }
         return map;
+    }
+
+    /**
+     * Iterate over all tips recursively
+     * @return Returns iterable of (msg, attestation)
+     */
+    public Set<byte[]> allTips() {
+
+        Set<byte[]> set = new HashSet<>();
+        if (this.ops.size() == 0){
+            set.add(this.msg);
+        }
+        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            Timestamp ts = entry.getValue();
+            //Op op = entry.getKey();
+
+            Set<byte[]> subSet = ts.allTips();
+            for (byte[] msg : subSet) {
+                set.add(msg);
+            }
+        }
+        return set;
+    }
+
+    /**
+     * Compare timestamps
+     * @return Returns true if timestamps are equals
+     */
+    public boolean equals(Timestamp timestamp){
+        if (Arrays.equals(this.getDigest(),timestamp.getDigest()) == false){
+            return false;
+        }
+
+        // Check attestations
+        if(this.attestations.size() != timestamp.attestations.size()){
+            return false;
+        }
+        for (int i=0 ; i < this.attestations.size(); i++){
+            TimeAttestation ta1 = this.attestations.get(i);
+            TimeAttestation ta2 = timestamp.attestations.get(i);
+            if(!(ta1.equals( ta2 ))){
+                return false;
+            }
+        }
+
+        // Check operations
+        if (this.ops.size() != timestamp.ops.size()){
+            return false;
+        }
+
+        // Order list of operations
+        List<Map.Entry<Op, Timestamp>> list1 = sortToList(this.ops.entrySet());
+        List<Map.Entry<Op, Timestamp>> list2 = sortToList(this.ops.entrySet());
+        for (int i=0 ; i<list1.size() ; i++){
+            Op op1 = list1.get(i).getKey();
+            Op op2 = list2.get(i).getKey();
+            if (!op1.equals(op2)){
+                return false;
+            }
+            Timestamp t1 = list1.get(i).getValue();
+            Timestamp t2 = list2.get(i).getValue();
+            if (!t1.equals(t2)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add Op to current timestamp and return the sub stamp
+     * @param op - The operation to insert
+     * @return Returns the sub timestamp
+     */
+    public Timestamp add(Op op){
+        // nonce_appended_stamp = timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
+        //Op opAppend = new OpAppend(bytes);
+
+        if (this.ops.containsKey(op)) {
+            return this.ops.get(op);
+        }
+
+        Timestamp stamp = new Timestamp(op.call(this.msg));
+        this.ops.put(op, stamp);
+        return stamp;
+    }
+
+
+    /**
+     * Retrieve
+     * @param setEntries - The entries set of ops hashmap
+     * @return Returns the sorted list of map entries
+     */
+    public List<Map.Entry<Op, Timestamp>> sortToList(Set<Entry<Op, Timestamp>> setEntries){
+        List<Map.Entry<Op, Timestamp>> entries = new ArrayList<>(setEntries);
+        Collections.sort(entries, new Comparator<Map.Entry<Op, Timestamp>>() {
+            @Override
+            public int compare(Entry<Op, Timestamp> a, Entry<Op, Timestamp> b) {
+                return a.getKey().compareTo(b.getKey());
+            }
+        });
+        return entries;
     }
 
 }

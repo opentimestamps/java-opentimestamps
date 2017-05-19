@@ -3,12 +3,13 @@ package com.eternitywall.ots.op;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
-public class Op implements Comparable<Op> {
+public abstract class Op implements Comparable<Op> {
 
 
     private static Logger log = Logger.getLogger(Op.class.getName());
@@ -132,4 +133,5 @@ public class Op implements Comparable<Op> {
     public int compareTo(Op o) {
         return this._TAG()-o._TAG();
     }
+
 }
