@@ -10,7 +10,6 @@ import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpPrepend;
 import com.eternitywall.ots.op.OpSHA256;
-import com.sun.tools.javac.util.Assert;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -121,9 +120,9 @@ public class TestTimestamp {
     // Should fail - empty timestamps can't be serialized
     //StreamSerializationContext ssc = new StreamSerializationContext();
     //stamp.serialize(ssc);
-    byte[] voids = new byte[0];
-    OpSHA256 opSHA256 = new OpSHA256(voids);
+    OpSHA256 opSHA256 = new OpSHA256();
     Timestamp sha256Stamp = stamp.add(opSHA256);
+    // TODO: check serialization
 
     PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("deeper", "UTF-8"));
     sha256Stamp.attestations.add( pendingAttestation );
