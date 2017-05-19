@@ -55,14 +55,15 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
         return this.height - ob.height;
     }
 
-    public boolean equals(TimeAttestation attestation){
-        if(!(attestation instanceof EthereumBlockHeaderAttestation)){
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof EthereumBlockHeaderAttestation)){
             return false;
         }
-        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+        if(!Arrays.equals(this._TAG(), ((EthereumBlockHeaderAttestation) obj)._TAG())){
             return false;
         }
-        if(this.height != ((EthereumBlockHeaderAttestation) attestation).height){
+        if(this.height != ((EthereumBlockHeaderAttestation) obj).height){
             return false;
         }
         return true;

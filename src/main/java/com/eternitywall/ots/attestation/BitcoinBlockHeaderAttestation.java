@@ -75,14 +75,15 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return this.height - ob.height;
     }
 
-    public boolean equals(TimeAttestation attestation){
-        if(!(attestation instanceof BitcoinBlockHeaderAttestation)){
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof BitcoinBlockHeaderAttestation)){
             return false;
         }
-        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+        if(!Arrays.equals(this._TAG(), ((BitcoinBlockHeaderAttestation) obj)._TAG())){
             return false;
         }
-        if(this.height != ((BitcoinBlockHeaderAttestation) attestation).height){
+        if(this.height != ((BitcoinBlockHeaderAttestation) obj).height){
             return false;
         }
         return true;

@@ -53,14 +53,15 @@ public class UnknownAttestation extends TimeAttestation {
         return Utils.compare(this.payload, ota.payload) ;
     }
 
-    public boolean equals(TimeAttestation attestation){
-        if(!(attestation instanceof UnknownAttestation)){
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof UnknownAttestation)){
             return false;
         }
-        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+        if(!Arrays.equals(this._TAG(), ((UnknownAttestation)obj)._TAG())){
             return false;
         }
-        if(!Arrays.equals(this.payload, ((UnknownAttestation) attestation).payload)){
+        if(!Arrays.equals(this.payload, ((UnknownAttestation)obj).payload)){
             return false;
         }
         return true;

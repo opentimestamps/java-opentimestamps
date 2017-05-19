@@ -94,14 +94,15 @@ public class PendingAttestation extends TimeAttestation {
         return Utils.compare(this.uri, opa.uri) ;
     }
 
-    public boolean equals(TimeAttestation attestation){
-        if(!(attestation instanceof PendingAttestation)){
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof PendingAttestation)){
             return false;
         }
-        if(!Arrays.equals(this._TAG(), attestation._TAG())){
+        if(!Arrays.equals(this._TAG(), ((PendingAttestation)obj)._TAG())){
             return false;
         }
-        if(!Arrays.equals(this.uri, ((PendingAttestation) attestation).uri)){
+        if(!Arrays.equals(this.uri, ((PendingAttestation)obj).uri)){
             return false;
         }
         return true;
