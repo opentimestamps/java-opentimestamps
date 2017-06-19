@@ -3,7 +3,7 @@ package com.eternitywall.ots.crypto;
 import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
-import javax.xml.bind.DatatypeConverter;
+
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,14 +19,14 @@ public class TestKeccakDigest {
         digest.update(msg, 0, msg.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
-        assertEquals("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470", DatatypeConverter.printHexBinary(hash).toLowerCase());
+        assertEquals("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470", Utils.bytesToHex(hash).toLowerCase());
 
-        byte[] msg2=DatatypeConverter.parseHexBinary("80");
+        byte[] msg2=Utils.hexToBytes("80");
         digest.reset();
         digest.update(msg2, 0, msg2.length);
         byte[] hash2 = new byte[digest.getDigestSize()];
         digest.doFinal(hash2, 0);
-        assertEquals("56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", DatatypeConverter.printHexBinary(hash2).toLowerCase());
+        assertEquals("56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", Utils.bytesToHex(hash2).toLowerCase());
 
         // self.assertEqual(OpKECCAK256()(b''), bytes.fromhex('c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'))
         // self.assertEqual(OpKECCAK256()(b'\x80'), bytes.fromhex('56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421'))

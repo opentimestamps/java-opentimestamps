@@ -4,7 +4,7 @@ import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import org.bitcoinj.core.ECKey;
 
-import javax.xml.bind.DatatypeConverter;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
         headers.put("Content-Type","application/x-www-form-urlencoded");
 
         if (key != null ) {
-            String signature = key.signMessage(DatatypeConverter.printHexBinary(digest).toLowerCase());
+            String signature = key.signMessage(Utils.bytesToHex(digest).toLowerCase());
             headers.put("x-signature", signature);
         }
 

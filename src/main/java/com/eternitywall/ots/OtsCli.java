@@ -7,7 +7,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 
-import javax.xml.bind.DatatypeConverter;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -64,7 +64,7 @@ public class OtsCli {
                 return;
             }
             if(line.hasOption("H")) {
-                shasum = DatatypeConverter.parseHexBinary(line.getOptionValue("H"));
+                shasum = Utils.hexToBytes(line.getOptionValue("H"));
             }
 
 
@@ -166,7 +166,7 @@ public class OtsCli {
             }
         }
 
-        String argsOts = DatatypeConverter.printHexBinary(shasum) + ".ots";
+        String argsOts = Utils.bytesToHex(shasum) + ".ots";
         Path path = Paths.get(argsOts);
         if(path.toFile().exists()) {
             System.out.println("File '" + argsOts + "' already exist");
@@ -234,7 +234,7 @@ public class OtsCli {
                 timestamp = OpenTimestamps.verify(byteOts,fis);
             } else {
                 // Read from hash option
-                System.out.println("Assuming target hash is '" + DatatypeConverter.printHexBinary(hash.getValue()) + "'");
+                System.out.println("Assuming target hash is '" + Utils.bytesToHex(hash.getValue()) + "'");
                 timestamp = OpenTimestamps.verify(byteOts,hash);
             }
 

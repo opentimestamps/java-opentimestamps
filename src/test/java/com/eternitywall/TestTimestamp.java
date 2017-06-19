@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import javax.xml.bind.DatatypeConverter;
-import org.bitcoinj.core.Utils;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.eternitywall.ots.Utils;
 
 public class TestTimestamp {
 
@@ -84,7 +84,7 @@ public class TestTimestamp {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobar", "UTF-8"));
     Tserialize(stamp, baos.toByteArray());
 
@@ -93,10 +93,10 @@ public class TestTimestamp {
     baos = new ByteArrayOutputStream();
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("barfoo", "UTF-8"));
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobar", "UTF-8"));
     Tserialize(stamp, baos.toByteArray());
 
@@ -105,14 +105,14 @@ public class TestTimestamp {
     baos = new ByteArrayOutputStream();
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("barfoo", "UTF-8"));
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobar", "UTF-8"));
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobaz", "UTF-8"));
     Tserialize(stamp, baos.toByteArray());
 
@@ -130,19 +130,19 @@ public class TestTimestamp {
     baos = new ByteArrayOutputStream();
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("barfoo", "UTF-8"));
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobar", "UTF-8"));
     baos.write(0xff);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("foobaz", "UTF-8"));
     baos.write(0x08);
     baos.write(0x00);
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("deeper", "UTF-8"));
     Tserialize(stamp, baos.toByteArray());
 
@@ -180,12 +180,12 @@ public class TestTimestamp {
   public void makeMerkleTree()
       throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
-    defTimestamp(2, DatatypeConverter.parseHexBinary("b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"));
-    defTimestamp(3, DatatypeConverter.parseHexBinary("e6aa639123d8aac95d13d365ec3779dade4b49c083a8fed97d7bfc0d89bb6a5e"));
-    defTimestamp(4, DatatypeConverter.parseHexBinary("7699a4fdd6b8b6908a344f73b8f05c8e1400f7253f544602c442ff5c65504b24"));
-    defTimestamp(5, DatatypeConverter.parseHexBinary("aaa9609d0c949fee22c1c941a4432f32dc1c2de939e4af25207f0dc62df0dbd8"));
-    defTimestamp(6, DatatypeConverter.parseHexBinary("ebdb4245f648b7e77b60f4f8a99a6d0529d1d372f98f35478b3284f16da93c06"));
-    defTimestamp(7, DatatypeConverter.parseHexBinary("ba4603a311279dea32e8958bfb660c86237157bf79e6bfee857803e811d91b8f"));
+    defTimestamp(2, Utils.hexToBytes("b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"));
+    defTimestamp(3, Utils.hexToBytes("e6aa639123d8aac95d13d365ec3779dade4b49c083a8fed97d7bfc0d89bb6a5e"));
+    defTimestamp(4, Utils.hexToBytes("7699a4fdd6b8b6908a344f73b8f05c8e1400f7253f544602c442ff5c65504b24"));
+    defTimestamp(5, Utils.hexToBytes("aaa9609d0c949fee22c1c941a4432f32dc1c2de939e4af25207f0dc62df0dbd8"));
+    defTimestamp(6, Utils.hexToBytes("ebdb4245f648b7e77b60f4f8a99a6d0529d1d372f98f35478b3284f16da93c06"));
+    defTimestamp(7, Utils.hexToBytes("ba4603a311279dea32e8958bfb660c86237157bf79e6bfee857803e811d91b8f"));
   }
 
   @Test
@@ -193,11 +193,11 @@ public class TestTimestamp {
     Timestamp left = new Timestamp(Utils.toBytes("foo", "UTF-8") );
     Timestamp right = new Timestamp(Utils.toBytes("bar", "UTF-8"));
     Timestamp stampLeftRight = Merkle.catSha256(left, right);
-    assertTrue(Arrays.equals(stampLeftRight.getDigest(),DatatypeConverter.parseHexBinary("c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2")));
+    assertTrue(Arrays.equals(stampLeftRight.getDigest(),Utils.hexToBytes("c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2")));
 
     Timestamp righter = new Timestamp(Utils.toBytes("baz", "UTF-8"));
     Timestamp stampRighter = Merkle.catSha256(stampLeftRight, righter);
-    assertTrue(Arrays.equals(stampRighter.getDigest(),DatatypeConverter.parseHexBinary("23388b16c66f1fa37ef14af8eb081712d570813e2afb8c8ae86efa726f3b7276")));
+    assertTrue(Arrays.equals(stampRighter.getDigest(),Utils.hexToBytes("23388b16c66f1fa37ef14af8eb081712d570813e2afb8c8ae86efa726f3b7276")));
   }
 
   public void defTimestamp(int n, byte[] expected_merkle_root){

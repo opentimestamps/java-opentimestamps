@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import org.bitcoinj.core.*;
 
 /**
  * Created by luca on 26/02/2017.
@@ -74,5 +75,33 @@ public class Utils {
             }
         }
         return left.length - right.length;
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
+    public static byte[] hexToBytes(String s) throws IllegalArgumentException{
+        int len = s.length();
+        if(len%2==1){
+            throw new IllegalArgumentException();
+        }
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            if ((Character.digit(s.charAt(i), 16) == -1) || (Character.digit(s.charAt(i+1), 16) == -1)) {
+                throw new IllegalArgumentException();
+            }
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+    public static byte[] toBytes(String str, String encode) {
+        return org.bitcoinj.core.Utils.toBytes(str, encode);
     }
 }

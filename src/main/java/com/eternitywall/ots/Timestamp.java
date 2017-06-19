@@ -14,7 +14,7 @@ import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.attestation.*;
 import com.eternitywall.ots.op.OpAppend;
 import java.util.Map.Entry;
-import javax.xml.bind.DatatypeConverter;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -226,7 +226,7 @@ public class Timestamp {
      */
     public String toString(int indent) {
         StringBuilder builder = new StringBuilder();
-        builder.append( Timestamp.indention(indent) + "msg: " + DatatypeConverter.printHexBinary(this.msg).toLowerCase() + "\n");
+        builder.append( Timestamp.indention(indent) + "msg: " + Utils.bytesToHex(this.msg).toLowerCase() + "\n");
         builder.append( Timestamp.indention(indent) + this.attestations.size() + " attestations: \n");
         int i = 0;
         for (final TimeAttestation attestation : this.attestations) {
@@ -318,7 +318,7 @@ public class Timestamp {
             for (final TimeAttestation attestation : timestamp.attestations) {
                 builder.append( Timestamp.indention(indent))
                     .append( "verify " + attestation.toString())
-                    .append( " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ")
+                    .append( " (" + Utils.bytesToHex(timestamp.msg).toLowerCase() + ") ")
                     //.append( " ["+com.eternitywall.ots.Utils.bytesToHex(timestamp.msg)+"] ")
                     .append( '\n');
             }
@@ -332,7 +332,7 @@ public class Timestamp {
                 builder.append( Timestamp.indention(indent))
                     .append( " -> ")
                     .append( op.toString())
-                    .append( " (" + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + ") ")
+                    .append( " (" + Utils.bytesToHex(timestamp.msg).toLowerCase() + ") ")
                     .append( '\n')
                     .append( Timestamp.strTreeExtended(ts, indent + 1));
             }
@@ -343,7 +343,7 @@ public class Timestamp {
                 Op op = entry.getKey();
                 builder.append( Timestamp.indention(indent))
                     .append( op.toString())
-                    .append( " ( " + DatatypeConverter.printHexBinary(timestamp.msg).toLowerCase() + " ) ")
+                    .append( " ( " + Utils.bytesToHex(timestamp.msg).toLowerCase() + " ) ")
                     .append( '\n')
                     .append( Timestamp.strTreeExtended(ts, indent));
             }

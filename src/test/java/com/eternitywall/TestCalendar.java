@@ -8,7 +8,7 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.junit.Test;
 
-import javax.xml.bind.DatatypeConverter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
