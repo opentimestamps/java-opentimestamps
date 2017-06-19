@@ -334,7 +334,6 @@ public class OpenTimestamps {
                 task.setKey(key);
                 task.setQueue(queue);
                 executor.submit(task);
-                capacity++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -349,14 +348,13 @@ public class OpenTimestamps {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, timestamp.msg);
                 task.setQueue(queue);
                 executor.submit(task);
-                capacity++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         int count=0;
-        for (int i=0; i < capacity; i++) {
+        for (count=0; count < capacity && count < m; count++) {
 
             try {
                 Optional<Timestamp> optionalStamp = queue.take();
@@ -366,10 +364,6 @@ public class OpenTimestamps {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    count++;
-                }
-                if(count >= m){
-                    break;
                 }
 
             } catch (InterruptedException e) {
