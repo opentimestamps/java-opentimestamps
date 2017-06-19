@@ -21,7 +21,7 @@ public abstract class OpUnary extends Op {
         return "";
     }
 
-    OpUnary() {
+    public OpUnary() {
         super();
     }
 

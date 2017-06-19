@@ -24,12 +24,12 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         return "";
     }
 
-    OpBinary() {
+    public OpBinary() {
         super();
         this.arg = new byte[]{};
     }
 
-    OpBinary(byte[] arg_) {
+    public OpBinary(byte[] arg_) {
         super();
         this.arg = arg_;
     }
@@ -64,6 +64,10 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
             return Utils.compare(this.arg, ((OpBinary) o).arg );
         }
         return this._TAG()-o._TAG();
+    }
 
+    @Override
+    public int hashCode(){
+        return _TAG ^ Arrays.hashCode(this.arg);
     }
 }

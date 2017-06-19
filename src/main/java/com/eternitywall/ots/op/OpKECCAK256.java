@@ -39,7 +39,7 @@ public class OpKECCAK256 extends OpCrypto {
         return digest.getDigestSize();
     }
 
-    OpKECCAK256() {
+    public OpKECCAK256() {
         super();
     }
 

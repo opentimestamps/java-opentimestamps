@@ -38,7 +38,7 @@ public class OpRIPEMD160 extends OpCrypto {
         return 20;
     }
 
-    OpRIPEMD160() {
+    public OpRIPEMD160() {
         super();
     }
 
@@ -58,6 +58,11 @@ public class OpRIPEMD160 extends OpCrypto {
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof OpRIPEMD160);
+    }
+
+    @Override
+    public int hashCode(){
+        return _TAG;
     }
 
 }
