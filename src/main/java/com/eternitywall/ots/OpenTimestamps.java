@@ -509,6 +509,7 @@ public class OpenTimestamps {
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
             System.err.print("com.eternitywall.ots.StreamDeserializationContext error");
+            return null;
         }
 
         // Read STAMPED
@@ -517,6 +518,7 @@ public class OpenTimestamps {
             actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(stamped);
         } catch (Exception e) {
             log.severe("com.eternitywall.ots.StreamDeserializationContext : file stream error");
+            return null;
         }
 
         // Call Verify
@@ -538,7 +540,7 @@ public class OpenTimestamps {
         if (!Arrays.equals(actualFileDigest.getValue(), detachedFileDigest)) {
             log.severe("Expected digest " + DatatypeConverter.printHexBinary(detachedTimestamp.fileDigest()).toLowerCase());
             log.severe("File does not match original!");
-
+            return null;
         }
 
         return OpenTimestamps.verify(detachedTimestamp.timestamp);
@@ -617,6 +619,7 @@ public class OpenTimestamps {
             detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
         } catch (Exception e) {
             log.severe("com.eternitywall.ots.StreamDeserializationContext error");
+            return null;
         }
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
             return ots;
