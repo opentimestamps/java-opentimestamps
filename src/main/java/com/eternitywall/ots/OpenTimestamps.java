@@ -382,6 +382,7 @@ public class OpenTimestamps {
     /**
      * Make Merkle Tree.
      * @param hashes The list of Hash to merklefy.
+     * @param opCrypto the hash type used for the initial data
      * @return merkle tip timestamp.
      */
     public static Timestamp makeMerkleTree(List<Hash> hashes, OpCrypto opCrypto){
