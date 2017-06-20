@@ -307,7 +307,8 @@ public class OtsCli {
                 "Options:\n" +
                         "-c, --calendar \tCreate timestamp with the aid of a remote calendar. May be specified multiple times.\n" +
                         "-k, --key \tSignature key file of private remote calendars.\n"+
-                        "-H, --hash \tPass the shasum of the document to timestamp.\n"+
+                        "-H, --hash \tPass the hash string of the document to timestamp.\n"+
+                        "-a, --algorithm \tPass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160.\n"+
                         "-m     \t\tCommitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied.\n" +
                         "-V, --version  \tprint " + title + " version.\n" +
                         "-h, --help     \tprint this help.\n" +
