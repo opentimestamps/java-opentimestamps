@@ -92,7 +92,7 @@ public class TestOpenTimestamps {
     @Test
     public void stamp() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
         byte[] bytes = Utils.randBytes(32);
-        byte[] ots = OpenTimestamps.stamp(new Hash(bytes));
+        byte[] ots = OpenTimestamps.stamp(new Hash(bytes, OpSHA256._TAG));
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
         DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
         byte[] digest = detachedTimestampFile.fileDigest();
@@ -157,7 +157,7 @@ public class TestOpenTimestamps {
         assertEquals(1473227803L, timestamp.longValue());
 
         byte[] hashBytes = Utils.randBytes(32);
-        byte[] stamp = OpenTimestamps.stamp(new Hash(hashBytes));
+        byte[] stamp = OpenTimestamps.stamp(new Hash(hashBytes, OpSHA256._TAG));
 
         StreamDeserializationContext streamSerializationContext = new StreamDeserializationContext(stamp);
         Timestamp timestamp1 = Timestamp.deserialize(streamSerializationContext, hashBytes);

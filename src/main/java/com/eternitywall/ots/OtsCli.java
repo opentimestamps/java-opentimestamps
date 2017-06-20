@@ -26,6 +26,8 @@ public class OtsCli {
     private static Integer m = 0;
     private static String signatureFile = "";
     private static byte[] shasum;
+    private static String[] algorithms = new String[]{"SHA256","SHA1","RIPEMD160"};
+    private static String algorithm = "SHA256";
 
     public static void main(String[] args) {
 
@@ -33,7 +35,8 @@ public class OtsCli {
         Options options = new Options();
         options.addOption( "c", "calendar", true, "Create timestamp with the aid of a remote calendar. May be specified multiple times." );
         options.addOption( "k", "key", true, "Signature key file of private remote calendars." );
-        options.addOption( "H", "hash", true, "Pass the shasum of the document to timestamp." );
+        options.addOption( "H", "hash", true, "Pass the hash string of the document to timestamp." );
+        options.addOption( "a", "algorithm", true, "Pass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
         options.addOption( "V", "version", false, "print " + title + " version." );
         options.addOption( "h", "help", false, "print this help." );
@@ -66,6 +69,13 @@ public class OtsCli {
             if(line.hasOption("H")) {
                 shasum = Utils.hexToBytes(line.getOptionValue("H"));
             }
+            if(line.hasOption("a")) {
+                algorithm = line.getOptionValue("a");
+                if(!Arrays.asList(algorithms).contains(algorithm)){
+                    System.out.println("Algorithm: " + algorithm + " not supported\n");
+                    return;
+                }
+            }
 
 
             if(line.getArgList().isEmpty()){
@@ -78,6 +88,7 @@ public class OtsCli {
 
         } catch(Exception e) {
             System.out.println(title + ": invalid parameters ");
+            return;
         }
 
         // Parse the command
@@ -96,7 +107,8 @@ public class OtsCli {
                 if(!files.isEmpty()) {
                     stamp(files.get(0), calendarsUrl, m, signatureFile);
                 } else if (shasum != null){
-                    stamp(shasum, calendarsUrl, m, signatureFile);
+                    Hash hash = new Hash(shasum, algorithm);
+                    stamp(hash, calendarsUrl, m, signatureFile);
                 } else {
                     System.out.println("Create timestamp with the aid of a remote calendar.\n");
                     System.out.println(title + ": bad options number ");
@@ -107,7 +119,7 @@ public class OtsCli {
                 if(!files.isEmpty()) {
                     verify(files.get(0), null);
                 } else if (shasum != null){
-                    Hash hash = new Hash(shasum);
+                    Hash hash = new Hash(shasum, algorithm);
                     verify(files.get(0), hash);
                 } else {
                     System.out.println("Verify the timestamp attestations given as argument.\n");
@@ -156,7 +168,7 @@ public class OtsCli {
         }
     }
 
-    private static void stamp(byte[] shasum, List<String> calendarsUrl, Integer m, String signatureFile) {
+    private static void stamp(Hash hash, List<String> calendarsUrl, Integer m, String signatureFile) {
         HashMap<String, String> privateUrls = new HashMap<>();
         if (signatureFile != null && signatureFile != "") {
             try {
@@ -174,7 +186,7 @@ public class OtsCli {
         }
 
         try {
-            byte[] stampResult = OpenTimestamps.stamp(shasum, calendarsUrl, m, privateUrls);
+            byte[] stampResult = OpenTimestamps.stamp(hash, calendarsUrl, m, privateUrls);
             Files.write(path, stampResult);
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (IOException e) {

@@ -174,7 +174,7 @@ public class OpenTimestamps {
     public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Read from file reader stream
         DetachedTimestampFile fileTimestamp;
-        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
+        fileTimestamp = DetachedTimestampFile.from(hash.getOp(), hash);
         return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
     }
 
@@ -199,10 +199,7 @@ public class OpenTimestamps {
      * @throws IOException desc
      */
     public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m) throws IOException {
-        // Read from file reader stream
-        DetachedTimestampFile fileTimestamp;
-        fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), hash);
-        return stamp(fileTimestamp, calendarsUrl, m, null);
+        return stamp(hash, calendarsUrl, m, null);
     }
 
 
@@ -484,7 +481,7 @@ public class OpenTimestamps {
         }
 
         // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,new Hash(actualFileDigest));
+        return OpenTimestamps.verify(detachedTimestamp,new Hash(actualFileDigest, OpSHA256._TAG));
     }
 
     /**
@@ -516,7 +513,7 @@ public class OpenTimestamps {
         }
 
         // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp, new Hash(actualFileDigest));
+        return OpenTimestamps.verify(detachedTimestamp, new Hash(actualFileDigest, OpSHA256._TAG));
     }
 
 
