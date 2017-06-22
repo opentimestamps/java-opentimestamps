@@ -227,17 +227,22 @@ public class OpenTimestamps {
         return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
     }
 
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param fileTimestamp The timestamp to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @param privateCalendarsUrl The list of private calendar urls with signature.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
     public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
+        List<DetachedTimestampFile> fileTimestamps = new ArrayList<DetachedTimestampFile>();
+        fileTimestamps.add(fileTimestamp);
+        return OpenTimestamps.stamp(fileTimestamps,calendarsUrl,m, privateCalendarsUrl);
+    }
+        /**
+         * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+         *
+         * @param fileTimestamp The timestamp to stamp.
+         * @param calendarsUrl The list of calendar urls.
+         * @param m The number of calendar to use.
+         * @param privateCalendarsUrl The list of private calendar urls with signature.
+         * @return The plain array buffer of stamped.
+         * @throws IOException desc
+         */
+    public static byte[] stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         /**
          * Add nonce:
          * Remember that the files - and their timestamps - might get separated

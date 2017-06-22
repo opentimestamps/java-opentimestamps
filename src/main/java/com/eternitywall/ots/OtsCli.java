@@ -193,6 +193,7 @@ public class OtsCli {
             log.severe("Invalid shasum");
         }
     }
+
     private static void stamp(String argsFile, List<String> calendarsUrl, Integer m, String signatureFile) {
         FileInputStream fis = null;
         try {
