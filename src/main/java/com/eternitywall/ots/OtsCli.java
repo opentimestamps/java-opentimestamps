@@ -76,7 +76,7 @@ public class OtsCli {
             }
             if(line.hasOption("a")) {
                 algorithm = line.getOptionValue("a");
-                if(!Arrays.asList(algorithms).contains(algorithm)){
+                if(!Arrays.asList(algorithms).contains(algorithm.toUpperCase())){
                     System.out.println("Algorithm: " + algorithm + " not supported\n");
                     return;
                 }
@@ -110,7 +110,7 @@ public class OtsCli {
             case "stamp":
             case "s":
                 if(!files.isEmpty()) {
-                    multistamp(files, calendarsUrl, m, signatureFile);
+                    multistamp(files, calendarsUrl, m, signatureFile, algorithm);
                 } else if (shasum != null){
                     Hash hash = new Hash(shasum, algorithm);
                     stamp(hash, calendarsUrl, m, signatureFile);
@@ -174,7 +174,7 @@ public class OtsCli {
         }
     }
 
-    private static void multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile){
+    private static void multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile, String algorithm){
 
         // Parse input privateUrls
         HashMap<String, String> privateUrls = new HashMap<>();
