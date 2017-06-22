@@ -9,10 +9,14 @@ import java.util.List;
 
 
 public class Merkle {
+
+
     /** Concatenate left and right, then perform a unary operation on them left and right can be either timestamps or bytes.
      * Appropriate intermediary append/prepend operations will be created as needed for left and right.
+     * @param left the left timestamp parameter
+     * @param right the right timestamp parameter
+     * @return the concatenation of left and right
      * */
-
 
     public static Timestamp catThenUnaryOp( Timestamp left, Timestamp right) {
 
@@ -43,11 +47,13 @@ public class Merkle {
 
     /** Merkelize a set of timestamps
      * A merkle tree of all the timestamps is built in-place using binop() to
-     timestamp each pair of timestamps. The exact algorithm used is structurally
-     identical to a merkle-mountain-range, although leaf sums aren't committed.
-     As this function is under the consensus-critical core, it's guaranteed that
-     the algorithm will not be changed in the future.
-     Returns the timestamp for the tip of the tree.
+     * timestamp each pair of timestamps. The exact algorithm used is structurally
+     * identical to a merkle-mountain-range, although leaf sums aren't committed.
+     * As this function is under the consensus-critical core, it's guaranteed that
+     * the algorithm will not be changed in the future.
+     * @param timestamps a list of timestamps
+     * @return the timestamp for the tip of the tree.
+
      */
     public static Timestamp makeMerkleTree(List<Timestamp> timestamps) {
         List<Timestamp> stamps = timestamps;

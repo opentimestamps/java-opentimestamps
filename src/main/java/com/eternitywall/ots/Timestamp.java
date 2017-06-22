@@ -132,6 +132,7 @@ public class Timestamp {
     /**
      * Add all operations and attestations from another timestamp to this one.
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
+     * @throws Exception desc TODO
      */
     public void merge(Timestamp other) throws Exception {
         if (!Arrays.equals(this.msg, other.msg)) {
@@ -446,6 +447,7 @@ public class Timestamp {
 
     /**
      * Compare timestamps
+     * @param timestamp the timestamp to compare with
      * @return Returns true if timestamps are equals
      */
     public boolean equals(Timestamp timestamp){
