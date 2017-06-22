@@ -227,15 +227,26 @@ public class OpenTimestamps {
         return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
     }
 
+    /**
+     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
+     *
+     * @param fileTimestamp The timestamp to stamp.
+     * @param calendarsUrl The list of calendar urls.
+     * @param m The number of calendar to use.
+     * @param privateCalendarsUrl The list of private calendar urls with signature.
+     * @return The plain array buffer of stamped.
+     * @throws IOException desc
+     */
     public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<DetachedTimestampFile>();
         fileTimestamps.add(fileTimestamp);
         return OpenTimestamps.stamp(fileTimestamps,calendarsUrl,m, privateCalendarsUrl);
     }
+
         /**
          * Create timestamp with the aid of a remote calendar. May be specified multiple times.
          *
-         * @param fileTimestamp The timestamp to stamp.
+         * @param fileTimestamps The list of timestamp to stamp.
          * @param calendarsUrl The list of calendar urls.
          * @param m The number of calendar to use.
          * @param privateCalendarsUrl The list of private calendar urls with signature.
@@ -243,28 +254,10 @@ public class OpenTimestamps {
          * @throws IOException desc
          */
     public static byte[] stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
-        /**
-         * Add nonce:
-         * Remember that the files - and their timestamps - might get separated
-         * later, so if we didn't use a nonce for every file, the timestamp
-         * would leak information on the digests of adjacent files.
-         */
-        byte[] bytesRandom16 = new byte[16];
-        try {
-            bytesRandom16 = Utils.randBytes(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        // Parse parameters
+        if (fileTimestamps == null ||fileTimestamps.size() == 0) {
             throw new IOException();
         }
-
-        // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
-        Timestamp nonceAppendedStamp = fileTimestamp.timestamp.add(new OpAppend(bytesRandom16));
-        // merkle_root = nonce_appended_stamp.ops.add(com.eternitywall.ots.op.OpSHA256())
-        Timestamp merkleRoot = nonceAppendedStamp.add(new OpSHA256());
-        // Merkle root
-        Timestamp merkleTip = merkleRoot;
-
-        // Parse parameters
         if(privateCalendarsUrl == null) {
             privateCalendarsUrl = new HashMap<>();
         }
@@ -288,15 +281,36 @@ public class OpenTimestamps {
             throw new IOException();
         }
 
-        Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m, privateCalendarsUrl);
+        // Build markle tree
+        Timestamp merkleTip = OpenTimestamps.makeMerkleTree(fileTimestamps);
+        if (merkleTip == null) {
+            throw new IOException();
+        }
 
+        // Stamping
+        Timestamp resultTimestamp = OpenTimestamps.create(merkleTip, calendarsUrl, m, privateCalendarsUrl);
         if (resultTimestamp == null) {
             throw new IOException();
         }
-        // com.eternitywall.ots.Timestamp serialization
-        StreamSerializationContext css = new StreamSerializationContext();
-        fileTimestamp.serialize(css);
-        return css.getOutput();
+
+        // Result of timestamp serialization
+        if (fileTimestamps.size() == 1) {
+            try {
+                StreamSerializationContext css = new StreamSerializationContext();
+                fileTimestamps.get(0).serialize(css);
+                return css.getOutput();
+            }catch(Exception e){
+                throw new IOException();
+            }
+        } else {
+            try {
+                StreamSerializationContext css = new StreamSerializationContext();
+                merkleTip.serialize(css);
+                return css.getOutput();
+            } catch (Exception e) {
+                throw new IOException();
+            }
+        }
     }
 
     /**
