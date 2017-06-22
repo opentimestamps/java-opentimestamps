@@ -44,6 +44,16 @@ public class Timestamp {
         this.ops = new HashMap<>();
     }
 
+    /**
+     * Deserialize a com.eternitywall.ots.Timestamp.
+     * @param ots - The serialized byte array.
+     * @param initialMsg - The initial message.
+     * @return The generated com.eternitywall.ots.Timestamp.
+     */
+    public static Timestamp deserialize(byte[] ots, byte[] initialMsg) {
+        StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
+        return Timestamp.deserialize(ctx,initialMsg);
+    }
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp.
@@ -83,6 +93,16 @@ public class Timestamp {
             Timestamp stamp = Timestamp.deserialize(ctx, result);
             self.ops.put(op, stamp);
         }
+    }
+
+    /**
+     * Create a Serialize object.
+     * @param ctx - The byte array serialized.
+     */
+    public byte[] serialize() {
+        StreamSerializationContext ctx = new StreamSerializationContext();
+        serialize(ctx);
+        return ctx.getOutput();
     }
 
     /**

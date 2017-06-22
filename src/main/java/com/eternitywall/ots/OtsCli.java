@@ -8,6 +8,10 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 
 
+import com.eternitywall.ots.op.Op;
+import com.eternitywall.ots.op.OpCrypto;
+import com.eternitywall.ots.op.OpSHA256;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -161,7 +165,8 @@ public class OtsCli {
         try {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
-            String infoResult = OpenTimestamps.info(byteOts);
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(byteOts);
+            String infoResult = OpenTimestamps.info(detached);
             System.out.println(infoResult);
         } catch (IOException e) {
             log.severe("No valid file");
@@ -186,10 +191,11 @@ public class OtsCli {
         }
 
         try {
-            byte[] stampResult = OpenTimestamps.stamp(hash, calendarsUrl, m, privateUrls);
-            Files.write(path, stampResult);
+            DetachedTimestampFile detached = DetachedTimestampFile.from(hash);
+            Timestamp stampResult = OpenTimestamps.stamp(detached, calendarsUrl, m, privateUrls);
+            Files.write(path, stampResult.serialize());
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.severe("Invalid shasum");
         }
     }
@@ -214,11 +220,13 @@ public class OtsCli {
                     log.severe("No valid signature file");
                 }
             }
-            byte[] stampResult = OpenTimestamps.stamp(fis, calendarsUrl, m, privateUrls);
 
-            Files.write(path, stampResult);
+            DetachedTimestampFile detached = DetachedTimestampFile.from(fis);
+            Timestamp stampResult = OpenTimestamps.stamp(detached, calendarsUrl, m, privateUrls);
+
+            Files.write(path, detached.serialize());
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.severe("No valid file");
         } finally {
             try {
@@ -236,19 +244,21 @@ public class OtsCli {
 
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
+            DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
             Long timestamp = null;
 
             if (shasum == null){
                 // Read from file
                 String argsFile = argsOts.replace(".ots","");
                 File file = new File(argsFile);
-                fis = new FileInputStream(file);
                 System.out.println("Assuming target filename is '" + argsFile + "'");
-                timestamp = OpenTimestamps.verify(byteOts,fis);
+                DetachedTimestampFile detached = DetachedTimestampFile.from(new OpSHA256(), file);
+                timestamp = OpenTimestamps.verify(detachedOts,detached);
             } else {
                 // Read from hash option
                 System.out.println("Assuming target hash is '" + Utils.bytesToHex(hash.getValue()) + "'");
-                timestamp = OpenTimestamps.verify(byteOts,hash);
+                DetachedTimestampFile detached = DetachedTimestampFile.from(hash);
+                timestamp = OpenTimestamps.verify(detachedOts,detached);
             }
 
             if(timestamp == null){
@@ -272,8 +282,10 @@ public class OtsCli {
         try {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
-            byte[] upgradeResult = OpenTimestamps.upgrade(byteOts);
-            if(Arrays.equals(byteOts, upgradeResult)) {
+            DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
+
+            boolean changed = OpenTimestamps.upgrade(detachedOts);
+            if(!changed) {
                 System.out.println("Timestamp not upgraded");
             } else {
                 byte[] byteBak = Files.readAllBytes(pathOts);
@@ -281,7 +293,8 @@ public class OtsCli {
                 Files.write(pathBak, byteBak);
 
                 // Write new Upgrade Result
-                Files.write(pathOts, upgradeResult);
+
+                Files.write(pathOts, detachedOts.serialize());
             }
             //System.out.println(Utils.bytesToHex(upgradeResult));
 

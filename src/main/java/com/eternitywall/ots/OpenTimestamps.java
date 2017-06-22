@@ -43,13 +43,10 @@ public class OpenTimestamps {
      * @param ots The ots array buffer.
      * @return the string representation of the timestamp
      */
-    public static String info(byte[] ots) {
-        if (ots == null) {
+    public static String info(DetachedTimestampFile detachedTimestampFile) {
+        if (detachedTimestampFile == null) {
             return "No ots file";
         }
-
-        StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-        DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.deserialize(ctx);
 
         String fileHash = Utils.bytesToHex(detachedTimestampFile.timestamp.msg).toLowerCase();
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._TAG_NAME();
@@ -75,142 +72,11 @@ public class OpenTimestamps {
     /**
      * Create timestamp with the aid of a remote calendar. May be specified multiple times.
      *
-     * @param inputStream The input stream to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @param privateCalendarsUrl The list of private calendar urls with signature.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
-        // Parse parameters
-        if (inputStream == null) {
-            throw new IOException();
-        }
-        // Read from file reader stream
-        try {
-            DetachedTimestampFile fileTimestamp;
-            fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
-            return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            log.severe("Invalid InputStream");
-            throw new IOException();
-        }
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param inputStream The input stream to stamp.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(InputStream inputStream) throws IOException {
-        return OpenTimestamps.stamp(inputStream, null, 0, null);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param inputStream The input stream to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(InputStream inputStream, List<String> calendarsUrl, Integer m) throws IOException {
-        return OpenTimestamps.stamp(inputStream, calendarsUrl, m, null);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @param content The sha 256 of the file to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @param privateCalendarsUrl The list of private calendar urls with signature.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-
-    public static byte[] stamp(byte[] content, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
-        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m, privateCalendarsUrl);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @param content The sha 256 of the file to stamp.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-
-    public static byte[] stamp(byte[] content) throws IOException {
-        return OpenTimestamps.stamp(content,null , 0, null);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     * @param content The sha 256 of the file to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-
-    public static byte[] stamp(byte[] content, List<String> calendarsUrl, Integer m) throws IOException {
-        return OpenTimestamps.stamp(new ByteArrayInputStream(content), calendarsUrl , m, null);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param hash The sha 256 of the file to stamp.
-     * @return The plain array buffer of stamped.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @param privateCalendarsUrl The list of private calendar urls with signature.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
-        // Read from file reader stream
-        DetachedTimestampFile fileTimestamp;
-        fileTimestamp = DetachedTimestampFile.from(hash.getOp(), hash);
-        return stamp(fileTimestamp, calendarsUrl, m, privateCalendarsUrl);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param hash The sha 256 of the file to stamp.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(Hash hash) throws IOException {
-        return OpenTimestamps.stamp(hash,null, 0, null);
-    }
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
-     * @param hash The sha 256 of the file to stamp.
-     * @param calendarsUrl The list of calendar urls.
-     * @param m The number of calendar to use.
-     * @return The plain array buffer of stamped.
-     * @throws IOException desc
-     */
-    public static byte[] stamp(Hash hash, List<String> calendarsUrl, Integer m) throws IOException {
-        return stamp(hash, calendarsUrl, m, null);
-    }
-
-
-    /**
-     * Create timestamp with the aid of a remote calendar. May be specified multiple times.
-     *
      * @param fileTimestamp The Detached Timestamp File.
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    private static byte[] stamp(DetachedTimestampFile fileTimestamp) throws IOException {
+    public static Timestamp stamp(DetachedTimestampFile fileTimestamp) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,null,0, null);
     }
 
@@ -223,7 +89,7 @@ public class OpenTimestamps {
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    private static byte[] stamp(DetachedTimestampFile fileTimestamp, List<String> calendarsUrl, Integer m) throws IOException {
+    public static Timestamp stamp(DetachedTimestampFile fileTimestamp, List<String> calendarsUrl, Integer m) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
     }
 
@@ -237,7 +103,7 @@ public class OpenTimestamps {
      * @return The plain array buffer of stamped.
      * @throws IOException desc
      */
-    public static byte[] stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
+    public static Timestamp stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<DetachedTimestampFile>();
         fileTimestamps.add(fileTimestamp);
         return OpenTimestamps.stamp(fileTimestamps,calendarsUrl,m, privateCalendarsUrl);
@@ -253,7 +119,7 @@ public class OpenTimestamps {
          * @return The plain array buffer of stamped.
          * @throws IOException desc
          */
-    public static byte[] stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
+    public static Timestamp stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Parse parameters
         if (fileTimestamps == null ||fileTimestamps.size() == 0) {
             throw new IOException();
@@ -295,21 +161,9 @@ public class OpenTimestamps {
 
         // Result of timestamp serialization
         if (fileTimestamps.size() == 1) {
-            try {
-                StreamSerializationContext css = new StreamSerializationContext();
-                fileTimestamps.get(0).serialize(css);
-                return css.getOutput();
-            }catch(Exception e){
-                throw new IOException();
-            }
+            return fileTimestamps.get(0).timestamp;
         } else {
-            try {
-                StreamSerializationContext css = new StreamSerializationContext();
-                merkleTip.serialize(css);
-                return css.getOutput();
-            } catch (Exception e) {
-                throw new IOException();
-            }
+            return merkleTip;
         }
     }
 
@@ -397,25 +251,6 @@ public class OpenTimestamps {
     }
 
 
-
-    /**
-     * Make Merkle Tree.
-     * @param hashes The list of Hash to merklefy.
-     * @param opCrypto the hash type used for the initial data
-     * @return merkle tip timestamp.
-     */
-    public static Timestamp makeMerkleTree(List<Hash> hashes, OpCrypto opCrypto){
-        List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
-
-        for (Hash hash : hashes){
-            DetachedTimestampFile fileTimestamp = DetachedTimestampFile.from(opCrypto, hash);
-            fileTimestamps.add(fileTimestamp);
-        }
-
-        return OpenTimestamps.makeMerkleTree(fileTimestamps);
-
-    }
-
     /**
      * Make Merkle Tree.
      * @param fileTimestamps The list of DetachedTimestampFile.
@@ -445,116 +280,21 @@ public class OpenTimestamps {
 
     /**
      * Verify a timestamp.
-     * @param ots The ots array buffer containing the proof to verify.
-     * @param stampedHash The plain array buffer to verify.
-     * @return unix timestamp if verified, undefined otherwise.
-     * @throws IOException desc
-     */
-    public static Long verify(byte[] ots, Hash stampedHash) throws IOException {
-        DetachedTimestampFile detachedTimestamp = null;
-        try {
-            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-            detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
-        } catch (Exception e) {
-            System.err.print("com.eternitywall.ots.StreamDeserializationContext error");
-        }
-
-        // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,stampedHash);
-    }
-
-    /**
-     * Verify a timestamp.
-     * @param ots The ots array buffer containing the proof to verify.
-     * @param stamped The plain array buffer to verify.
-     * @return unix timestamp if verified, undefined otherwise.
-     * @throws IOException desc
-     */
-    public static Long verify(byte[] ots, byte[] stamped) throws IOException {
-       return verify(ots, new ByteArrayInputStream(stamped));
-    }
-
-    /**
-     * Verify a timestamp.
-     * @param ots The ots array buffer containing the proof to verify.
-     * @param inputStream The input stream to verify.
-     * @return unix timestamp if verified, undefined otherwise.
-     * @throws IOException desc
-     */
-    public static Long verify(byte[] ots, InputStream inputStream) throws IOException {
-
-        // Read OTS
-        DetachedTimestampFile detachedTimestamp = null;
-        try {
-            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-            detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
-        } catch (Exception e) {
-            System.err.print("com.eternitywall.ots.StreamDeserializationContext error");
-        }
-
-        // Read STAMPED
-        byte[] actualFileDigest = new byte[0];
-        try {
-            actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(inputStream);
-        } catch (Exception e) {
-            log.severe("com.eternitywall.ots.StreamDeserializationContext : inputStream error");
-        }
-
-        // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp,new Hash(actualFileDigest, OpSHA256._TAG));
-    }
-
-    /**
-     * Verify a timestamp.
-     * @param ots The ots array buffer containing the proof to verify.
-     * @param stamped The File to verify.
-     * @return unix timestamp if verified, undefined otherwise.
-     * @throws IOException desc
-     */
-    public static Long verify(byte[] ots, File stamped) throws IOException {
-
-        // Read OTS
-        DetachedTimestampFile detachedTimestamp = null;
-        try {
-            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-            detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
-        } catch (Exception e) {
-            System.err.print("com.eternitywall.ots.StreamDeserializationContext error");
-            return null;
-        }
-
-        // Read STAMPED
-        byte[] actualFileDigest = new byte[0];
-        try {
-            actualFileDigest = ((OpCrypto) (detachedTimestamp.fileHashOp)).hashFd(stamped);
-        } catch (Exception e) {
-            log.severe("com.eternitywall.ots.StreamDeserializationContext : file stream error");
-            return null;
-        }
-
-        // Call Verify
-        return OpenTimestamps.verify(detachedTimestamp, new Hash(actualFileDigest, OpSHA256._TAG));
-    }
-
-
-
-    /**
-     * Verify a timestamp.
      *
      * @param detachedTimestamp The ots containing the proof to verify.
      * @param actualFileDigest The plain array buffer stamped.
      * @return the timestamp in seconds from 1 Jamuary 1970
      */
-    private static Long verify(DetachedTimestampFile detachedTimestamp, Hash actualFileDigest) {
 
-        byte[] detachedFileDigest = detachedTimestamp.fileDigest();
-        if (!Arrays.equals(actualFileDigest.getValue(), detachedFileDigest)) {
-            log.severe("Expected digest " + Utils.bytesToHex(detachedTimestamp.fileDigest()).toLowerCase());
+    public static Long verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) {
+
+        if (!Arrays.equals(ots.fileDigest(), stamped.fileDigest())) {
+            log.severe("Expected digest " + Utils.bytesToHex(ots.fileDigest()).toLowerCase());
             log.severe("File does not match original!");
             return null;
         }
 
-        return OpenTimestamps.verify(detachedTimestamp.timestamp);
+        return OpenTimestamps.verify(ots.timestamp);
     }
 
     /**
@@ -619,21 +359,12 @@ public class OpenTimestamps {
      * Upgrade a timestamp.
      *
      * @param ots The ots array buffer containing the proof to verify.
-     * @return the upgraded timestamp
+     * @return a boolean represnting if the timestamp has changed
      */
-    public static byte[] upgrade(byte[] ots) {
+    public static boolean upgrade(DetachedTimestampFile detachedTimestamp) {
 
-        // Read OTS
-        DetachedTimestampFile detachedTimestamp = null;
-        try {
-            StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
-            detachedTimestamp = DetachedTimestampFile.deserialize(ctx);
-        } catch (Exception e) {
-            log.severe("com.eternitywall.ots.StreamDeserializationContext error");
-            return null;
-        }
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            return ots;
+            return false;
         }
 
         // Upgrade timestamp
@@ -649,9 +380,7 @@ public class OpenTimestamps {
             log.info("Timestamp is not complete");
         }
 
-        StreamSerializationContext css = new StreamSerializationContext();
-        detachedTimestamp.serialize(css);
-        return css.getOutput();
+        return changed;
     }
 
 

@@ -9,6 +9,7 @@ package com.eternitywall.ots;
 
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpCrypto;
+import com.eternitywall.ots.op.OpSHA256;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,19 +25,24 @@ import java.util.logging.Logger;
 public class DetachedTimestampFile {
 
     /**
-     * Header magic bytes
-     * Designed to be give the user some information in a hexdump, while being identified as 'data' by the file utility.
+     * Header magic bytes Designed to be give the user some information in a hexdump, while being
+     * identified as 'data' by the file utility.
+     *
      * @default \x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94
      */
-    static byte[] HEADER_MAGIC = {(byte) 0x00, (byte) 0x4f, (byte) 0x70, (byte) 0x65, (byte) 0x6e, (byte) 0x54, (byte) 0x69, (byte) 0x6d, (byte) 0x65, (byte) 0x73,
-            (byte) 0x74, (byte) 0x61, (byte) 0x6d, (byte) 0x70, (byte) 0x73, (byte) 0x00, (byte) 0x00, (byte) 0x50, (byte) 0x72, (byte) 0x6f, (byte) 0x6f, (byte) 0x66, (byte) 0x00,
-            (byte) 0xbf, (byte) 0x89, (byte) 0xe2, (byte) 0xe8, (byte) 0x84, (byte) 0xe8, (byte) 0x92, (byte) 0x94};
+    static byte[] HEADER_MAGIC = {(byte) 0x00, (byte) 0x4f, (byte) 0x70, (byte) 0x65, (byte) 0x6e,
+        (byte) 0x54, (byte) 0x69, (byte) 0x6d, (byte) 0x65, (byte) 0x73,
+        (byte) 0x74, (byte) 0x61, (byte) 0x6d, (byte) 0x70, (byte) 0x73, (byte) 0x00, (byte) 0x00,
+        (byte) 0x50, (byte) 0x72, (byte) 0x6f, (byte) 0x6f, (byte) 0x66, (byte) 0x00,
+        (byte) 0xbf, (byte) 0x89, (byte) 0xe2, (byte) 0xe8, (byte) 0x84, (byte) 0xe8, (byte) 0x92,
+        (byte) 0x94};
 
     /**
      * While the git commit timestamps have a minor version, probably better to
      * leave it out here: unlike Git commits round-tripping is an issue when
      * timestamps are upgraded, and we could end up with bugs related to not
      * saving/updating minor version numbers correctly.
+     *
      * @default 1
      */
     static byte MAJOR_VERSION = 1;
@@ -67,7 +73,7 @@ public class DetachedTimestampFile {
 
     /**
      * Serialize a com.eternitywall.ots.Timestamp File.
-     * @param  ctx The stream serialization context.
+     * @param ctx The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
         ctx.writeBytes(HEADER_MAGIC);
@@ -75,6 +81,16 @@ public class DetachedTimestampFile {
         this.fileHashOp.serialize(ctx);
         ctx.writeBytes(this.timestamp.msg);
         this.timestamp.serialize(ctx);
+    }
+
+    /**
+     * Serialize a com.eternitywall.ots.Timestamp File.
+     * @return The byte array of serialized data.
+     */
+    public byte[] serialize() {
+        StreamSerializationContext ctx = new StreamSerializationContext();
+        this.serialize(ctx);
+        return ctx.getOutput();
     }
 
     /**
@@ -95,14 +111,29 @@ public class DetachedTimestampFile {
     }
 
     /**
+     * Deserialize a com.eternitywall.ots.Timestamp File.
+     * @param ctx The byte array of deserialization DetachedFileTimestamped.
+     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
+     */
+    public static DetachedTimestampFile deserialize(byte[] ots) {
+        StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
+        return DetachedTimestampFile.deserialize(ctx);
+    }
+
+    /**
      * Read the Detached com.eternitywall.ots.Timestamp File from bytes.
      * @param fileHashOp The file hash operation.
      * @param ctx The stream deserialization context.
      * @return  The generated com.eternitywall.ots.DetachedTimestampFile object.
      * @throws NoSuchAlgorithmException desc
      */
-    public static DetachedTimestampFile fromBytes(OpCrypto fileHashOp, StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(ctx);
+        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    }
+
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, byte[] bytes) throws Exception {
+        byte[] fdHash = fileHashOp.hashFd(bytes);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
@@ -112,21 +143,18 @@ public class DetachedTimestampFile {
      * @param hash The hash of the file.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile from(OpCrypto fileHashOp, Hash hash) {
-        return new DetachedTimestampFile(fileHashOp, new Timestamp(hash.getValue()));
-    }
-
-    /**
-     * Read the Detached com.eternitywall.ots.Timestamp File from File.
-     * @param  fileHashOp The file hash operation.
-     * @param  file The hash file.
-     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
-     * @throws IOException desc
-     * @throws NoSuchAlgorithmException desc
-     */
-    public static DetachedTimestampFile from(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
-        byte[] fdHash = fileHashOp.hashFd(file);
-        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    public static DetachedTimestampFile from(InputStream inputStream) throws Exception {
+        if (inputStream == null) {
+            throw new Exception();
+        }
+        // Read from file reader stream
+        try {
+            DetachedTimestampFile fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
+            return fileTimestamp;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
     }
 
     /**
@@ -139,6 +167,28 @@ public class DetachedTimestampFile {
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, InputStream inputStream) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(inputStream);
+        return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
+    }
+
+    /**
+     * Read the Detached com.eternitywall.ots.Timestamp File from hash.
+     * @param hash The hash of the file.
+     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
+     */
+    public static DetachedTimestampFile from(Hash hash) {
+        return new DetachedTimestampFile(hash.getOp(), new Timestamp(hash.getValue()));
+    }
+
+    /**
+     * Read the Detached com.eternitywall.ots.Timestamp File from File.
+     * @param  fileHashOp The file hash operation.
+     * @param  file The hash file.
+     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
+     */
+    public static DetachedTimestampFile from(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
+        byte[] fdHash = fileHashOp.hashFd(file);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 

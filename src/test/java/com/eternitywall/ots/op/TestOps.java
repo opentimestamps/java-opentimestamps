@@ -66,7 +66,7 @@ public class TestOps {
         int size = 1 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
-        DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
+        DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
         assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
     }
@@ -77,7 +77,7 @@ public class TestOps {
         int size = 10 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
-        DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
+        DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
         assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
     }
@@ -88,7 +88,7 @@ public class TestOps {
         int size = 100 * 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
-        DetachedTimestampFile timestampFile = DetachedTimestampFile.fromBytes(new OpSHA256(), ctx);
+        DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
         assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
     }
