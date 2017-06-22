@@ -1,6 +1,9 @@
 package com.eternitywall.ots;
 
 import com.eternitywall.ots.op.*;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Created by casatta on 03/03/17.
  */
@@ -46,7 +49,20 @@ public class Hash {
         }
         return new OpSHA256();
     }
-    public OpCrypto getOp(String label){
+    public static OpCrypto getOp(byte algorithm){
+        if (algorithm == OpSHA1._TAG) {
+            return new OpSHA1();
+        } else if (algorithm == OpSHA256._TAG){
+            return new OpSHA256();
+        } else if (algorithm == OpRIPEMD160._TAG){
+            return new OpRIPEMD160();
+        } else if (algorithm == OpKECCAK256._TAG){
+            return new OpKECCAK256();
+        }
+        return new OpSHA256();
+    }
+
+    public static OpCrypto getOp(String label){
         if (label.toLowerCase().equals(new OpSHA1()._TAG_NAME())){
             return new OpSHA1();
         } else if (label.toLowerCase().equals(new OpSHA256()._TAG_NAME())){
@@ -57,6 +73,12 @@ public class Hash {
             return new OpKECCAK256();
         }
         return new OpSHA256();
+    }
+
+    public static Hash from(byte[] bytes, byte algorithm) throws IOException, NoSuchAlgorithmException {
+        OpCrypto opCrypto = getOp(algorithm);
+        byte[] value = opCrypto.hashFd(bytes);
+        return new Hash(value,algorithm);
     }
 
 }

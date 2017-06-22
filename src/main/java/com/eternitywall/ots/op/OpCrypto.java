@@ -67,6 +67,10 @@ public class OpCrypto extends OpUnary {
         return hashFd(new FileInputStream(file));
     }
 
+    public byte[] hashFd(byte[] bytes) throws IOException, NoSuchAlgorithmException {
+        StreamDeserializationContext ctx = new StreamDeserializationContext(bytes);
+        return hashFd(ctx);
+    }
 
     public byte[] hashFd(InputStream inputStream) throws IOException, NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
