@@ -1,7 +1,9 @@
 package com.eternitywall.ots;
 
 import com.eternitywall.ots.op.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -78,6 +80,18 @@ public class Hash {
     public static Hash from(byte[] bytes, byte algorithm) throws IOException, NoSuchAlgorithmException {
         OpCrypto opCrypto = getOp(algorithm);
         byte[] value = opCrypto.hashFd(bytes);
+        return new Hash(value,algorithm);
+    }
+
+    public static Hash from(File file, byte algorithm) throws IOException, NoSuchAlgorithmException {
+        OpCrypto opCrypto = getOp(algorithm);
+        byte[] value = opCrypto.hashFd(file);
+        return new Hash(value,algorithm);
+    }
+
+    public static Hash from(InputStream inputStream, byte algorithm) throws IOException, NoSuchAlgorithmException {
+        OpCrypto opCrypto = getOp(algorithm);
+        byte[] value = opCrypto.hashFd(inputStream);
         return new Hash(value,algorithm);
     }
 

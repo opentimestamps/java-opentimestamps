@@ -2,6 +2,7 @@ package com.eternitywall.ots; /**
  * Created by luca on 25/02/2017.
  */
 
+import java.security.NoSuchAlgorithmException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -109,7 +110,7 @@ public class OtsCli {
             case "stamp":
             case "s":
                 if(!files.isEmpty()) {
-                    stamp(files.get(0), calendarsUrl, m, signatureFile);
+                    multistamp(files, calendarsUrl, m, signatureFile);
                 } else if (shasum != null){
                     Hash hash = new Hash(shasum, algorithm);
                     stamp(hash, calendarsUrl, m, signatureFile);
@@ -173,6 +174,72 @@ public class OtsCli {
         }
     }
 
+    private static void multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile){
+
+        // Parse input privateUrls
+        HashMap<String, String> privateUrls = new HashMap<>();
+        if(signatureFile != null && signatureFile != "") {
+            try {
+                privateUrls = readSignature(signatureFile);
+            } catch (Exception e) {
+                log.severe("No valid signature file");
+                return;
+            }
+        }
+
+        // Make list of detached files
+        HashMap<String, DetachedTimestampFile> mapFiles = new HashMap<>();
+        for (String argsFile : argsFiles){
+            try {
+                File file = new File(argsFile);
+                Hash hash = Hash.from( file, Hash.getOp(algorithm)._TAG());
+                mapFiles.put( argsFile, DetachedTimestampFile.from(hash) );
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.severe("File read error");
+                return;
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                log.severe("Crypto error");
+                return;
+            }
+        }
+
+        // Stamping
+        Timestamp stampResult;
+        try {
+            List<DetachedTimestampFile> detaches = new ArrayList(mapFiles.values());
+            stampResult = OpenTimestamps.stamp(detaches, calendarsUrl, m, privateUrls);
+            if(stampResult == null){
+               throw new IOException();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.severe("Stamp error");
+            return;
+        }
+
+        // Generate ots output files
+        for (Map.Entry<String, DetachedTimestampFile> entry : mapFiles.entrySet()){
+
+            String argsFile = entry.getKey();
+            DetachedTimestampFile detached = entry.getValue();
+            String argsOts = argsFile + ".ots";
+            try {
+                Path path = Paths.get(argsOts);
+                if (Files.exists(path)) {
+                    System.out.println("File '" + argsOts + "' already exist");
+                } else {
+                    Files.write(path, detached.serialize());
+                    System.out.println("The timestamp proof '" + argsOts + "' has been created!");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                log.severe("File '" + argsOts + "' writing error");
+            }
+        }
+    }
+
     private static void stamp(Hash hash, List<String> calendarsUrl, Integer m, String signatureFile) {
         HashMap<String, String> privateUrls = new HashMap<>();
         if (signatureFile != null && signatureFile != "") {
@@ -197,44 +264,6 @@ public class OtsCli {
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (Exception e) {
             log.severe("Invalid shasum");
-        }
-    }
-
-    private static void stamp(String argsFile, List<String> calendarsUrl, Integer m, String signatureFile) {
-        FileInputStream fis = null;
-        try {
-            String argsOts = argsFile + ".ots";
-            Path path = Paths.get(argsOts);
-            if(Files.exists(path)) {
-                System.out.println("File '" + argsOts + "' already exist");
-                return;
-            }
-            File file = new File(argsFile);
-            fis = new FileInputStream(file);
-
-            HashMap<String, String> privateUrls = new HashMap<>();
-            if(signatureFile != null && signatureFile != "") {
-                try {
-                    privateUrls = readSignature(signatureFile);
-                } catch (Exception e) {
-                    log.severe("No valid signature file");
-                }
-            }
-
-            DetachedTimestampFile detached = DetachedTimestampFile.from(fis);
-            Timestamp stampResult = OpenTimestamps.stamp(detached, calendarsUrl, m, privateUrls);
-
-            Files.write(path, detached.serialize());
-            System.out.println("The timestamp proof '" + argsOts + "' has been created!");
-        } catch (Exception e) {
-            log.severe("No valid file");
-        } finally {
-            try {
-                if(fis!=null)
-                    fis.close();
-            }catch  (IOException e) {
-                log.severe("No valid file");
-            }
         }
     }
 
@@ -311,10 +340,9 @@ public class OtsCli {
     }
     public static void showHelp() {
         System.out.println(
-                "Usage: " + title + " [options] {stamp,s,upgrade,u,verify,v,info} [arguments]\n\n" +
+                "Usage: " + title + " [options] {stamp,s,upgrade,u,verify,v,info,i} [arguments]\n\n" +
                 "Subcommands:\n" +
-                "s, stamp FILE\tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
-                "S, multistamp FILES\tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
+                "s, stamp FILES\tCreate timestamp with the aid of a remote calendar, the output receipt will be saved with .ots\n" +
                 "i, info FILE_OTS \tShow information on a timestamp.\n" +
                 "v, verify FILE_OTS\tVerify the timestamp attestations, expect original file present in the same directory without .ots\n" +
                 "u, upgrade FILE_OTS\tUpgrade remote calendar timestamps to be locally verifiable.\n\n" +
