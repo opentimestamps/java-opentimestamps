@@ -51,6 +51,16 @@ Submitting to remote calendar https://finney.calendar.eternitywall.com
 The timestamp proof 'README.md.ots' has been created!
 ```
 
+Create timestamp proof file from the `sha256` hash, equals to `26a5dc28b43e2634a8455113c3ffe8f0af3b214f`, with the aid of a remote calendar.
+
+ ```shell
+$ java -jar target/OtsCli.jar -H 26a5dc28b43e2634a8455113c3ffe8f0af3b214f -a sha256 stamp
+INFO: Submitting to remote calendar https://alice.btc.calendar.opentimestamps.org
+INFO: Submitting to remote calendar https://bob.btc.calendar.opentimestamps.org
+INFO: Submitting to remote calendar https://finney.calendar.eternitywall.com
+The timestamp proof '26A5DC28B43E2634A8455113C3FFE8F0AF3B214F.ots' has been created!
+```
+
 #### Info
 
 Show information on a timestamp.
@@ -98,9 +108,7 @@ Timestamp has been successfully upgraded!
 Create timestamp with the aid of remote calendars.
 
 ```java
-FileInputStream fis = new FileInputStream(file);
-Hash hash = Hash.from
-DetachedTimestampFile detached = DetachedTimestampFile.from( new OpSHA256(), fis )
+DetachedTimestampFile detached = DetachedTimestampFile.from( new OpSHA256(), file )
 Timestamp stampResult = OpenTimestamps.stamp(detached);
 String infoResult = OpenTimestamps.info(detached);
 System.out.println(infoResult);
