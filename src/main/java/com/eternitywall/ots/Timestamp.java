@@ -97,7 +97,7 @@ public class Timestamp {
 
     /**
      * Create a Serialize object.
-     * @param ctx - The byte array serialized.
+     * @return The byte array of the serialized timestamp
      */
     public byte[] serialize() {
         StreamSerializationContext ctx = new StreamSerializationContext();
@@ -152,7 +152,7 @@ public class Timestamp {
     /**
      * Add all operations and attestations from another timestamp to this one.
      * @param other - Initial other com.eternitywall.ots.Timestamp to merge.
-     * @throws Exception desc TODO
+     * @throws Exception different timestamps messages
      */
     public void merge(Timestamp other) throws Exception {
         if (!Arrays.equals(this.msg, other.msg)) {

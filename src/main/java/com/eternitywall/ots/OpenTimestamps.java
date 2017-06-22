@@ -40,7 +40,7 @@ public class OpenTimestamps {
     /**
      * Show information on a timestamp.
      *
-     * @param ots The ots array buffer.
+     * @param detachedTimestampFile The DetachedTimestampFile ots.
      * @return the string representation of the timestamp
      */
     public static String info(DetachedTimestampFile detachedTimestampFile) {
@@ -281,8 +281,8 @@ public class OpenTimestamps {
     /**
      * Verify a timestamp.
      *
-     * @param detachedTimestamp The ots containing the proof to verify.
-     * @param actualFileDigest The plain array buffer stamped.
+     * @param ots The DetachedTimestampFile containing the proof to verify.
+     * @param stamped The DetachedTimestampFile containing the stamped data.
      * @return the timestamp in seconds from 1 Jamuary 1970
      */
 
@@ -358,7 +358,7 @@ public class OpenTimestamps {
     /**
      * Upgrade a timestamp.
      *
-     * @param ots The ots array buffer containing the proof to verify.
+     * @param detachedTimestamp The DetachedTimestampFile containing the proof to verify.
      * @return a boolean represnting if the timestamp has changed
      */
     public static boolean upgrade(DetachedTimestampFile detachedTimestamp) {

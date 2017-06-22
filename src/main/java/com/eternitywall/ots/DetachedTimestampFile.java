@@ -112,7 +112,7 @@ public class DetachedTimestampFile {
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp File.
-     * @param ctx The byte array of deserialization DetachedFileTimestamped.
+     * @param ots The byte array of deserialization DetachedFileTimestamped.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile deserialize(byte[] ots) {
@@ -132,6 +132,13 @@ public class DetachedTimestampFile {
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
+    /**
+     * Read the Detached com.eternitywall.ots.Timestamp File from bytes.
+     * @param fileHashOp The file hash operation.
+     * @param bytes The byte array of data to hash
+     * @return  The generated com.eternitywall.ots.DetachedTimestampFile object.
+     * @throws NoSuchAlgorithmException desc
+     */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, byte[] bytes) throws Exception {
         byte[] fdHash = fileHashOp.hashFd(bytes);
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
@@ -139,8 +146,7 @@ public class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from hash.
-     * @param fileHashOp The file hash operation.
-     * @param hash The hash of the file.
+     * @param inputStream The InputStream of the file to hash
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile from(InputStream inputStream) throws Exception {

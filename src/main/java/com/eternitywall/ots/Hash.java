@@ -13,32 +13,63 @@ public class Hash {
     private byte[] value;
     private byte algorithm;
 
+    /**
+     * Create a Hash object.
+     * @param value - The byte array of the hash
+     * @param algorithm - The hashlib tag of crypto operation
+     */
     public Hash(byte[] value, byte algorithm) {
         this.value = value;
         this.algorithm = algorithm;
     }
 
+    /**
+     * Create a Hash object.
+     * @param value - The byte array of the hash
+     * @param label - The hashlib name of crypto operation
+     */
     public Hash(byte[] value, String label) {
         this.value = value;
         this.algorithm = getOp(label)._TAG();
     }
 
+    /**
+     * Get Value.
+     * @return value - The hash in byte array.
+     */
     public byte[] getValue() {
         return value;
     }
 
+    /**
+     * Set Value tag.
+     * @param value - The hash in byte array.
+     */
     public void setValue(byte[] value) {
         this.value = value;
     }
 
+    /**
+     * Get Algorithm tag.
+     * @return algorithm - The algorithm tag of crypto operation.
+     */
     public byte getAlgorithm() {
         return algorithm;
     }
 
+    /**
+     * Set Algorithm tag.
+     * @param algorithm - The algorithm tag of crypto operation.
+     */
     public void setAlgorithm(byte algorithm) {
         this.algorithm = algorithm;
     }
 
+    /**
+     * Get the current Crypto operation.
+     *
+     * @return The generated com.eternitywall.ots.OpCrypto object.
+     */
     public OpCrypto getOp(){
         if (this.algorithm == OpSHA1._TAG){
             return new OpSHA1();
@@ -51,6 +82,13 @@ public class Hash {
         }
         return new OpSHA256();
     }
+
+    /**
+     * Get Crypto operation from hashlib tag.
+     *
+     * @param  algorithm The hashlib tag.
+     * @return The generated com.eternitywall.ots.OpCrypto object.
+     */
     public static OpCrypto getOp(byte algorithm){
         if (algorithm == OpSHA1._TAG) {
             return new OpSHA1();
@@ -64,6 +102,12 @@ public class Hash {
         return new OpSHA256();
     }
 
+    /**
+     * Get Crypto operation from hashlib name.
+     *
+     * @param  label The hashlib name.
+     * @return The generated com.eternitywall.ots.OpCrypto object.
+     */
     public static OpCrypto getOp(String label){
         if (label.toLowerCase().equals(new OpSHA1()._TAG_NAME())){
             return new OpSHA1();
@@ -77,22 +121,63 @@ public class Hash {
         return new OpSHA256();
     }
 
+    /**
+     * Build hash from data.
+     *
+     * @param  bytes The byte array of data to hash.
+     * @param  algorithm The hash file.
+     * @return The generated com.eternitywall.ots.Hash object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
+     */
     public static Hash from(byte[] bytes, byte algorithm) throws IOException, NoSuchAlgorithmException {
         OpCrypto opCrypto = getOp(algorithm);
         byte[] value = opCrypto.hashFd(bytes);
         return new Hash(value,algorithm);
     }
 
+    /**
+     * Build hash from File.
+     *
+     * @param  file The File of data to hash.
+     * @param  algorithm The hash file.
+     * @return The generated com.eternitywall.ots.Hash object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
+     */
     public static Hash from(File file, byte algorithm) throws IOException, NoSuchAlgorithmException {
         OpCrypto opCrypto = getOp(algorithm);
         byte[] value = opCrypto.hashFd(file);
         return new Hash(value,algorithm);
     }
 
+    /**
+     * Build hash from InputStream.
+     *
+     * @param  inputStream The InputStream of data to hash.
+     * @param  algorithm The hash file.
+     * @return The generated com.eternitywall.ots.Hash object.
+     * @throws IOException desc
+     * @throws NoSuchAlgorithmException desc
+     */
     public static Hash from(InputStream inputStream, byte algorithm) throws IOException, NoSuchAlgorithmException {
         OpCrypto opCrypto = getOp(algorithm);
         byte[] value = opCrypto.hashFd(inputStream);
         return new Hash(value,algorithm);
+    }
+
+
+    /**
+     * Print the object.
+     *
+     * @return The output.
+     */
+    @Override
+    public String toString() {
+        String output = "com.eternitywall.ots.Hash\n";
+        output += "algorithm: " + this.getOp()._HASHLIB_NAME() + '\n';
+        output += "value: " + Utils.bytesToHex(this.value) + '\n';
+        return output;
     }
 
 }
