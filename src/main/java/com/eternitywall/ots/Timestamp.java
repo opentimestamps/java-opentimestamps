@@ -184,51 +184,51 @@ public class Timestamp {
             throw new Exception();
         } else if (allAttestations.size() == 1) {
             return allAttestations.values().iterator().next();
-        }
-
-        if (this.ops.size() == 0) {
+        } else if (this.ops.size() == 0) {
             throw new Exception();
         }
 
-        if (this.getAttestations().size() == 1) {
-            return this.getAttestations().iterator().next();
-        }
-
-        // Search first BitcoinBlockHeaderAttestation / EthereumBlockHeaderAttestation
+        // Fore >1 attestations :
+        // Search first BitcoinBlockHeaderAttestation
         TimeAttestation minAttestation = null;
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp timestamp = entry.getValue();
             //Op op = entry.getKey();
-            TimeAttestation attestation = timestamp.shrink();
 
-            if (attestation instanceof BitcoinBlockHeaderAttestation ||
-                    attestation instanceof EthereumBlockHeaderAttestation) {
-
-                if (minAttestation == null) {
-                    minAttestation = attestation;
-                } else {
-                    if (minAttestation instanceof BitcoinBlockHeaderAttestation && attestation instanceof BitcoinBlockHeaderAttestation
-                            && ((BitcoinBlockHeaderAttestation) minAttestation).getHeight() > ((BitcoinBlockHeaderAttestation) attestation).getHeight()) {
+            for (TimeAttestation attestation : timestamp.getAttestations()) {
+                if (attestation instanceof BitcoinBlockHeaderAttestation) {
+                    if (minAttestation == null) {
                         minAttestation = attestation;
-                    } else if (minAttestation instanceof EthereumBlockHeaderAttestation && attestation instanceof EthereumBlockHeaderAttestation
-                            && ((EthereumBlockHeaderAttestation) minAttestation).getHeight() > ((EthereumBlockHeaderAttestation) attestation).getHeight()) {
-                        minAttestation = attestation;
+                    } else {
+                        if (minAttestation instanceof BitcoinBlockHeaderAttestation
+                            && attestation instanceof BitcoinBlockHeaderAttestation
+                            && ((BitcoinBlockHeaderAttestation) minAttestation).getHeight()
+                            > ((BitcoinBlockHeaderAttestation) attestation).getHeight()) {
+                            minAttestation = attestation;
+                        }
                     }
-
                 }
             }
         }
 
+        // Only pending attestations : return the first
+        if(minAttestation == null){
+            return allAttestations.values().iterator().next();
+        }
+
+        // Remove attestation if not min attestation
         for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
             Timestamp timestamp = entry.getValue();
             Op op = entry.getKey();
-            TimeAttestation attestation = timestamp.shrink();
-            if (!minAttestation.equals(attestation)) {
+            Set<TimeAttestation> attestations = timestamp.getAttestations();
+            if(attestations.size()>0 && attestations.contains(minAttestation)) {
+                timestamp.shrink();
+            } else {
                 this.ops.remove(op);
             }
         }
 
-        return this.getAttestations().iterator().next();
+        return minAttestation;
 
     }
 
