@@ -43,7 +43,7 @@ public class UnknownAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "com.eternitywall.ots.attestation.UnknownAttestation " + this._TAG() + ' ' + this.payload;
+        return "UnknownAttestation " + Utils.bytesToHex(this._TAG()) + ' ' + Utils.bytesToHex(this.payload);
     }
 
 
