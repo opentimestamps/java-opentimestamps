@@ -51,6 +51,8 @@ Submitting to remote calendar https://finney.calendar.eternitywall.com
 The timestamp proof 'README.md.ots' has been created!
 ```
 
+##### Stamping only a hash
+
 Create timestamp proof file from the `sha256` hash, equals to `03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340`, with the aid of a remote calendar.
 
  ```shell
@@ -99,6 +101,22 @@ Upgrade incomplete remote calendar timestamps to be independently verifiable. Th
 ```shell
 $ java -jar target/OtsCli.jar upgrade examples/incomplete.txt.ots
 Timestamp has been successfully upgraded!
+```
+
+##### Shrink
+
+When a proof is completed with at least one bitcoin attestation, information regarding other paths are redundant.
+The oldest bitcoin attestation (the lower bitcoin block height) is the only relevant information, in this case we can shrink all the redundant informatio.
+
+```shell
+$ java -jar target/OtsCli.jar upgrade examples/merkle2.txt.ots 
+Timestamp has been successfully upgraded!
+$ java -jar target/OtsCli.jar info examples/merkle2.txt.ots
+# ... have a look at the double path
+$ java -jar target/OtsCli.jar upgrade examples/merkle2.txt.ots
+$ java -jar target/OtsCli.jar info examples/merkle2.txt.ots
+# ... now the ots receipt contains only the relevant information
+
 ```
 
 ## From code
