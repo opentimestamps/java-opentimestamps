@@ -5,11 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
+import com.eternitywall.ots.Utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
-import org.bitcoinj.core.Utils;
 import org.junit.Test;
 
 
@@ -22,7 +22,7 @@ public class TestPendingAttestation {
     PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("foobar", "UTF-8"));
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"07"+"06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"07"+"06"));
     baos.write(Utils.toBytes("foobar", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
 
@@ -31,10 +31,10 @@ public class TestPendingAttestation {
     assertTrue(Arrays.equals(expected_serialized, ctx.getOutput()));
 
     StreamDeserializationContext ctx1 = new StreamDeserializationContext(expected_serialized);
-    PendingAttestation pendingAttestation2 = (PendingAttestation) PendingAttestation.deserialize(ctx1);
+    PendingAttestation pendingAttestation2 = (PendingAttestation) TimeAttestation.deserialize(ctx1);
 
     assertTrue(Arrays.equals(pendingAttestation2._TAG(), PendingAttestation._TAG));
-    assertTrue(Arrays.equals(pendingAttestation2.uri, Utils.toBytes("foobar", "UTF-8")));
+    assertTrue(Arrays.equals(pendingAttestation2.getUri(), Utils.toBytes("foobar", "UTF-8")));
 
   }
 
@@ -59,7 +59,7 @@ public class TestPendingAttestation {
     // illegal character
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"07"+"06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"07"+"06"));
     baos.write(Utils.toBytes("fo%bar", "UTF-8"));
     StreamDeserializationContext ctx = new StreamDeserializationContext(baos.toByteArray());
     TimeAttestation.deserialize(ctx);
@@ -69,7 +69,7 @@ public class TestPendingAttestation {
 
     // Exactly 1000 bytes is ok
     baos = new ByteArrayOutputStream();
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"ea07"+"e807"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"ea07"+"e807"));
     byte[] buffer = new byte[1000];
     Arrays.fill(buffer,(byte)'x');
     baos.write(buffer);
@@ -78,7 +78,7 @@ public class TestPendingAttestation {
 
     // But 1001 isn't
     baos = new ByteArrayOutputStream();
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"eb07"+"e907"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"eb07"+"e907"));
     buffer = new byte[1001];
     Arrays.fill(buffer,(byte)'x');
     baos.write(buffer);
@@ -91,7 +91,7 @@ public class TestPendingAttestation {
   @Test
   public void deserializationTrailingGarbage() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"08"+"06"));
+    baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"08"+"06"));
     baos.write(Utils.toBytes("foobarx", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
 
