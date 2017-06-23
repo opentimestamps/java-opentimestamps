@@ -148,6 +148,7 @@ public class DetachedTimestampFile {
      * Read the Detached com.eternitywall.ots.Timestamp File from hash.
      * @param inputStream The InputStream of the file to hash
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
+     * @throws Exception desc
      */
     public static DetachedTimestampFile from(InputStream inputStream) throws Exception {
         if (inputStream == null) {
