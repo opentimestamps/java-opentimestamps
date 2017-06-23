@@ -60,7 +60,7 @@ public abstract class TimeAttestation  implements Comparable<TimeAttestation> {
             // console.log('tag(com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation)');
             return EthereumBlockHeaderAttestation.deserialize(ctxPayload);
         }
-        return UnknownAttestation.deserialize(ctxPayload, tag);
+        return new UnknownAttestation(tag, serializedAttestation);
     }
 
     /**
