@@ -33,6 +33,7 @@ public class OtsCli {
     private static byte[] shasum;
     private static String[] algorithms = new String[]{"SHA256","SHA1","RIPEMD160"};
     private static String algorithm = "SHA256";
+    private static boolean shrink = false;
 
     public static void main(String[] args) {
 
@@ -43,6 +44,7 @@ public class OtsCli {
         options.addOption( "H", "hash", true, "Pass the hash string of the document to timestamp." );
         options.addOption( "a", "algorithm", true, "Pass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
+        options.addOption( "s", "shrink", false, "Shrink upgraded timestamp." );
         options.addOption( "V", "version", false, "print " + title + " version." );
         options.addOption( "h", "help", false, "print this help." );
 
@@ -63,6 +65,9 @@ public class OtsCli {
                 signatureFile = line.getOptionValue("k");
                 calendarsUrl.clear();
             }
+            if(line.hasOption("s")) {
+                shrink = true;
+            }
             if(line.hasOption("V")) {
                 System.out.println("Version: " + title + " v." + version + '\n');
                 return;
@@ -81,8 +86,6 @@ public class OtsCli {
                     return;
                 }
             }
-
-
             if(line.getArgList().isEmpty()){
                 showHelp();
                 return;
@@ -138,7 +141,7 @@ public class OtsCli {
                     System.out.println(title + ": bad options number ");
                     break;
                 }
-                upgrade(files.get(0));
+                upgrade(files.get(0), shrink);
                 break;
             default:
                 System.out.println(title + ": bad option: " + cmd);
@@ -307,30 +310,34 @@ public class OtsCli {
         }
     }
 
-    public static void upgrade (String argsOts) {
+    public static void upgrade (String argsOts, boolean shrink) {
         try {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
 
             boolean changed = OpenTimestamps.upgrade(detachedOts);
-            if(!changed) {
+            if(shrink == true) {
+                detachedOts.getTimestamp().shrink();
+            }
+
+            if(!shrink && !changed) {
                 System.out.println("Timestamp not upgraded");
             } else {
+                // Copy Bak File
                 byte[] byteBak = Files.readAllBytes(pathOts);
                 Path pathBak = Paths.get(argsOts+".bak");
                 Files.write(pathBak, byteBak);
 
                 // Write new Upgrade Result
-
                 Files.write(pathOts, detachedOts.serialize());
             }
-            //System.out.println(Utils.bytesToHex(upgradeResult));
-
-            // Copy Bak File
 
         } catch (IOException e) {
             log.severe("No valid file");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.severe("Shrink error");
         }
     }
 

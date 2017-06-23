@@ -177,6 +177,12 @@ public class Timestamp {
         }
     }
 
+    /**
+     * Shrink Timestamp.
+     * Remove useless pending attestions if exist a full bitcoin attestation.
+     * @return TimeAttestation - the minimal attestation.
+     * @throws Exception no attestion found
+     */
     public TimeAttestation shrink() throws Exception {
         // Get all attestations
         HashMap<byte[], TimeAttestation> allAttestations = this.allAttestations();
