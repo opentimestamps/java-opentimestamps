@@ -60,7 +60,7 @@ $ java -jar target/OtsCli.jar -H 03ba204e50d126e4674c005e04d82e84c21366780af1f43
 INFO: Submitting to remote calendar https://alice.btc.calendar.opentimestamps.org
 INFO: Submitting to remote calendar https://bob.btc.calendar.opentimestamps.org
 INFO: Submitting to remote calendar https://finney.calendar.eternitywall.com
-The timestamp proof '26A5DC28B43E2634A8455113C3FFE8F0AF3B214F.ots' has been created!
+The timestamp proof '03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340.ots' has been created!
 ```
 
 #### Info
