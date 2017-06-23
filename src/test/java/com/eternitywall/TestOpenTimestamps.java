@@ -3,6 +3,8 @@ package com.eternitywall;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import com.eternitywall.ots.*;
+import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
 import java.util.ArrayList;
@@ -35,8 +37,10 @@ public class TestOpenTimestamps{
     private String incompleteOtsInfo;
     private byte[] helloworld;
     private byte[] helloworldOts;
+    private byte[] merkle1Ots;
     private byte[] merkle2Ots;
     private String merkle2OtsInfo;
+    private byte[] merkle3Ots;
     private byte[] differentBlockchainOts;
     private String differentBlockchainOtsInfo;
 
@@ -54,8 +58,10 @@ public class TestOpenTimestamps{
         Future<Response> incompleteOtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/incomplete.txt.ots.info")));
         Future<Response> helloworldFuture = executor.submit(new Request(new URL( baseUrl + "/examples/hello-world.txt")));
         Future<Response> helloworldOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/hello-world.txt.ots")));
+        Future<Response> merkle1OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle1.txt.ots")));
         Future<Response> merkle2OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots")));
         Future<Response> merkle2OtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots.info")));
+        Future<Response> merkle3OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle3.txt.ots")));
         Future<Response> differentBlockchainOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots")));
         Future<Response> differentBlockchainOtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots.info")));
 
@@ -64,8 +70,10 @@ public class TestOpenTimestamps{
         incompleteOtsInfo = incompleteOtsInfoFuture.get().getString();
         helloworld = helloworldFuture.get().getBytes();
         helloworldOts = helloworldOtsFuture.get().getBytes();
+        merkle1Ots = merkle1OtsFuture.get().getBytes();
         merkle2Ots = merkle2OtsFuture.get().getBytes();
         merkle2OtsInfo = merkle2OtsInfoFuture.get().getString();
+        merkle3Ots = merkle3OtsFuture.get().getBytes();
         differentBlockchainOts = differentBlockchainOtsFuture.get().getBytes();
         differentBlockchainOtsInfo = differentBlockchainOtsInfoFuture.get().getString();
     }
@@ -208,6 +216,84 @@ public class TestOpenTimestamps{
 
     }
 
+    @Test
+    public void shrink() throws Exception {
+        {
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(helloworldOts);
+            Timestamp timestamp = detached.getTimestamp();
+
+            assertEquals(timestamp.getAttestations().size(), 1);
+            TimeAttestation resultAttestation = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 1);
+            assertTrue(timestamp.getAttestations().contains(resultAttestation));
+        }
+
+        {
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(incompleteOts);
+            Timestamp timestamp = detached.getTimestamp();
+
+            assertEquals(timestamp.getAttestations().size(), 1);
+            TimeAttestation resultAttestation = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 1);
+            assertTrue(timestamp.getAttestations().contains(resultAttestation));
+
+            OpenTimestamps.upgrade(detached);
+            assertEquals(timestamp.getAttestations().size(), 2);
+            TimeAttestation resultAttestationBitcoin = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
+        }
+
+        {
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle1Ots);
+            Timestamp timestamp = detached.getTimestamp();
+
+            assertEquals(timestamp.getAttestations().size(), 2);
+            TimeAttestation resultAttestation = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestation));
+
+            OpenTimestamps.upgrade(detached);
+            assertEquals(timestamp.getAttestations().size(), 3);
+            TimeAttestation resultAttestationBitcoin = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
+
+        }
+
+        {
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle2Ots);
+            Timestamp timestamp = detached.getTimestamp();
+
+            assertEquals(timestamp.getAttestations().size(), 2);
+            TimeAttestation resultAttestation = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestation));
+
+            OpenTimestamps.upgrade(detached);
+            assertEquals(timestamp.getAttestations().size(), 3);
+            TimeAttestation resultAttestationBitcoin = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
+        }
+
+        {
+            DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle3Ots);
+            Timestamp timestamp = detached.getTimestamp();
+
+            assertEquals(timestamp.getAttestations().size(), 2);
+            TimeAttestation resultAttestation = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestation));
+
+            OpenTimestamps.upgrade(detached);
+            assertEquals(timestamp.getAttestations().size(), 3);
+            TimeAttestation resultAttestationBitcoin = timestamp.shrink();
+            assertEquals(timestamp.getAttestations().size(), 2);
+            assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
+        }
+
+    }
 
     @After
     public void tearDown() {
