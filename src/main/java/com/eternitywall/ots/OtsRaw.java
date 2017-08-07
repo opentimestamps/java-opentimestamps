@@ -179,71 +179,79 @@ public class OtsRaw {
         }
     }
 
-//    private static void multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile, String algorithm){
-//
-//        // Parse input privateUrls
-//        HashMap<String, String> privateUrls = new HashMap<>();
-//        if(signatureFile != null && signatureFile != "") {
-//            try {
-//                privateUrls = readSignature(signatureFile);
-//            } catch (Exception e) {
-//                log.severe("No valid signature file");
-//                return;
-//            }
-//        }
-//
-//        // Make list of detached files
-//        HashMap<String, DetachedTimestampFile> mapFiles = new HashMap<>();
-//        for (String argsFile : argsFiles){
-//            try {
-//                File file = new File(argsFile);
-//                Hash hash = Hash.from( file, Hash.getOp(algorithm)._TAG());
-//                mapFiles.put( argsFile, DetachedTimestampFile.from(hash) );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                log.severe("File read error");
-//                return;
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//                log.severe("Crypto error");
-//                return;
-//            }
-//        }
-//
-//        // Stamping
-//        Timestamp stampResult;
-//        try {
-//            List<DetachedTimestampFile> detaches = new ArrayList(mapFiles.values());
-//            stampResult = OpenTimestamps.stamp(detaches, calendarsUrl, m, privateUrls);
-//            if(stampResult == null){
-//               throw new IOException();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            log.severe("Stamp error");
-//            return;
-//        }
-//
-//        // Generate ots output files
-//        for (Map.Entry<String, DetachedTimestampFile> entry : mapFiles.entrySet()){
-//
-//            String argsFile = entry.getKey();
-//            DetachedTimestampFile detached = entry.getValue();
-//            String argsOts = argsFile + ".ots";
-//            try {
-//                Path path = Paths.get(argsOts);
-//                if (Files.exists(path)) {
-//                    System.out.println("File '" + argsOts + "' already exist");
-//                } else {
-//                    Files.write(path, detached.serialize());
-//                    System.out.println("The timestamp proof '" + argsOts + "' has been created!");
-//                }
-//            }catch (Exception e){
-//                e.printStackTrace();
-//                log.severe("File '" + argsOts + "' writing error");
-//            }
-//        }
-//    }
+    public static List<String> multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile, String algorithm){
+        //Create return message object
+        List<String> messages = new ArrayList<String>();
+        // Parse input privateUrls
+        HashMap<String, String> privateUrls = new HashMap<>();
+        if(signatureFile != null && signatureFile != "") {
+            try {
+                privateUrls = readSignature(signatureFile);
+            } catch (Exception e) {
+                //log.severe("No valid signature file");
+                messages.add("No valid signature file");
+            }
+        }
+
+        // Make list of detached files
+        HashMap<String, DetachedTimestampFile> mapFiles = new HashMap<>();
+        for (String argsFile : argsFiles){
+            try {
+                File file = new File(argsFile);
+                Hash hash = Hash.from( file, Hash.getOp(algorithm)._TAG());
+                mapFiles.put( argsFile, DetachedTimestampFile.from(hash) );
+            } catch (IOException e) {
+                e.printStackTrace();
+                //log.severe("File read error");
+                messages.add("File read error");
+                return messages;
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                //log.severe("Crypto error");
+                messages.add("Crypto error");
+                return messages;
+            }
+        }
+
+        // Stamping
+        Timestamp stampResult;
+        try {
+            List<DetachedTimestampFile> detaches = new ArrayList(mapFiles.values());
+            stampResult = OpenTimestamps.stamp(detaches, calendarsUrl, m, privateUrls);
+            if(stampResult == null){
+               throw new IOException();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            messages.add("Stamp error");
+            //log.severe("Stamp error");
+            return messages;
+        }
+
+        // Generate ots output files
+        for (Map.Entry<String, DetachedTimestampFile> entry : mapFiles.entrySet()){
+
+            String argsFile = entry.getKey();
+            DetachedTimestampFile detached = entry.getValue();
+            String argsOts = argsFile + ".ots";
+            try {
+                Path path = Paths.get(argsOts);
+                if (Files.exists(path)) {
+                    //System.out.println("File '" + argsOts + "' already exist");
+                    messages.add("File '" + argsOts + "' already exist");
+                } else {
+                    Files.write(path, detached.serialize());
+                    //System.out.println("The timestamp proof '" + argsOts + "' has been created!");
+                    messages.add("The timestamp proof '" + argsOts + "' has been created!");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                messages.add("File '" + argsOts + "' writing error");
+                //log.severe("File '" + argsOts + "' writing error");
+            }
+        }
+        return messages;
+    }
 
     private static String stamp(Hash hash, List<String> calendarsUrl, Integer m, String signatureFile) {
         HashMap<String, String> privateUrls = new HashMap<>();

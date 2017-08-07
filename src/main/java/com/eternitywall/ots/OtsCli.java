@@ -36,7 +36,9 @@ public class OtsCli {
     private static boolean shrink = false;
 
     public static void main(String[] args) {
-
+        
+        
+        
         // Create the Options
         Options options = new Options();
         options.addOption( "c", "calendar", true, "Create timestamp with the aid of a remote calendar. May be specified multiple times." );
@@ -47,7 +49,7 @@ public class OtsCli {
         options.addOption( "s", "shrink", false, "Shrink upgraded timestamp." );
         options.addOption( "V", "version", false, "print " + title + " version." );
         options.addOption( "h", "help", false, "print this help." );
-
+        
         // Parse the args to retrieve options & command
         CommandLineParser parser = new BasicParser();
         try {
