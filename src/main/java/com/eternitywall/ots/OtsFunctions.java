@@ -20,11 +20,11 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class OtsRaw {
+public class OtsFunctions {
 
 //    private static Logger log = Logger.getLogger(OtsCli.class.getName());
-//    private static String title = "OtsRaw";
-//    private static String version = "1.0";
+    private static String title = "OtsFunctions";
+    private static String version = "1.0";
 //    private static List<String> calendarsUrl = new ArrayList<>();
 //    private static List<String> files = new ArrayList<>();
 //    private static String cmd = null;
@@ -178,10 +178,11 @@ public class OtsRaw {
             return "No valid file";
         }
     }
-
+    
+    
     public static List<String> multistamp(List<String> argsFiles, List<String> calendarsUrl, Integer m, String signatureFile, String algorithm){
         //Create return message object
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         // Parse input privateUrls
         HashMap<String, String> privateUrls = new HashMap<>();
         if(signatureFile != null && signatureFile != "") {
@@ -201,12 +202,12 @@ public class OtsRaw {
                 Hash hash = Hash.from( file, Hash.getOp(algorithm)._TAG());
                 mapFiles.put( argsFile, DetachedTimestampFile.from(hash) );
             } catch (IOException e) {
-                e.printStackTrace();
+                messages.add(e.getMessage());
                 //log.severe("File read error");
                 messages.add("File read error");
                 return messages;
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+                messages.add(e.getMessage());
                 //log.severe("Crypto error");
                 messages.add("Crypto error");
                 return messages;
@@ -222,7 +223,7 @@ public class OtsRaw {
                throw new IOException();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            messages.add(e.getMessage());
             messages.add("Stamp error");
             //log.severe("Stamp error");
             return messages;
@@ -245,7 +246,7 @@ public class OtsRaw {
                     messages.add("The timestamp proof '" + argsOts + "' has been created!");
                 }
             }catch (Exception e){
-                e.printStackTrace();
+                messages.add(e.getMessage());
                 messages.add("File '" + argsOts + "' writing error");
                 //log.severe("File '" + argsOts + "' writing error");
             }
@@ -327,41 +328,43 @@ public class OtsRaw {
         }
     }
 
-//    public static void upgrade (String argsOts, boolean shrink) {
-//        try {
-//            Path pathOts = Paths.get(argsOts);
-//            byte[] byteOts = Files.readAllBytes(pathOts);
-//            DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
-//
-//            boolean changed = OpenTimestamps.upgrade(detachedOts);
-//            if(shrink == true) {
-//                detachedOts.getTimestamp().shrink();
-//            }
-//
-//            if(!shrink && !changed) {
-//                System.out.println("Timestamp not upgraded");
-//            } else {
-//                // Copy Bak File
-//                byte[] byteBak = Files.readAllBytes(pathOts);
-//                Path pathBak = Paths.get(argsOts+".bak");
-//                Files.write(pathBak, byteBak);
-//
-//                // Write new Upgrade Result
-//                Files.write(pathOts, detachedOts.serialize());
-//            }
-//
-//        } catch (IOException e) {
-//            log.severe("No valid file");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.severe("Shrink error");
-//        }
-//    }
+    public static String upgrade (String argsOts, boolean shrink) {
+        try {
+            Path pathOts = Paths.get(argsOts);
+            byte[] byteOts = Files.readAllBytes(pathOts);
+            DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
 
-//    public static void showVersion() {
-//        System.out.println("Version: " + title + " v." + version );
-//
-//    }
+            boolean changed = OpenTimestamps.upgrade(detachedOts);
+            if(shrink == true) {
+                detachedOts.getTimestamp().shrink();
+            }
+
+            if(!shrink && !changed) {
+                return "Timestamp not upgraded";
+            } else {
+                // Copy Bak File
+                byte[] byteBak = Files.readAllBytes(pathOts);
+                Path pathBak = Paths.get(argsOts+".bak");
+                Files.write(pathBak, byteBak);
+
+                // Write new Upgrade Result
+                Files.write(pathOts, detachedOts.serialize());
+                
+                return "Timestamp successfully upgraded";
+            }
+
+        } catch (IOException e) {
+            return "No valid file";
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return "Shrink error";
+        }
+    }
+
+    public static String showVersion() {
+        return "Version: " + title + " v." + version;
+
+    }
 //    public static void showHelp() {
 //        System.out.println(
 //                "Usage: " + title + " [options] {stamp,s,upgrade,u,verify,v,info,i} [arguments]\n\n" +

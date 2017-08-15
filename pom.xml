@@ -137,14 +137,14 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>OtsRaw</finalName>
+                    <finalName>OtsFunctions</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>com.eternitywall.ots.OtsRaw</mainClass>
+                            <mainClass>com.eternitywall.ots.OtsFunctions</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
