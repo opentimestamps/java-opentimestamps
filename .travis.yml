@@ -4,3 +4,4 @@ jdk:
   - oraclejdk7
 notifications:
   slack: eternitywall:etqKsfod1e0lcsOFby1npMh6
+sudo: required
