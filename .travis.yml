@@ -1,6 +1,5 @@
 language: java
 jdk:
   - oraclejdk8
-  - oraclejdk7
 notifications:
-  slack: eternitywall:etqKsfod1e0lcsOFby1npMh6
+  slack: eternitywall:etqKsfod1e0lcsOFby1npMh6g
