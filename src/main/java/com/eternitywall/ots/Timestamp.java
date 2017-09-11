@@ -223,14 +223,15 @@ public class Timestamp {
         }
 
         // Remove attestation if not min attestation
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Iterator<Entry<Op, Timestamp>> it = this.ops.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<Op, Timestamp> entry = it.next();
             Timestamp timestamp = entry.getValue();
             Op op = entry.getKey();
             Set<TimeAttestation> attestations = timestamp.getAttestations();
             if(attestations.size()>0 && attestations.contains(minAttestation)) {
                 timestamp.shrink();
             } else {
-                this.ops.remove(op);
+                it.remove();
             }
         }
 
