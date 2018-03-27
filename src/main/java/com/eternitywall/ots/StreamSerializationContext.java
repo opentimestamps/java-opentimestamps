@@ -2,6 +2,8 @@ package com.eternitywall.ots;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by luca on 25/02/2017.
@@ -11,19 +13,27 @@ public class StreamSerializationContext {
 
     private static Logger log = Logger.getLogger(StreamSerializationContext.class.getName());
 
-    byte[] buffer = new byte[1024 * 4];
-    int length = 0;
+    List<Byte> buffer = new ArrayList<Byte>();
 
     public StreamSerializationContext() {
-        this.buffer = new byte[1024 * 4];
-        this.length = 0;
+        this.buffer = new ArrayList<>();
     }
 
     public byte[] getOutput() {
-        return Arrays.copyOfRange(this.buffer, 0, this.length);
+        Byte[] bytesArray = (Byte[])this.buffer.toArray(new Byte[this.buffer.size()]);
+        return toPrimitives(bytesArray);
     }
     public int getLength() {
-        return length;
+        return this.buffer.size();
+    }
+
+    private byte[] toPrimitives(Byte[] oBytes)
+    {
+        byte[] bytes = new byte[oBytes.length];
+        for(int i = 0; i < oBytes.length; i++){
+            bytes[i] = oBytes[i];
+        }
+        return bytes;
     }
 
 
@@ -54,14 +64,11 @@ public class StreamSerializationContext {
     }
 
     public void writeByte(byte value) {
-        if (this.length >= this.buffer.length) {
-            int newLenght = this.buffer.length * 2;
-            byte[] swapBuffer = Arrays.copyOf(this.buffer, newLenght);
-            this.buffer = swapBuffer;
-        }
+        this.buffer.add( new Byte(value) );
+    }
 
-        this.buffer[this.length] = value;
-        this.length++;
+    public void writeByte(Byte value) {
+        this.buffer.add( value );
     }
 
 
@@ -77,7 +84,7 @@ public class StreamSerializationContext {
     }
 
     public String toString() {
-        return Arrays.toString(Arrays.copyOf(this.buffer, this.length));
+        return Arrays.toString( this.getOutput() );
     }
 
 }
