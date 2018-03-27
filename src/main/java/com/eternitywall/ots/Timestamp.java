@@ -390,7 +390,7 @@ public class Timestamp {
                 try {
                     Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
                     byte[] tx = new OpReverse().call(new OpSHA256().call(new OpSHA256().call(this.msg)));
-                    builder.append(Timestamp.indention(indent) + "# transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
+                    builder.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
                 } catch (Exception err) {
                 }
                 byte[] curRes = op.call(this.msg);
