@@ -26,7 +26,6 @@ import com.eternitywall.ots.attestation.PendingAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpBinary;
-import com.eternitywall.ots.op.OpReverse;
 import com.eternitywall.ots.op.OpSHA256;
 
 /**
@@ -357,7 +356,7 @@ public class Timestamp {
                 builder.append( Timestamp.indention(indent));
                 builder.append( "verify " + attestation.toString() + strResult(verbosity, this.msg, null) + "\n");
                 if (attestation instanceof BitcoinBlockHeaderAttestation) {
-                    String tx = Utils.bytesToHex(new OpReverse().call(this.msg));
+                    String tx = Utils.bytesToHex( Utils.arrayReverse(this.msg));
                     builder.append(Timestamp.indention(indent) + "# Bitcoin block merkle root " + tx.toLowerCase() + "\n");
                 }
             }
@@ -370,7 +369,7 @@ public class Timestamp {
                 Op op = entry.getKey();
                 try {
                     Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
-                    byte[] tx = new OpReverse().call(new OpSHA256().call(new OpSHA256().call(this.msg)));
+                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(this.msg)));
                     builder.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
                 } catch (Exception err) {
                 }
@@ -389,7 +388,7 @@ public class Timestamp {
                 Op op = entry.getKey();
                 try {
                     Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
-                    byte[] tx = new OpReverse().call(new OpSHA256().call(new OpSHA256().call(this.msg)));
+                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(this.msg)));
                     builder.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
                 } catch (Exception err) {
                 }
