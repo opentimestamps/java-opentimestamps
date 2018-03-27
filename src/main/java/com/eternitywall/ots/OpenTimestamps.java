@@ -44,6 +44,16 @@ public class OpenTimestamps {
      * @return the string representation of the timestamp
      */
     public static String info(DetachedTimestampFile detachedTimestampFile) {
+        return info(detachedTimestampFile, false);
+    }
+    /**
+     * Show information on a timestamp.
+     *
+     * @param detachedTimestampFile The DetachedTimestampFile ots.
+     * @param verbose Show verbose output.
+     * @return the string representation of the timestamp
+     */
+    public static String info(DetachedTimestampFile detachedTimestampFile, boolean verbose) {
         if (detachedTimestampFile == null) {
             return "No ots file";
         }
@@ -52,7 +62,7 @@ public class OpenTimestamps {
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._TAG_NAME();
 
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
-        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
+        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0, verbose);
     }
     /**
      * Show information on a timestamp.

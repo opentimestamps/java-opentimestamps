@@ -17,7 +17,7 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
 
     private static Logger log = Logger.getLogger(OpBinary.class.getName());
 
-    byte[] arg;
+    public byte[] arg;
 
     @Override
     public String _TAG_NAME() {

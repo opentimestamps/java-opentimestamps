@@ -17,6 +17,17 @@ import java.util.Map.Entry;
 
 import java.util.*;
 import java.util.logging.Logger;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.*;
+
+import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
+import com.eternitywall.ots.attestation.PendingAttestation;
+import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.op.Op;
+import com.eternitywall.ots.op.OpBinary;
+import com.eternitywall.ots.op.OpReverse;
+import com.eternitywall.ots.op.OpSHA256;
 
 /**
  * Class representing com.eternitywall.ots.Timestamp interface
@@ -292,88 +303,103 @@ public class Timestamp {
         return builder.toString();
     }
 
+
+    public String strTree(int indent) {
+        return strTree(indent, false);
+    }
+
+    private String strResult (boolean verbosity, byte[] parameter, byte[] result) {
+
+        final String ANSI_HEADER = "\u001B[95m";
+        final String ANSI_OKBLUE = "\u001B[94m";
+        final String ANSI_OKGREEN = "\u001B[92m";
+        final String ANSI_WARNING = "\u001B[93m";
+        final String ANSI_FAIL = "\u001B[91m";
+        final String ANSI_ENDC = "\u001B[0m";
+        final String ANSI_BOLD = "\u001B[1m";
+        final String ANSI_UNDERLINE = "\u001B[4m";
+
+        String rr = "";
+        if (verbosity == true && result != null) {
+            rr += " == ";
+            String resultHex = Utils.bytesToHex(result);
+            if (parameter == null) {
+                rr += resultHex;
+            } else {
+                String parameterHex = Utils.bytesToHex(parameter);
+                try {
+                    int index = resultHex.indexOf(parameterHex);
+                    String parameterHexHighlight = ANSI_BOLD + parameterHex + ANSI_ENDC;
+                    if (index == 0) {
+                        rr += parameterHexHighlight + resultHex.substring(index + parameterHex.length(), resultHex.length());
+                    } else {
+                        rr += resultHex.substring(0, index) + parameterHexHighlight;
+                    }
+                } catch (Exception err) {
+                    rr += resultHex;
+                }
+            }
+        }
+        return rr;
+    }
+
     /**
      * Print as tree hierarchical object.
      * @param indent - Initial hierarchical indention.
+     * @param verbosity - Verbose option.
      * @return The output string.
      */
-    public String strTree(int indent) {
+    public String strTree(int indent, boolean verbosity) {
+
         StringBuilder builder = new StringBuilder();
         if (!this.attestations.isEmpty()) {
             for (final TimeAttestation attestation : this.attestations) {
                 builder.append( Timestamp.indention(indent));
-                builder.append( "verify " + attestation.toString() + '\n');
-
+                builder.append( "verify " + attestation.toString() + strResult(verbosity, this.msg, null) + "\n");
+                if (attestation instanceof BitcoinBlockHeaderAttestation) {
+                    String tx = Utils.bytesToHex(new OpReverse().call(this.msg));
+                    builder.append(Timestamp.indention(indent) + "# Bitcoin block merkle root " + tx.toLowerCase() + "\n");
+                }
             }
         }
 
         if (this.ops.size() > 1) {
             TreeMap<Op, Timestamp> ordered = new TreeMap<>(this.ops);
-
             for (Map.Entry<Op, Timestamp> entry : ordered.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
-                builder.append( Timestamp.indention(indent));
-                builder.append( " -> ");
-                builder.append( op.toString() + '\n');
-                builder.append( timestamp.strTree(indent + 1));
+                try {
+                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
+                    byte[] tx = new OpReverse().call(new OpSHA256().call(new OpSHA256().call(this.msg)));
+                    builder.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
+                } catch (Exception err) {
+                }
+                byte[] curRes = op.call(this.msg);
+                byte[] curPar = null;
+                if (op instanceof OpBinary){
+                    curPar = ((OpBinary) op).arg;
+                }
+                builder.append(Timestamp.indention(indent) + " -> " + op.toString().toLowerCase() + strResult(verbosity, curPar, curRes).toLowerCase() + "\n");
+                builder.append(timestamp.strTree(indent + 1, verbosity));
             }
         } else if (this.ops.size() > 0) {
             // output += com.eternitywall.ots.Timestamp.indention(indent);
             for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
-                builder.append( Timestamp.indention(indent));
-                builder.append( op.toString() + '\n');
-                // output += ' ( ' + com.eternitywall.ots.Utils.bytesToHex(this.msg) + ' ) ';
-                // output += '\n';
-                builder.append( timestamp.strTree(indent));
-            }
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Print as tree extended hierarchical object.
-     * @param timestamp - desc
-     * @param indent - Initial hierarchical indention.
-     * @return The output string.
-     */
-    public static String strTreeExtended(Timestamp timestamp, int indent) {
-        StringBuilder builder = new StringBuilder();
-
-        if (!timestamp.attestations.isEmpty()) {
-            for (final TimeAttestation attestation : timestamp.attestations) {
-                builder.append( Timestamp.indention(indent))
-                    .append( "verify " + attestation.toString())
-                    .append( " (" + Utils.bytesToHex(timestamp.msg).toLowerCase() + ") ")
-                    //.append( " ["+com.eternitywall.ots.Utils.bytesToHex(timestamp.msg)+"] ")
-                    .append( '\n');
-            }
-        }
-
-        if (timestamp.ops.size() > 1) {
-
-            for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
-                Timestamp ts = entry.getValue();
-                Op op = entry.getKey();
-                builder.append( Timestamp.indention(indent))
-                    .append( " -> ")
-                    .append( op.toString())
-                    .append( " (" + Utils.bytesToHex(timestamp.msg).toLowerCase() + ") ")
-                    .append( '\n')
-                    .append( Timestamp.strTreeExtended(ts, indent + 1));
-            }
-        } else if (timestamp.ops.size() > 0) {
-            builder.append( Timestamp.indention(indent));
-            for (Map.Entry<Op, Timestamp> entry : timestamp.ops.entrySet()) {
-                Timestamp ts = entry.getValue();
-                Op op = entry.getKey();
-                builder.append( Timestamp.indention(indent))
-                    .append( op.toString())
-                    .append( " ( " + Utils.bytesToHex(timestamp.msg).toLowerCase() + " ) ")
-                    .append( '\n')
-                    .append( Timestamp.strTreeExtended(ts, indent));
+                try {
+                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
+                    byte[] tx = new OpReverse().call(new OpSHA256().call(new OpSHA256().call(this.msg)));
+                    builder.append(Timestamp.indention(indent) + "# transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
+                } catch (Exception err) {
+                }
+                byte[] curRes = op.call(this.msg);
+                byte[] curPar = null;
+                if (op instanceof OpBinary){
+                    curPar = ((OpBinary) op).arg;
+                }
+                builder.append(Timestamp.indention(indent) + op.toString().toLowerCase() + strResult(verbosity, curPar, curRes).toLowerCase() + "\n");
+                builder.append(timestamp.strTree(indent, verbosity));
             }
         }
         return builder.toString();
