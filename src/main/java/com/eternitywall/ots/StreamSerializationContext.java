@@ -55,11 +55,9 @@ public class StreamSerializationContext {
 
     public void writeByte(byte value) {
         if (this.length >= this.buffer.length) {
-            int newLenght = this.length * 2;
-            byte[] swapBuffer = new byte[newLenght];
-            swapBuffer = Arrays.copyOf(this.buffer, this.length);
+            int newLenght = this.buffer.length * 2;
+            byte[] swapBuffer = Arrays.copyOf(this.buffer, newLenght);
             this.buffer = swapBuffer;
-            this.length = newLenght;
         }
 
         this.buffer[this.length] = value;
