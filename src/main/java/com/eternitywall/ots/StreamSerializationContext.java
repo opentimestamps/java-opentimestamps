@@ -13,29 +13,23 @@ public class StreamSerializationContext {
 
     private static Logger log = Logger.getLogger(StreamSerializationContext.class.getName());
 
-    List<Byte> buffer = new ArrayList<Byte>();
+    List<Byte> buffer = new ArrayList<>();
 
     public StreamSerializationContext() {
         this.buffer = new ArrayList<>();
     }
 
     public byte[] getOutput() {
-        Byte[] bytesArray = (Byte[])this.buffer.toArray(new Byte[this.buffer.size()]);
-        return toPrimitives(bytesArray);
-    }
-    public int getLength() {
-        return this.buffer.size();
-    }
-
-    private byte[] toPrimitives(Byte[] oBytes)
-    {
-        byte[] bytes = new byte[oBytes.length];
-        for(int i = 0; i < oBytes.length; i++){
-            bytes[i] = oBytes[i];
+        byte[] bytes = new byte[this.buffer.size()];
+        for(int i = 0; i < this.buffer.size(); i++){
+            bytes[i] = this.buffer.get(i);
         }
         return bytes;
     }
 
+    public int getLength() {
+        return this.buffer.size();
+    }
 
     public void writeBool(boolean value) {
         if (value == true) {
