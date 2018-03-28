@@ -174,30 +174,27 @@ public class TestOpenTimestamps{
 
     @Test
     public void upgrade() throws ExecutionException, InterruptedException, IOException, NoSuchAlgorithmException {
-
-        {
+        try {
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(incomplete, OpSHA256._TAG));
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
-            boolean changed= OpenTimestamps.upgrade(detachedOts);
+            boolean changed = OpenTimestamps.upgrade(detachedOts);
             assertTrue(changed);
-            try{
-                HashMap<String,Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
-                assertTrue(timestamps.containsKey("bitcoin"));
-                assertEquals(1473227803L, timestamps.get("bitcoin").longValue());
-            }catch(Exception e){
-                assertNull(e);
-            }
+            HashMap<String, Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
+            assertTrue(timestamps.containsKey("bitcoin"));
+            assertEquals(1473227803L, timestamps.get("bitcoin").longValue());
+        } catch (Exception e) {
+            assertNull(e);
         }
 
-        {
+        try {
             byte[] hashBytes = Utils.randBytes(32);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(hashBytes, OpSHA256._TAG));
             Timestamp stamp = OpenTimestamps.stamp(detached);
             boolean changed = OpenTimestamps.upgrade(stamp);
             assertFalse(changed);
+        } catch (Exception e) {
+            assertNull(e);
         }
-        //byte[] upgrade = OpenTimestamps.upgrade(stamp);
-        //assertTrue( Arrays.equals(stamp,upgrade) );   //FIXME this doesn't work, should it?
 
     }
 
@@ -218,15 +215,12 @@ public class TestOpenTimestamps{
         byte []otsBefore = streamSerializationContext.getOutput();
         //log.info("fullOts hex: " + Utils.bytesToHex(otsBefore));
 
-        //log.info("upgrading " + OpenTimestamps.info(timestamp));
-        boolean changed = OpenTimestamps.upgrade(timestamp);
-        assertTrue(changed);
-
-        //streamSerializationContext = new StreamSerializationContext();
-        //timestamp.serialize(streamSerializationContext);
-        //byte []otsAfter = streamSerializationContext.getOutput();
-        //if (!Arrays.equals(ots, otsAfter)) {
-        //}
+        try {
+            boolean changed = OpenTimestamps.upgrade(timestamp);
+            assertTrue(changed);
+        } catch (Exception e) {
+            assertNull(e);
+        }
 
     }
 

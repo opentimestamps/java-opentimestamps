@@ -10,6 +10,7 @@ package com.eternitywall.ots;
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
+import com.eternitywall.ots.exceptions.*;
 import org.bitcoinj.core.ECKey;
 
 import java.net.*;
@@ -50,13 +51,20 @@ public class Calendar{
         return this.key;
     }
 
+    /**
+     * Get calendar url.
+     * @return The calendar url.
+     */
+    public String getUrl() {
+        return this.url;
+    }
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.ots.Timestamp committing to that digest.
      * @param digest The digest hash to send.
      * @return the Timestamp received from the calendar
      */
-    public Timestamp submit(byte[] digest) {
+    public Timestamp submit(byte[] digest) throws ExceededSizeException, UrlException {
         try {
 
             Map<String, String> headers = new HashMap<>();
@@ -77,16 +85,14 @@ public class Calendar{
             byte[] body = response.getBytes();
 
             if (body.length > 10000) {
-                log.severe("com.eternitywall.ots.Calendar response exceeded size limit");
-                return null;
+                throw new ExceededSizeException("Calendar response exceeded size limit");
             }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             return Timestamp.deserialize(ctx, digest);
 
         } catch (Exception e) {
-            //log.severe(e.getMessage());
-            return null;
+            throw new UrlException(e.getMessage());
         }
     }
 
@@ -96,7 +102,7 @@ public class Calendar{
      * @param commitment The digest hash to send.
      * @return the Timestamp from the calendar server (with blockchain information if already written)
      */
-    public Timestamp getTimestamp(byte[] commitment) {
+    public Timestamp getTimestamp(byte[] commitment) throws ExceededSizeException, CommitmentNotFoundException, UrlException {
         try {
 
             Map<String, String> headers = new HashMap<>();
@@ -111,20 +117,17 @@ public class Calendar{
             byte[] body = response.getBytes();
 
             if (body.length > 10000) {
-                log.severe("com.eternitywall.ots.Calendar response exceeded size limit");
-                return null;
+                throw new ExceededSizeException("Calendar response exceeded size limit");
             }
             if(!response.isOk()) {
-                log.info("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
-                return null;
+                throw new CommitmentNotFoundException("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
             }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             return Timestamp.deserialize(ctx, commitment);
 
         } catch (Exception e) {
-            //log.severe(e.getMessage());
-            return null;
+            throw new UrlException(e.getMessage());
         }
     }
 }

@@ -383,19 +383,15 @@ public class OpenTimestamps {
      * @param detachedTimestamp The DetachedTimestampFile containing the proof to verify.
      * @return a boolean represnting if the timestamp has changed
      */
-    public static boolean upgrade(DetachedTimestampFile detachedTimestamp) {
-
-        if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            return false;
-        }
+    public static boolean upgrade(DetachedTimestampFile detachedTimestamp) throws Exception {
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
 
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            log.info("Timestamp is complete");
+            // log.info("Timestamp is complete");
         } else {
-            log.info("Timestamp is not complete");
+            // log.info("Timestamp is not complete");
         }
 
         return changed;
@@ -409,7 +405,7 @@ public class OpenTimestamps {
      * @param timestamp The timestamp.
      * @return a boolean represnting if the timestamp has changed
      */
-    public static boolean upgrade(Timestamp timestamp) {
+    public static boolean upgrade(Timestamp timestamp) throws Exception{
         // Check remote calendars for upgrades.
         // This time we only check PendingAttestations - we can't be as agressive.
 
@@ -418,21 +414,23 @@ public class OpenTimestamps {
         Set<TimeAttestation> existingAttestations = timestamp.getAttestations();
         for (Timestamp subStamp : timestamp.directlyVerified()) {
             for (TimeAttestation attestation : subStamp.attestations) {
-                if (attestation instanceof PendingAttestation) {
+                if (attestation instanceof PendingAttestation && !subStamp.isTimestampComplete()) {
+
                     String calendarUrl = new String(((PendingAttestation) attestation).getUri(), StandardCharsets.UTF_8);
                     // var calendarUrl = calendarUrls[0];
                     byte[] commitment = subStamp.msg;
 
-                    Calendar calendar = new Calendar(calendarUrl);
-                    Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
-                    if(upgradedStamp != null) {
+                    try {
+                        Calendar calendar = new Calendar(calendarUrl);
+                        Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
                         try {
                             subStamp.merge(upgradedStamp);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         upgraded = true;
-                        return upgraded;
+                    }catch(Exception e){
+                        log.info(e.getMessage());
                     }
                 }
             }
@@ -440,24 +438,28 @@ public class OpenTimestamps {
         return upgraded;
     }
 
-    private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
-        Timestamp upgradedStamp = calendar.getTimestamp(commitment);
-        if (upgradedStamp == null) {
-            return null;
+    private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) throws Exception{
+
+        Timestamp upgradedStamp;
+        try {
+            upgradedStamp = calendar.getTimestamp(commitment);
+            if (upgradedStamp == null) {
+                throw new Exception("Invalid stamp");
+            }
+        }catch(Exception e){
+            log.info("Calendar " + calendar.getUrl() + ": " + e.getMessage());
+            throw e;
         }
 
         Set<TimeAttestation> attsFromRemote = upgradedStamp.getAttestations();
         if (attsFromRemote.size() > 0) {
-            // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+            log.info("Got 1 attestation(s) from " + calendar.getUrl());
         }
 
         // Set difference from remote attestations & existing attestations
         Set<TimeAttestation> newAttestations = attsFromRemote;
         newAttestations.removeAll(existingAttestations);
 
-        if (newAttestations.size() == 0) {
-            return null;
-        }
         // changed & found_new_attestations
         // foundNewAttestations = true;
         // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
