@@ -104,4 +104,8 @@ public class Utils {
     public static byte[] toBytes(String str, String encode) {
         return org.bitcoinj.core.Utils.toBytes(str, encode);
     }
+
+    public static String toUpperFirstLetter(String string){
+        return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
+    }
 }

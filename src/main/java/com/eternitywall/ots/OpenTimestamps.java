@@ -3,10 +3,8 @@ package com.eternitywall.ots;
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.PendingAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
-import com.eternitywall.ots.op.Op;
-import com.eternitywall.ots.op.OpAppend;
-import com.eternitywall.ots.op.OpCrypto;
-import com.eternitywall.ots.op.OpSHA256;
+import com.eternitywall.ots.op.*;
+import com.eternitywall.ots.exceptions.*;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -296,12 +294,12 @@ public class OpenTimestamps {
      * @return the timestamp in seconds from 1 Jamuary 1970
      */
 
-    public static Long verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) {
+    public static HashMap<String,Long> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception{
 
         if (!Arrays.equals(ots.fileDigest(), stamped.fileDigest())) {
             log.severe("Expected digest " + Utils.bytesToHex(ots.fileDigest()).toLowerCase());
             log.severe("File does not match original!");
-            return null;
+            throw new Exception("File does not match original!");
         }
 
         return OpenTimestamps.verify(ots.timestamp);
@@ -313,56 +311,51 @@ public class OpenTimestamps {
      * @param timestamp The timestamp.
      * @return unix timestamp if verified, undefined otherwise.
      */
-    public static Long verify(Timestamp timestamp) {
-        Boolean found = false;
+    public static HashMap<String,Long> verify(Timestamp timestamp) throws Exception{
+        HashMap<String,Long> hashResults = new HashMap<>();
 
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
-
-            if (!found) { // Verify only the first com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation
-                if (attestation instanceof PendingAttestation) {
-                } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
-                    found = true;
-                    Integer height = ((BitcoinBlockHeaderAttestation) attestation).getHeight();
-
-                    BlockHeader blockInfo = null;
-
-                    try {
-                        Properties properties = BitcoinNode.readBitcoinConf();
-                        BitcoinNode bitcoin = new BitcoinNode(properties);
-                        blockInfo = bitcoin.getBlockHeader(height);
-                    } catch (Exception e1) {
-                        log.fine("There is no local node available");
-                        try {
-                            MultiInsight insight = new MultiInsight();
-                            String blockHash = null;
-                            blockHash = insight.blockHash(height);
-                            blockInfo = insight.block(blockHash);
-                            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
-                            insight.getExecutor().shutdown();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                            return null;
-                        }
+            if(attestation instanceof BitcoinBlockHeaderAttestation) {
+                try {
+                    String chain = BitcoinBlockHeaderAttestation.chain;
+                    Long time = verify((BitcoinBlockHeaderAttestation)attestation, msg);
+                    if (!hashResults.containsKey(chain) || hashResults.get(chain) > time) {
+                        hashResults.put(chain, time);
                     }
-
-                    byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
-                    byte[] message = Utils.arrayReverse(msg);
-
-                    // One Bitcoin attestation is enought
-                    if (Arrays.equals(merkle, message)) {
-                        return blockInfo.getTime();
-                    } else {
-                        return null;
-                    }
+                }catch(VerificationException e){
+                    throw e;
+                }catch(Exception e){
+                    log.info("Bitcoin verification failed: "+e.getMessage());
                 }
             }
         }
-        if (!found) {
-            return null;
+        return hashResults;
+    }
+
+    public static Long verify(BitcoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
+        Integer height = attestation.getHeight();
+        BlockHeader blockInfo;
+        try {
+            Properties properties = BitcoinNode.readBitcoinConf();
+            BitcoinNode bitcoin = new BitcoinNode(properties);
+            blockInfo = bitcoin.getBlockHeader(height);
+        } catch (Exception e1) {
+            log.fine("There is no local node available");
+            try {
+                MultiInsight insight = new MultiInsight();
+                String blockHash = blockHash = insight.blockHash(height);
+                blockInfo = insight.block(blockHash);
+                log.info("Lite-client verification, assuming block " + blockHash + " is valid");
+                insight.getExecutor().shutdown();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                throw e2;
+            }
         }
-        return null;
+
+        return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
     }
 
     /**
@@ -379,10 +372,6 @@ public class OpenTimestamps {
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
-
-        if (changed) {
-            log.info("Timestamp has been successfully upgraded!");
-        }
 
         if (detachedTimestamp.timestamp.isTimestampComplete()) {
             log.info("Timestamp is complete");

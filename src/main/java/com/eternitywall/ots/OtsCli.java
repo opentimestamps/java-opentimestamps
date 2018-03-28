@@ -276,42 +276,40 @@ public class OtsCli {
     }
 
     public static void verify (String argsOts, Hash hash) {
-        FileInputStream fis = null;
         try {
-
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
-            Long timestamp = null;
+            DetachedTimestampFile detached;
+            HashMap<String,Long> timestamps;
 
             if (shasum == null){
                 // Read from file
                 String argsFile = argsOts.replace(".ots","");
                 File file = new File(argsFile);
                 System.out.println("Assuming target filename is '" + argsFile + "'");
-                DetachedTimestampFile detached = DetachedTimestampFile.from(new OpSHA256(), file);
-                timestamp = OpenTimestamps.verify(detachedOts,detached);
+                detached = DetachedTimestampFile.from(new OpSHA256(), file);
             } else {
                 // Read from hash option
                 System.out.println("Assuming target hash is '" + Utils.bytesToHex(hash.getValue()) + "'");
-                DetachedTimestampFile detached = DetachedTimestampFile.from(hash);
-                timestamp = OpenTimestamps.verify(detachedOts,detached);
+                detached = DetachedTimestampFile.from(hash);
             }
 
-            if(timestamp == null){
-                System.out.println("Pending or Bad attestation");
-            }else {
-                System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
+            try {
+                timestamps = OpenTimestamps.verify(detachedOts, detached);
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                return;
+            }
+
+            if(timestamps.size() > 0){
+                for (Map.Entry<String, Long> entry : timestamps.entrySet()) {
+                    System.out.println("Success! " + Utils.toUpperFirstLetter(entry.getKey()) + " attests data existed as of " + new Date(entry.getValue()*1000) );
+                }
             }
 
         } catch (Exception e) {
             log.severe("No valid file");
-        } finally {
-            try {
-                fis.close();
-            }catch  (IOException e) {
-                log.severe("No valid file");
-            }
         }
     }
 

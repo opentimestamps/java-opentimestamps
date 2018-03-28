@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -148,16 +149,25 @@ public class TestOpenTimestamps{
         {
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(helloworldOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
-            Long timestamp = OpenTimestamps.verify(detachedOts, detached);
-            assertEquals(1432827678L, timestamp.longValue());
+            try {
+                HashMap<String, Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
+                assertTrue(timestamps.containsKey("bitcoin"));
+                assertEquals(1432827678L, timestamps.get("bitcoin").longValue());
+            }catch(Exception e){
+                assertNull(e);
+            }
         }
 
         // verify on python call upgrade
         {
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(incomplete, OpSHA256._TAG));
-            Long timestamp = OpenTimestamps.verify(detachedOts, detached);
-            assertEquals(null, timestamp);
+            try {
+                HashMap<String,Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
+                assertEquals(timestamps.size(), 0);
+            }catch(Exception e){
+                assertNull(e);
+            }
         }
 
     }
@@ -170,8 +180,13 @@ public class TestOpenTimestamps{
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
             boolean changed= OpenTimestamps.upgrade(detachedOts);
             assertTrue(changed);
-            Long timestamp = OpenTimestamps.verify(detachedOts, detached);
-            assertEquals(1473227803L, timestamp.longValue());
+            try{
+                HashMap<String,Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
+                assertTrue(timestamps.containsKey("bitcoin"));
+                assertEquals(1473227803L, timestamps.get("bitcoin").longValue());
+            }catch(Exception e){
+                assertNull(e);
+            }
         }
 
         {
