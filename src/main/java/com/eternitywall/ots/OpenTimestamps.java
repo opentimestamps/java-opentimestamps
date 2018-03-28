@@ -1,8 +1,6 @@
 package com.eternitywall.ots;
 
-import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
-import com.eternitywall.ots.attestation.PendingAttestation;
-import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.attestation.*;
 import com.eternitywall.ots.op.*;
 import com.eternitywall.ots.exceptions.*;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -317,18 +315,23 @@ public class OpenTimestamps {
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
-            if(attestation instanceof BitcoinBlockHeaderAttestation) {
-                try {
-                    String chain = BitcoinBlockHeaderAttestation.chain;
-                    Long time = verify((BitcoinBlockHeaderAttestation)attestation, msg);
-                    if (!hashResults.containsKey(chain) || hashResults.get(chain) > time) {
-                        hashResults.put(chain, time);
-                    }
-                }catch(VerificationException e){
-                    throw e;
-                }catch(Exception e){
-                    log.info("Bitcoin verification failed: "+e.getMessage());
+            String chain = null;
+            Long time = null;
+            try {
+                if (attestation instanceof BitcoinBlockHeaderAttestation) {
+                    chain = BitcoinBlockHeaderAttestation.chain;
+                    time = verify((BitcoinBlockHeaderAttestation) attestation, msg);
+                } else if (attestation instanceof LitecoinBlockHeaderAttestation) {
+                    chain = LitecoinBlockHeaderAttestation.chain;
+                    time = verify((LitecoinBlockHeaderAttestation) attestation, msg);
                 }
+                if (chain != null && (!hashResults.containsKey(chain) || hashResults.get(chain) > time)) {
+                    hashResults.put(chain, time);
+                }
+            } catch (VerificationException e) {
+                throw e;
+            } catch (Exception e) {
+                log.info(Utils.toUpperFirstLetter(chain) + " verification failed: " + e.getMessage());
             }
         }
         return hashResults;
@@ -344,7 +347,7 @@ public class OpenTimestamps {
         } catch (Exception e1) {
             log.fine("There is no local node available");
             try {
-                MultiInsight insight = new MultiInsight();
+                MultiInsight insight = new MultiInsight(attestation.chain);
                 String blockHash = blockHash = insight.blockHash(height);
                 blockInfo = insight.block(blockHash);
                 log.info("Lite-client verification, assuming block " + blockHash + " is valid");
@@ -355,6 +358,22 @@ public class OpenTimestamps {
             }
         }
 
+        return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
+    }
+
+    public static Long verify(LitecoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
+        Integer height = attestation.getHeight();
+        BlockHeader blockInfo;
+        try {
+            MultiInsight insight = new MultiInsight(attestation.chain);
+            String blockHash = blockHash = insight.blockHash(height);
+            blockInfo = insight.block(blockHash);
+            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
+            insight.getExecutor().shutdown();
+        } catch (Exception e2) {
+            e2.printStackTrace();
+            throw e2;
+        }
         return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
     }
 
