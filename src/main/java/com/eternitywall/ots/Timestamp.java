@@ -233,13 +233,15 @@ public class Timestamp {
         }
 
         // Remove attestation if not min attestation
+        boolean shrinked = false;
         for (Iterator<Entry<Op, Timestamp>> it = this.ops.entrySet().iterator(); it.hasNext();) {
             Map.Entry<Op, Timestamp> entry = it.next();
             Timestamp timestamp = entry.getValue();
             Op op = entry.getKey();
             Set<TimeAttestation> attestations = timestamp.getAttestations();
-            if(attestations.size()>0 && attestations.contains(minAttestation)) {
+            if(attestations.size()>0 && attestations.contains(minAttestation) && shrinked==false) {
                 timestamp.shrink();
+                shrinked = true;
             } else {
                 it.remove();
             }

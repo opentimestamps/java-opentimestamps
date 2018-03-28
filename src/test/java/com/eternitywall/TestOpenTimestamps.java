@@ -246,9 +246,9 @@ public class TestOpenTimestamps{
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
-            assertEquals(timestamp.getAttestations().size(), 2);
+            assertEquals(timestamp.allAttestations().size(), 2);
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
-            assertEquals(timestamp.getAttestations().size(), 2);
+            assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
         }
 
@@ -262,9 +262,9 @@ public class TestOpenTimestamps{
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
-            assertEquals(timestamp.getAttestations().size(), 3);
+            assertEquals(timestamp.allAttestations().size(), 4);
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
-            assertEquals(timestamp.getAttestations().size(), 2);
+            assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
 
         }
@@ -279,7 +279,7 @@ public class TestOpenTimestamps{
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
-            assertEquals(timestamp.getAttestations().size(), 3);
+            assertEquals(timestamp.allAttestations().size(), 4);
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
@@ -295,9 +295,9 @@ public class TestOpenTimestamps{
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
-            assertEquals(timestamp.getAttestations().size(), 3);
+            assertEquals(timestamp.allAttestations().size(), 4);
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
-            assertEquals(timestamp.getAttestations().size(), 2);
+            assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
         }
 

@@ -93,6 +93,11 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return true;
     }
 
+    @Override
+    public int hashCode(){
+        return Arrays.hashCode(this._TAG()) ^ this.height;
+    }
+
     /*
      Verify attestation against a block header
      Returns the block time on success; raises VerificationError on failure.

@@ -107,4 +107,9 @@ public class PendingAttestation extends TimeAttestation {
         }
         return true;
     }
+
+    @Override
+    public int hashCode(){
+        return Arrays.hashCode(this._TAG()) ^ Arrays.hashCode(this.uri);
+    }
 }
