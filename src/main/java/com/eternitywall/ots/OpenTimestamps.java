@@ -327,7 +327,7 @@ public class OpenTimestamps {
                 }
                 if (chain != null && (!hashResults.containsKey(chain) || hashResults.get(chain) > time)) {
                     hashResults.put(chain, time);
-                }
+                }src/main/java/com/eternitywall/ots
             } catch (VerificationException e) {
                 throw e;
             } catch (Exception e) {
