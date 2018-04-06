@@ -34,20 +34,20 @@ public class OpenTimestamps {
 
 
     /**
-     * Show information on a timestamp.
+     * Show information on a detached timestamp.
      *
      * @param detachedTimestampFile The DetachedTimestampFile ots.
-     * @return the string representation of the timestamp
+     * @return the string representation of the timestamp.
      */
     public static String info(DetachedTimestampFile detachedTimestampFile) {
         return info(detachedTimestampFile, false);
     }
     /**
-     * Show information on a timestamp.
+     * Show information on a detached timestamp with verbose option.
      *
      * @param detachedTimestampFile The DetachedTimestampFile ots.
      * @param verbose Show verbose output.
-     * @return the string representation of the timestamp
+     * @return the string representation of the timestamp.
      */
     public static String info(DetachedTimestampFile detachedTimestampFile, boolean verbose) {
         if (detachedTimestampFile == null) {
@@ -64,7 +64,7 @@ public class OpenTimestamps {
      * Show information on a timestamp.
      *
      * @param timestamp The timestamp buffered.
-     * @return the string representation of the timestamp
+     * @return the string representation of the timestamp.
      */
     public static String info(Timestamp timestamp) {
         if (timestamp == null) {
@@ -80,7 +80,7 @@ public class OpenTimestamps {
      *
      * @param fileTimestamp The Detached Timestamp File.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,null,0, null);
@@ -93,7 +93,7 @@ public class OpenTimestamps {
      * @param calendarsUrl The list of calendar urls.
      * @param m The number of calendar to use.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp, List<String> calendarsUrl, Integer m) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
@@ -107,7 +107,7 @@ public class OpenTimestamps {
      * @param m The number of calendar to use.
      * @param privateCalendarsUrl The list of private calendar urls with signature.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<DetachedTimestampFile>();
@@ -123,7 +123,7 @@ public class OpenTimestamps {
          * @param m The number of calendar to use.
          * @param privateCalendarsUrl The list of private calendar urls with signature.
          * @return The plain array buffer of stamped.
-         * @throws IOException desc
+         * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
          */
     public static Timestamp stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Parse parameters
@@ -258,7 +258,7 @@ public class OpenTimestamps {
 
 
     /**
-     * Make Merkle Tree.
+     * Make Merkle Tree of detached timestamps.
      * @param fileTimestamps The list of DetachedTimestampFile.
      * @return merkle tip timestamp.
      */
@@ -285,11 +285,12 @@ public class OpenTimestamps {
     }
 
     /**
-     * Verify a timestamp.
+     * Compare and verify a detached timestamp.
      *
      * @param ots The DetachedTimestampFile containing the proof to verify.
      * @param stamped The DetachedTimestampFile containing the stamped data.
-     * @return the timestamp in seconds from 1 Jamuary 1970
+     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @throws Exception if the verification procedure fails.
      */
 
     public static HashMap<String,Long> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception{
@@ -307,7 +308,8 @@ public class OpenTimestamps {
      * Verify a timestamp.
      *
      * @param timestamp The timestamp.
-     * @return unix timestamp if verified, undefined otherwise.
+     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @throws Exception if the verification procedure fails.
      */
     public static HashMap<String,Long> verify(Timestamp timestamp) throws Exception{
         HashMap<String,Long> hashResults = new HashMap<>();
@@ -337,6 +339,16 @@ public class OpenTimestamps {
         return hashResults;
     }
 
+    /**
+     * Verify an Bitcoin Block Header Attestation. Bitcoin verification uses a bitcoin node as default,
+     * if the node is not reachable or it fails, uses Lite-client verification.
+     *
+     * @param attestation The BitcoinBlockHeaderAttestation attestation.
+     * @param msg The digest to verify.
+     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @throws VerificationException if it doesn't check the merkle root of the block.
+     * @throws Exception if the verification procedure fails.
+     */
     public static Long verify(BitcoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
         Integer height = attestation.getHeight();
         BlockHeader blockInfo;
@@ -361,6 +373,15 @@ public class OpenTimestamps {
         return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
     }
 
+    /**
+     * Verify an Litecoin Block Header Attestation. Litecoin verification uses only lite-client verification.
+     *
+     * @param attestation The LitecoinBlockHeaderAttestation attestation.
+     * @param msg The digest to verify.
+     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @throws VerificationException if it doesn't check the merkle root of the block.
+     * @throws Exception if the verification procedure fails.
+     */
     public static Long verify(LitecoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
         Integer height = attestation.getHeight();
         BlockHeader blockInfo;
@@ -381,19 +402,13 @@ public class OpenTimestamps {
      * Upgrade a timestamp.
      *
      * @param detachedTimestamp The DetachedTimestampFile containing the proof to verify.
-     * @return a boolean represnting if the timestamp has changed
+     * @return a boolean representing if the timestamp has changed.
+     * @throws Exception if the upgrading procedure fails.
      */
     public static boolean upgrade(DetachedTimestampFile detachedTimestamp) throws Exception {
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
-
-        if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            // log.info("Timestamp is complete");
-        } else {
-            // log.info("Timestamp is not complete");
-        }
-
         return changed;
     }
 
@@ -402,8 +417,9 @@ public class OpenTimestamps {
      * Attempt to upgrade an incomplete timestamp to make it verifiable.
      * Note that this means if the timestamp that is already complete, False will be returned as nothing has changed.
      *
-     * @param timestamp The timestamp.
-     * @return a boolean represnting if the timestamp has changed
+     * @param timestamp The timestamp to upgrade.
+     * @return a boolean representing if the timestamp has changed.
+     * @throws Exception if the upgrading procedure fails.
      */
     public static boolean upgrade(Timestamp timestamp) throws Exception{
         // Check remote calendars for upgrades.

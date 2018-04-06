@@ -62,7 +62,9 @@ public class Calendar{
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.ots.Timestamp committing to that digest.
      * @param digest The digest hash to send.
-     * @return the Timestamp received from the calendar
+     * @return the Timestamp received from the calendar.
+     * @throws ExceededSizeException if response is too big.
+     * @throws UrlException if url is not reachable.
      */
     public Timestamp submit(byte[] digest) throws ExceededSizeException, UrlException {
         try {
@@ -100,7 +102,10 @@ public class Calendar{
     /**
      * Get a timestamp for a given commitment.
      * @param commitment The digest hash to send.
-     * @return the Timestamp from the calendar server (with blockchain information if already written)
+     * @return the Timestamp from the calendar server (with blockchain information if already written).
+     * @throws ExceededSizeException if response is too big.
+     * @throws UrlException if url is not reachable.
+     * @throws CommitmentNotFoundException if commit is not found.
      */
     public Timestamp getTimestamp(byte[] commitment) throws ExceededSizeException, CommitmentNotFoundException, UrlException {
         try {
