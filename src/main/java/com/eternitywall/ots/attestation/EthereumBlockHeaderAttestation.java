@@ -68,4 +68,9 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
         }
         return true;
     }
+
+    @Override
+    public int hashCode(){
+        return Arrays.hashCode(this._TAG()) ^ this.height;
+    }
 }

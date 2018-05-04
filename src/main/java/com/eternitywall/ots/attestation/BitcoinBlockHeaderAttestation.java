@@ -2,8 +2,11 @@ package com.eternitywall.ots.attestation; /**
  * Created by luca on 25/02/2017.
  */
 
+import com.eternitywall.ots.Utils;
+import com.eternitywall.ots.BlockHeader;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
+import com.eternitywall.ots.exceptions.VerificationException;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -37,6 +40,7 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
     private static Logger log = Logger.getLogger(BitcoinBlockHeaderAttestation.class.getName());
+    public static String chain = "bitcoin";
 
     @Override
     public byte[] _TAG() {
@@ -87,5 +91,23 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode(){
+        return Arrays.hashCode(this._TAG()) ^ this.height;
+    }
+
+    /*
+     Verify attestation against a block header
+     Returns the block time on success; raises VerificationError on failure.
+     */
+    public Long verifyAgainstBlockheader (byte[] digest, BlockHeader block) throws VerificationException {
+        if (digest.length != 32) {
+            throw new VerificationException("Expected digest with length 32 bytes; got " + digest.length + " bytes");
+        } else if (!Arrays.equals(digest, Utils.hexToBytes(block.getMerkleroot()))) {
+            throw new VerificationException("Digest does not match merkleroot");
+        }
+        return block.getTime();
     }
 }

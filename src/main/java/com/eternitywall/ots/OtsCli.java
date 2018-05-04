@@ -34,6 +34,7 @@ public class OtsCli {
     private static String[] algorithms = new String[]{"SHA256","SHA1","RIPEMD160"};
     private static String algorithm = "SHA256";
     private static boolean shrink = false;
+    private static boolean verbose = false;
 
     public static void main(String[] args) {
 
@@ -45,7 +46,8 @@ public class OtsCli {
         options.addOption( "a", "algorithm", true, "Pass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
         options.addOption( "s", "shrink", false, "Shrink upgraded timestamp." );
-        options.addOption( "V", "version", false, "print " + title + " version." );
+        options.addOption( "V", "version", false, "Print " + title + " version." );
+        options.addOption( "v", "verbose", false, "Be more verbose.." );
         options.addOption( "h", "help", false, "print this help." );
 
         // Parse the args to retrieve options & command
@@ -67,6 +69,9 @@ public class OtsCli {
             }
             if(line.hasOption("s")) {
                 shrink = true;
+            }
+            if(line.hasOption("v")) {
+                verbose = true;
             }
             if(line.hasOption("V")) {
                 System.out.println("Version: " + title + " v." + version + '\n');
@@ -105,10 +110,10 @@ public class OtsCli {
             case "i":
                 if (files.isEmpty()) {
                     System.out.println("Show information on a timestamp given as argument.\n");
-                    System.out.println(title + " info: bad options number ");
+                    System.out.println(title + " info: bad options ");
                     break;
                 }
-                info(files.get(0));
+                info(files.get(0),verbose);
                 break;
             case "stamp":
             case "s":
@@ -165,12 +170,12 @@ public class OtsCli {
     }
 
 
-    public static void info (String argsOts) {
+    public static void info (String argsOts, boolean verbose) {
         try {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             DetachedTimestampFile detached = DetachedTimestampFile.deserialize(byteOts);
-            String infoResult = OpenTimestamps.info(detached);
+            String infoResult = OpenTimestamps.info(detached, verbose);
             System.out.println(infoResult);
         } catch (IOException e) {
             log.severe("No valid file");
@@ -271,42 +276,40 @@ public class OtsCli {
     }
 
     public static void verify (String argsOts, Hash hash) {
-        FileInputStream fis = null;
         try {
-
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
-            Long timestamp = null;
+            DetachedTimestampFile detached;
+            HashMap<String,Long> timestamps;
 
             if (shasum == null){
                 // Read from file
                 String argsFile = argsOts.replace(".ots","");
                 File file = new File(argsFile);
                 System.out.println("Assuming target filename is '" + argsFile + "'");
-                DetachedTimestampFile detached = DetachedTimestampFile.from(new OpSHA256(), file);
-                timestamp = OpenTimestamps.verify(detachedOts,detached);
+                detached = DetachedTimestampFile.from(new OpSHA256(), file);
             } else {
                 // Read from hash option
                 System.out.println("Assuming target hash is '" + Utils.bytesToHex(hash.getValue()) + "'");
-                DetachedTimestampFile detached = DetachedTimestampFile.from(hash);
-                timestamp = OpenTimestamps.verify(detachedOts,detached);
+                detached = DetachedTimestampFile.from(hash);
             }
 
-            if(timestamp == null){
-                System.out.println("Pending or Bad attestation");
-            }else {
-                System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
+            try {
+                timestamps = OpenTimestamps.verify(detachedOts, detached);
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                return;
+            }
+
+            if(timestamps.size() > 0){
+                for (Map.Entry<String, Long> entry : timestamps.entrySet()) {
+                    System.out.println("Success! " + Utils.toUpperFirstLetter(entry.getKey()) + " attests data existed as of " + new Date(entry.getValue()*1000) );
+                }
             }
 
         } catch (Exception e) {
             log.severe("No valid file");
-        } finally {
-            try {
-                fis.close();
-            }catch  (IOException e) {
-                log.severe("No valid file");
-            }
         }
     }
 

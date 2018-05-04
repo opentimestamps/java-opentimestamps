@@ -24,15 +24,25 @@ public class MultiInsight {
     private BlockingQueue<Response> queueBlockHash;
 
 
-    public MultiInsight(){
+    public MultiInsight() throws Exception {
+        this("bitcoin");
+    }
+    public MultiInsight(String chain) throws Exception{
         insightUrls = new ArrayList<>();
-        insightUrls.add("https://search.bitaccess.co/insight-api");
-        insightUrls.add("https://www.localbitcoinschain.com/api");
-        insightUrls.add("https://insight.bitpay.com/api");
-        insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
-        insightUrls.add("https://btc-bitcore1.trezor.io/api");
-        insightUrls.add("https://btc-bitcore4.trezor.io/api");
-        insightUrls.add("https://blockexplorer.com/api");
+        if(chain.equals("bitcoin")) {
+            insightUrls.add("https://search.bitaccess.co/insight-api");
+            insightUrls.add("https://www.localbitcoinschain.com/api");
+            insightUrls.add("https://insight.bitpay.com/api");
+            insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
+            insightUrls.add("https://btc-bitcore1.trezor.io/api");
+            insightUrls.add("https://btc-bitcore4.trezor.io/api");
+            insightUrls.add("https://blockexplorer.com/api");
+        } else if(chain.equals("litecoin")) {
+            insightUrls.add("https://ltc-bitcore1.trezor.io/api");
+            insightUrls.add("https://insight.litecore.io/api");
+        } else {
+            throw new Exception(chain +" not supported");
+        }
 
         queueBlockHeader = new ArrayBlockingQueue<>(insightUrls.size());
         queueBlockHash = new ArrayBlockingQueue<>(insightUrls.size());

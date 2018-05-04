@@ -1,12 +1,8 @@
 package com.eternitywall.ots;
 
-import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
-import com.eternitywall.ots.attestation.PendingAttestation;
-import com.eternitywall.ots.attestation.TimeAttestation;
-import com.eternitywall.ots.op.Op;
-import com.eternitywall.ots.op.OpAppend;
-import com.eternitywall.ots.op.OpCrypto;
-import com.eternitywall.ots.op.OpSHA256;
+import com.eternitywall.ots.attestation.*;
+import com.eternitywall.ots.op.*;
+import com.eternitywall.ots.exceptions.*;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -38,12 +34,22 @@ public class OpenTimestamps {
 
 
     /**
-     * Show information on a timestamp.
+     * Show information on a detached timestamp.
      *
      * @param detachedTimestampFile The DetachedTimestampFile ots.
-     * @return the string representation of the timestamp
+     * @return the string representation of the timestamp.
      */
     public static String info(DetachedTimestampFile detachedTimestampFile) {
+        return info(detachedTimestampFile, false);
+    }
+    /**
+     * Show information on a detached timestamp with verbose option.
+     *
+     * @param detachedTimestampFile The DetachedTimestampFile ots.
+     * @param verbose Show verbose output.
+     * @return the string representation of the timestamp.
+     */
+    public static String info(DetachedTimestampFile detachedTimestampFile, boolean verbose) {
         if (detachedTimestampFile == null) {
             return "No ots file";
         }
@@ -52,13 +58,13 @@ public class OpenTimestamps {
         String hashOp = ((OpCrypto) detachedTimestampFile.fileHashOp)._TAG_NAME();
 
         String firstLine = "File " + hashOp + " hash: " + fileHash + '\n';
-        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0);
+        return firstLine + "Timestamp:\n" + detachedTimestampFile.timestamp.strTree(0, verbose);
     }
     /**
      * Show information on a timestamp.
      *
      * @param timestamp The timestamp buffered.
-     * @return the string representation of the timestamp
+     * @return the string representation of the timestamp.
      */
     public static String info(Timestamp timestamp) {
         if (timestamp == null) {
@@ -74,7 +80,7 @@ public class OpenTimestamps {
      *
      * @param fileTimestamp The Detached Timestamp File.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,null,0, null);
@@ -87,7 +93,7 @@ public class OpenTimestamps {
      * @param calendarsUrl The list of calendar urls.
      * @param m The number of calendar to use.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp, List<String> calendarsUrl, Integer m) throws IOException {
         return OpenTimestamps.stamp(fileTimestamp,calendarsUrl,m, null);
@@ -101,7 +107,7 @@ public class OpenTimestamps {
      * @param m The number of calendar to use.
      * @param privateCalendarsUrl The list of private calendar urls with signature.
      * @return The plain array buffer of stamped.
-     * @throws IOException desc
+     * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
      */
     public static Timestamp stamp(DetachedTimestampFile fileTimestamp,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<DetachedTimestampFile>();
@@ -117,7 +123,7 @@ public class OpenTimestamps {
          * @param m The number of calendar to use.
          * @param privateCalendarsUrl The list of private calendar urls with signature.
          * @return The plain array buffer of stamped.
-         * @throws IOException desc
+         * @throws IOException if fileTimestamp is not valid, or the stamp procedure fails.
          */
     public static Timestamp stamp(List<DetachedTimestampFile> fileTimestamps,  List<String> calendarsUrl, Integer m, HashMap<String,String> privateCalendarsUrl) throws IOException {
         // Parse parameters
@@ -252,7 +258,7 @@ public class OpenTimestamps {
 
 
     /**
-     * Make Merkle Tree.
+     * Make Merkle Tree of detached timestamps.
      * @param fileTimestamps The list of DetachedTimestampFile.
      * @return merkle tip timestamp.
      */
@@ -279,19 +285,20 @@ public class OpenTimestamps {
     }
 
     /**
-     * Verify a timestamp.
+     * Compare and verify a detached timestamp.
      *
      * @param ots The DetachedTimestampFile containing the proof to verify.
      * @param stamped The DetachedTimestampFile containing the stamped data.
-     * @return the timestamp in seconds from 1 Jamuary 1970
+     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @throws Exception if the verification procedure fails.
      */
 
-    public static Long verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) {
+    public static HashMap<String,Long> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception{
 
         if (!Arrays.equals(ots.fileDigest(), stamped.fileDigest())) {
             log.severe("Expected digest " + Utils.bytesToHex(ots.fileDigest()).toLowerCase());
             log.severe("File does not match original!");
-            return null;
+            throw new Exception("File does not match original!");
         }
 
         return OpenTimestamps.verify(ots.timestamp);
@@ -301,85 +308,107 @@ public class OpenTimestamps {
      * Verify a timestamp.
      *
      * @param timestamp The timestamp.
-     * @return unix timestamp if verified, undefined otherwise.
+     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @throws Exception if the verification procedure fails.
      */
-    public static Long verify(Timestamp timestamp) {
-        Boolean found = false;
+    public static HashMap<String,Long> verify(Timestamp timestamp) throws Exception{
+        HashMap<String,Long> hashResults = new HashMap<>();
 
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
-
-            if (!found) { // Verify only the first com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation
-                if (attestation instanceof PendingAttestation) {
-                } else if (attestation instanceof BitcoinBlockHeaderAttestation) {
-                    found = true;
-                    Integer height = ((BitcoinBlockHeaderAttestation) attestation).getHeight();
-
-                    BlockHeader blockInfo = null;
-
-                    try {
-                        Properties properties = BitcoinNode.readBitcoinConf();
-                        BitcoinNode bitcoin = new BitcoinNode(properties);
-                        blockInfo = bitcoin.getBlockHeader(height);
-                    } catch (Exception e1) {
-                        log.fine("There is no local node available");
-                        try {
-                            MultiInsight insight = new MultiInsight();
-                            String blockHash = null;
-                            blockHash = insight.blockHash(height);
-                            blockInfo = insight.block(blockHash);
-                            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
-                            insight.getExecutor().shutdown();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                            return null;
-                        }
-                    }
-
-                    byte[] merkle = Utils.hexToBytes(blockInfo.getMerkleroot());
-                    byte[] message = Utils.arrayReverse(msg);
-
-                    // One Bitcoin attestation is enought
-                    if (Arrays.equals(merkle, message)) {
-                        return blockInfo.getTime();
-                    } else {
-                        return null;
-                    }
+            String chain = null;
+            Long time = null;
+            try {
+                if (attestation instanceof BitcoinBlockHeaderAttestation) {
+                    chain = BitcoinBlockHeaderAttestation.chain;
+                    time = verify((BitcoinBlockHeaderAttestation) attestation, msg);
+                } else if (attestation instanceof LitecoinBlockHeaderAttestation) {
+                    chain = LitecoinBlockHeaderAttestation.chain;
+                    time = verify((LitecoinBlockHeaderAttestation) attestation, msg);
                 }
+                if (chain != null && (!hashResults.containsKey(chain) || hashResults.get(chain) > time)) {
+                    hashResults.put(chain, time);
+                }
+            } catch (VerificationException e) {
+                throw e;
+            } catch (Exception e) {
+                log.info(Utils.toUpperFirstLetter(chain) + " verification failed: " + e.getMessage());
             }
         }
-        if (!found) {
-            return null;
+        return hashResults;
+    }
+
+    /**
+     * Verify an Bitcoin Block Header Attestation. Bitcoin verification uses a bitcoin node as default,
+     * if the node is not reachable or it fails, uses Lite-client verification.
+     *
+     * @param attestation The BitcoinBlockHeaderAttestation attestation.
+     * @param msg The digest to verify.
+     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @throws VerificationException if it doesn't check the merkle root of the block.
+     * @throws Exception if the verification procedure fails.
+     */
+    public static Long verify(BitcoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
+        Integer height = attestation.getHeight();
+        BlockHeader blockInfo;
+        try {
+            Properties properties = BitcoinNode.readBitcoinConf();
+            BitcoinNode bitcoin = new BitcoinNode(properties);
+            blockInfo = bitcoin.getBlockHeader(height);
+        } catch (Exception e1) {
+            log.fine("There is no local node available");
+            try {
+                MultiInsight insight = new MultiInsight(attestation.chain);
+                String blockHash = blockHash = insight.blockHash(height);
+                blockInfo = insight.block(blockHash);
+                log.info("Lite-client verification, assuming block " + blockHash + " is valid");
+                insight.getExecutor().shutdown();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                throw e2;
+            }
         }
-        return null;
+
+        return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
+    }
+
+    /**
+     * Verify an Litecoin Block Header Attestation. Litecoin verification uses only lite-client verification.
+     *
+     * @param attestation The LitecoinBlockHeaderAttestation attestation.
+     * @param msg The digest to verify.
+     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @throws VerificationException if it doesn't check the merkle root of the block.
+     * @throws Exception if the verification procedure fails.
+     */
+    public static Long verify(LitecoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
+        Integer height = attestation.getHeight();
+        BlockHeader blockInfo;
+        try {
+            MultiInsight insight = new MultiInsight(attestation.chain);
+            String blockHash = blockHash = insight.blockHash(height);
+            blockInfo = insight.block(blockHash);
+            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
+            insight.getExecutor().shutdown();
+        } catch (Exception e2) {
+            e2.printStackTrace();
+            throw e2;
+        }
+        return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
     }
 
     /**
      * Upgrade a timestamp.
      *
      * @param detachedTimestamp The DetachedTimestampFile containing the proof to verify.
-     * @return a boolean represnting if the timestamp has changed
+     * @return a boolean representing if the timestamp has changed.
+     * @throws Exception if the upgrading procedure fails.
      */
-    public static boolean upgrade(DetachedTimestampFile detachedTimestamp) {
-
-        if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            return false;
-        }
+    public static boolean upgrade(DetachedTimestampFile detachedTimestamp) throws Exception {
 
         // Upgrade timestamp
         boolean changed = OpenTimestamps.upgrade(detachedTimestamp.timestamp);
-
-        if (changed) {
-            log.info("Timestamp has been successfully upgraded!");
-        }
-
-        if (detachedTimestamp.timestamp.isTimestampComplete()) {
-            log.info("Timestamp is complete");
-        } else {
-            log.info("Timestamp is not complete");
-        }
-
         return changed;
     }
 
@@ -388,10 +417,11 @@ public class OpenTimestamps {
      * Attempt to upgrade an incomplete timestamp to make it verifiable.
      * Note that this means if the timestamp that is already complete, False will be returned as nothing has changed.
      *
-     * @param timestamp The timestamp.
-     * @return a boolean represnting if the timestamp has changed
+     * @param timestamp The timestamp to upgrade.
+     * @return a boolean representing if the timestamp has changed.
+     * @throws Exception if the upgrading procedure fails.
      */
-    public static boolean upgrade(Timestamp timestamp) {
+    public static boolean upgrade(Timestamp timestamp) throws Exception{
         // Check remote calendars for upgrades.
         // This time we only check PendingAttestations - we can't be as agressive.
 
@@ -400,21 +430,23 @@ public class OpenTimestamps {
         Set<TimeAttestation> existingAttestations = timestamp.getAttestations();
         for (Timestamp subStamp : timestamp.directlyVerified()) {
             for (TimeAttestation attestation : subStamp.attestations) {
-                if (attestation instanceof PendingAttestation) {
+                if (attestation instanceof PendingAttestation && !subStamp.isTimestampComplete()) {
+
                     String calendarUrl = new String(((PendingAttestation) attestation).getUri(), StandardCharsets.UTF_8);
                     // var calendarUrl = calendarUrls[0];
                     byte[] commitment = subStamp.msg;
 
-                    Calendar calendar = new Calendar(calendarUrl);
-                    Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
-                    if(upgradedStamp != null) {
+                    try {
+                        Calendar calendar = new Calendar(calendarUrl);
+                        Timestamp upgradedStamp = OpenTimestamps.upgrade(subStamp, calendar, commitment, existingAttestations);
                         try {
                             subStamp.merge(upgradedStamp);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         upgraded = true;
-                        return upgraded;
+                    }catch(Exception e){
+                        log.info(e.getMessage());
                     }
                 }
             }
@@ -422,24 +454,28 @@ public class OpenTimestamps {
         return upgraded;
     }
 
-    private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) {
-        Timestamp upgradedStamp = calendar.getTimestamp(commitment);
-        if (upgradedStamp == null) {
-            return null;
+    private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) throws Exception{
+
+        Timestamp upgradedStamp;
+        try {
+            upgradedStamp = calendar.getTimestamp(commitment);
+            if (upgradedStamp == null) {
+                throw new Exception("Invalid stamp");
+            }
+        }catch(Exception e){
+            log.info("Calendar " + calendar.getUrl() + ": " + e.getMessage());
+            throw e;
         }
 
         Set<TimeAttestation> attsFromRemote = upgradedStamp.getAttestations();
         if (attsFromRemote.size() > 0) {
-            // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
+            log.info("Got 1 attestation(s) from " + calendar.getUrl());
         }
 
         // Set difference from remote attestations & existing attestations
         Set<TimeAttestation> newAttestations = attsFromRemote;
         newAttestations.removeAll(existingAttestations);
 
-        if (newAttestations.size() == 0) {
-            return null;
-        }
         // changed & found_new_attestations
         // foundNewAttestations = true;
         // log.info(attsFromRemote.size + ' attestation(s) from ' + calendar.url);
