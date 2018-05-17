@@ -1,6 +1,9 @@
 package com.eternitywall.ots.op;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
@@ -64,10 +67,14 @@ public class OpCrypto extends OpUnary {
     }
 
     public byte[] hashFd(File file) throws IOException, NoSuchAlgorithmException {
-        return hashFd(new FileInputStream(file));
+        byte[] result;
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            result = hashFd(fileInputStream);
+        }
+        return result;
     }
 
-    public byte[] hashFd(byte[] bytes) throws IOException, NoSuchAlgorithmException {
+    public byte[] hashFd(byte[] bytes) throws NoSuchAlgorithmException {
         StreamDeserializationContext ctx = new StreamDeserializationContext(bytes);
         return hashFd(ctx);
     }
