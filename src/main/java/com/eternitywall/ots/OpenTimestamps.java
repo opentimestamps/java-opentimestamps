@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class OpenTimestamps {
 
 
-    private static Logger log = Logger.getLogger(OpenTimestamps.class.getName());
+    private static Logger log = Utils.getLogger(OpenTimestamps.class.getName());
 
 
     /**
@@ -289,11 +289,11 @@ public class OpenTimestamps {
      *
      * @param ots The DetachedTimestampFile containing the proof to verify.
      * @param stamped The DetachedTimestampFile containing the stamped data.
-     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @return Hashmap of block heights & timestamps indexed by chain: timestamp in seconds from 1 January 1970.
      * @throws Exception if the verification procedure fails.
      */
 
-    public static HashMap<String,Long> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception{
+    public static HashMap<VerifyResult.Chains, VerifyResult> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception{
 
         if (!Arrays.equals(ots.fileDigest(), stamped.fileDigest())) {
             log.severe("Expected digest " + Utils.bytesToHex(ots.fileDigest()).toLowerCase());
@@ -308,35 +308,58 @@ public class OpenTimestamps {
      * Verify a timestamp.
      *
      * @param timestamp The timestamp.
-     * @return Hashmap of timestamps indexed by chain: timestamp in seconds from 1 Jamuary 1970.
+     * @return HashMap of block heights & timestamps indexed by chain: timestamp in seconds from 1 January 1970.
      * @throws Exception if the verification procedure fails.
      */
-    public static HashMap<String,Long> verify(Timestamp timestamp) throws Exception{
-        HashMap<String,Long> hashResults = new HashMap<>();
+    public static HashMap<VerifyResult.Chains, VerifyResult> verify(Timestamp timestamp) throws Exception{
+        HashMap<VerifyResult.Chains, VerifyResult> verifyResults = new HashMap<>();
 
         for (Map.Entry<byte[], TimeAttestation> item : timestamp.allAttestations().entrySet()) {
             byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
-            String chain = null;
-            Long time = null;
+            VerifyResult verifyResult = null;
+            VerifyResult.Chains chain = null;
+
             try {
                 if (attestation instanceof BitcoinBlockHeaderAttestation) {
-                    chain = BitcoinBlockHeaderAttestation.chain;
-                    time = verify((BitcoinBlockHeaderAttestation) attestation, msg);
+                    chain = VerifyResult.Chains.BITCOIN;
+                    Long time = verify((BitcoinBlockHeaderAttestation) attestation, msg);
+                    int height = ((BitcoinBlockHeaderAttestation) attestation).getHeight();
+                    verifyResult = new VerifyResult(time, height);
                 } else if (attestation instanceof LitecoinBlockHeaderAttestation) {
-                    chain = LitecoinBlockHeaderAttestation.chain;
-                    time = verify((LitecoinBlockHeaderAttestation) attestation, msg);
+                    chain = VerifyResult.Chains.LITECOIN;
+                    Long time = verify((LitecoinBlockHeaderAttestation) attestation, msg);
+                    int height = ((LitecoinBlockHeaderAttestation) attestation).getHeight();
+                    verifyResult = new VerifyResult(time, height);
                 }
-                if (chain != null && (!hashResults.containsKey(chain) || hashResults.get(chain) > time)) {
-                    hashResults.put(chain, time);
+
+                if (verifyResult != null && verifyResults.containsKey(chain)) {
+                    if (verifyResult.height < verifyResults.get(chain).height) {
+                        verifyResults.put(chain, verifyResult);
+                    }
                 }
+                if (verifyResult != null && !verifyResults.containsKey(chain)) {
+                    verifyResults.put(chain, verifyResult);
+                }
+
             } catch (VerificationException e) {
                 throw e;
             } catch (Exception e) {
-                log.info(Utils.toUpperFirstLetter(chain) + " verification failed: " + e.getMessage());
+                String text = "";
+                if (chain == VerifyResult.Chains.BITCOIN) {
+                    text = BitcoinBlockHeaderAttestation.chain;
+                } else if (chain == VerifyResult.Chains.LITECOIN) {
+                    text = LitecoinBlockHeaderAttestation.chain;
+                } else if (chain == VerifyResult.Chains.ETHEREUM) {
+                    text = EthereumBlockHeaderAttestation.chain;
+                } else {
+                    throw e;
+                }
+                log.severe(Utils.toUpperFirstLetter(text) + " verification failed: " + e.getMessage());
+                throw e;
             }
         }
-        return hashResults;
+        return verifyResults;
     }
 
     /**

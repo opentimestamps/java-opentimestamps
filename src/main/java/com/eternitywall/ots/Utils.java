@@ -9,6 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import org.bitcoinj.core.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by luca on 26/02/2017.
@@ -107,5 +111,19 @@ public class Utils {
 
     public static String toUpperFirstLetter(String string){
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
+    }
+
+    public static Logger getLogger(String name) {
+        Logger log = Logger.getLogger( name );
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter() {
+            @Override
+            public synchronized String format(LogRecord lr) {
+                return lr.getMessage() + "\r\n";
+            }
+        });
+        log.setUseParentHandlers(false);
+        log.addHandler(handler);
+        return log;
     }
 }
