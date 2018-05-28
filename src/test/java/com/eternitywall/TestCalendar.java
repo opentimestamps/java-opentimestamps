@@ -275,4 +275,13 @@ public class TestCalendar {
     }
 
 
+    @Test
+    public void rfc6979() {
+        BigInteger privKey = new BigInteger("235236247357325473457345");
+        ECKey ecKey = ECKey.fromPrivate(privKey);
+        String a = ecKey.signMessage("a");
+        System.out.println(a);
+        assertTrue(a.equals("IBY7a75Ygps/o1BqTQ0OpFL+a8WHfd9jNO/8820ST0gyQ0SAuIWKm8/M90aG1G40oJvjrlcoiKngKAYYsJS6I0s="));
+    }
+
 }
