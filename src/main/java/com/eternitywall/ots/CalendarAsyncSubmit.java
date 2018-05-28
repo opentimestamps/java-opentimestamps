@@ -13,9 +13,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-/**
- * Created by luca on 08/03/2017.
- */
 public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     private String url;

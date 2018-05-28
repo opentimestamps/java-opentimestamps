@@ -5,13 +5,10 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * Created by luca on 25/02/2017.
- */
 public class StreamSerializationContext {
 
 
-    private static Logger log = Logger.getLogger(StreamSerializationContext.class.getName());
+    private static Logger log = Utils.getLogger(StreamSerializationContext.class.getName());
 
     List<Byte> buffer = new ArrayList<>();
 

@@ -3,12 +3,9 @@ package com.eternitywall.ots;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-/**
- * Created by luca on 25/02/2017.
- */
 public class StreamDeserializationContext {
 
-    private static Logger log = Logger.getLogger(StreamDeserializationContext.class.getName());
+    private static Logger log = Utils.getLogger(StreamDeserializationContext.class.getName());
 
     byte[] buffer;
     int counter = 0;

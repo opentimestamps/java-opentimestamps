@@ -1,7 +1,4 @@
-package com.eternitywall.ots.attestation; /**
- * Created by luca on 25/02/2017.
- */
-
+package com.eternitywall.ots.attestation;
 import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.BlockHeader;
 import com.eternitywall.ots.StreamDeserializationContext;
@@ -39,7 +36,7 @@ import java.util.logging.Logger;
 public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
-    private static Logger log = Logger.getLogger(BitcoinBlockHeaderAttestation.class.getName());
+    private static Logger log = Utils.getLogger(BitcoinBlockHeaderAttestation.class.getName());
     public static String chain = "bitcoin";
 
     @Override

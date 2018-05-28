@@ -1,16 +1,14 @@
-package com.eternitywall.ots; /**
- * Created by luca on 25/02/2017.
- */
+package com.eternitywall.ots;
 
 import java.security.NoSuchAlgorithmException;
+
+import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
+import com.eternitywall.ots.attestation.EthereumBlockHeaderAttestation;
+import com.eternitywall.ots.attestation.LitecoinBlockHeaderAttestation;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
-
-
-import com.eternitywall.ots.op.Op;
-import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
 
 import java.io.*;
@@ -22,7 +20,7 @@ import java.util.logging.Logger;
 
 public class OtsCli {
 
-    private static Logger log = Logger.getLogger(OtsCli.class.getName());
+    private static Logger log = Utils.getLogger(OtsCli.class.getName());
     private static String title = "OtsCli";
     private static String version = "1.0";
     private static List<String> calendarsUrl = new ArrayList<>();
@@ -35,6 +33,7 @@ public class OtsCli {
     private static String algorithm = "SHA256";
     private static boolean shrink = false;
     private static boolean verbose = false;
+    private static String verifyFile = null;
 
     public static void main(String[] args) {
 
@@ -42,12 +41,13 @@ public class OtsCli {
         Options options = new Options();
         options.addOption( "c", "calendar", true, "Create timestamp with the aid of a remote calendar. May be specified multiple times." );
         options.addOption( "k", "key", true, "Signature key file of private remote calendars." );
-        options.addOption( "H", "hash", true, "Pass the hash string of the document to timestamp." );
+        options.addOption( "d", "digest", true, "Verify a (hex-encoded) digest rather than a file." );
         options.addOption( "a", "algorithm", true, "Pass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160." );
         options.addOption( "m", "", true, "Commitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied." );
         options.addOption( "s", "shrink", false, "Shrink upgraded timestamp." );
         options.addOption( "V", "version", false, "Print " + title + " version." );
         options.addOption( "v", "verbose", false, "Be more verbose.." );
+        options.addOption( "f", "file", true, "Specify target file explicitly (default: original file present in the same directory without .ots)" );
         options.addOption( "h", "help", false, "print this help." );
 
         // Parse the args to retrieve options & command
@@ -81,8 +81,11 @@ public class OtsCli {
                 showHelp();
                 return;
             }
-            if(line.hasOption("H")) {
-                shasum = Utils.hexToBytes(line.getOptionValue("H"));
+            if(line.hasOption("d")) {
+                shasum = Utils.hexToBytes(line.getOptionValue("d"));
+            }
+            if(line.hasOption("f")) {
+                verifyFile = line.getOptionValue("f");
             }
             if(line.hasOption("a")) {
                 algorithm = line.getOptionValue("a");
@@ -129,11 +132,15 @@ public class OtsCli {
                 break;
             case "verify":
             case "v":
-                if(!files.isEmpty()) {
-                    verify(files.get(0), null);
-                } else if (shasum != null){
-                    Hash hash = new Hash(shasum, algorithm);
-                    verify(files.get(0), hash);
+                if (!files.isEmpty()) {
+                    Hash hash = null;
+                    if (shasum != null) {
+                        hash = new Hash(shasum, algorithm);
+                    }
+                    if (verifyFile == null) {
+                        verifyFile = files.get(0).replace(".ots", "");
+                    }
+                    verify(files.get(0), hash, verifyFile);
                 } else {
                     System.out.println("Verify the timestamp attestations given as argument.\n");
                     System.out.println(title + ": bad options number ");
@@ -275,17 +282,16 @@ public class OtsCli {
         }
     }
 
-    public static void verify (String argsOts, Hash hash) {
+    public static void verify (String argsOts, Hash hash, String argsFile) {
         try {
             Path pathOts = Paths.get(argsOts);
             byte[] byteOts = Files.readAllBytes(pathOts);
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(byteOts);
             DetachedTimestampFile detached;
-            HashMap<String,Long> timestamps;
+            HashMap<VerifyResult.Chains, VerifyResult> verifyResults;
 
             if (shasum == null){
                 // Read from file
-                String argsFile = argsOts.replace(".ots","");
                 File file = new File(argsFile);
                 System.out.println("Assuming target filename is '" + argsFile + "'");
                 detached = DetachedTimestampFile.from(new OpSHA256(), file);
@@ -296,16 +302,21 @@ public class OtsCli {
             }
 
             try {
-                timestamps = OpenTimestamps.verify(detachedOts, detached);
+                verifyResults = OpenTimestamps.verify(detachedOts, detached);
+                for (Map.Entry<VerifyResult.Chains, VerifyResult> entry : verifyResults.entrySet()) {
+                    String chain = "";
+                    if (entry.getKey() == VerifyResult.Chains.BITCOIN){
+                        chain = BitcoinBlockHeaderAttestation.chain;
+                    } else if (entry.getKey() == VerifyResult.Chains.LITECOIN){
+                        chain = LitecoinBlockHeaderAttestation.chain;
+                    } else if (entry.getKey() == VerifyResult.Chains.ETHEREUM){
+                        chain = EthereumBlockHeaderAttestation.chain;
+                    }
+                    System.out.println("Success! " + Utils.toUpperFirstLetter(chain) + " " + entry.getValue().toString());
+                }
             }catch(Exception e){
                 System.out.println(e.getMessage());
                 return;
-            }
-
-            if(timestamps.size() > 0){
-                for (Map.Entry<String, Long> entry : timestamps.entrySet()) {
-                    System.out.println("Success! " + Utils.toUpperFirstLetter(entry.getKey()) + " attests data existed as of " + new Date(entry.getValue()*1000) );
-                }
             }
 
         } catch (Exception e) {
@@ -323,10 +334,13 @@ public class OtsCli {
             if(shrink == true) {
                 detachedOts.getTimestamp().shrink();
             }
-
-            if(!shrink && !changed) {
-                System.out.println("Timestamp not upgraded");
+            if (detachedOts.timestamp.isTimestampComplete()) {
+                System.out.println("Success! Timestamp complete");
             } else {
+                System.out.println("Failed! Timestamp not complete");
+            }
+
+            if(shrink || changed) {
                 // Copy Bak File
                 byte[] byteBak = Files.readAllBytes(pathOts);
                 Path pathBak = Paths.get(argsOts+".bak");
@@ -359,7 +373,7 @@ public class OtsCli {
                 "Options:\n" +
                         "-c, --calendar \tCreate timestamp with the aid of a remote calendar. May be specified multiple times.\n" +
                         "-k, --key \tSignature key file of private remote calendars.\n"+
-                        "-H, --hash \tPass the hash string of the document to timestamp.\n"+
+                        "-d, --digest \tVerify a (hex-encoded) digest rather than a file.\n"+
                         "-a, --algorithm\tPass the hashing algorithm of the document to timestamp: SHA256(default), SHA1, RIPEMD160.\n"+
                         "-m     \t\tCommitments are sent to remote calendars in the event of timeout the timestamp is considered done if at least M calendars replied.\n" +
                         "-s, --shrink   \tShrink upgraded timestamp.\n"+

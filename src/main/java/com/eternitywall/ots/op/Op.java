@@ -2,6 +2,7 @@ package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
+import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 public abstract class Op implements Comparable<Op> {
 
 
-    private static Logger log = Logger.getLogger(Op.class.getName());
+    private static Logger log = Utils.getLogger(Op.class.getName());
 
     /**
      * Maximum length of an com.eternitywall.ots.op.Op result

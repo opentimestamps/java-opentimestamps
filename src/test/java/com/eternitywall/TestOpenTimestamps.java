@@ -150,9 +150,10 @@ public class TestOpenTimestamps{
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(helloworldOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
             try {
-                HashMap<String, Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
-                assertTrue(timestamps.containsKey("bitcoin"));
-                assertEquals(1432827678L, timestamps.get("bitcoin").longValue());
+                HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
+                assertTrue(results.size()>0);
+                assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
+                assertEquals(1432827678L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
             }catch(Exception e){
                 assertNull(e);
             }
@@ -163,8 +164,8 @@ public class TestOpenTimestamps{
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(incomplete, OpSHA256._TAG));
             try {
-                HashMap<String,Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
-                assertEquals(timestamps.size(), 0);
+                HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
+                assertEquals(results.size(), 0);
             }catch(Exception e){
                 assertNull(e);
             }
@@ -179,9 +180,10 @@ public class TestOpenTimestamps{
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
             boolean changed = OpenTimestamps.upgrade(detachedOts);
             assertTrue(changed);
-            HashMap<String, Long> timestamps = OpenTimestamps.verify(detachedOts, detached);
-            assertTrue(timestamps.containsKey("bitcoin"));
-            assertEquals(1473227803L, timestamps.get("bitcoin").longValue());
+            HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
+            assertTrue(results.size()>0);
+            assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
+            assertEquals(1473227803L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
         } catch (Exception e) {
             assertNull(e);
         }
@@ -203,7 +205,7 @@ public class TestOpenTimestamps{
 
         byte []ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
         byte []digest= Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
-        Logger log = Logger.getLogger(MultiInsight.class.getName());
+        Logger log = Utils.getLogger(MultiInsight.class.getName());
         //log.info("ots hex: " + Utils.bytesToHex(ots));
 
         StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(ots);

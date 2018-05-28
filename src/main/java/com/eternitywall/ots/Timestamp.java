@@ -38,7 +38,7 @@ import com.eternitywall.ots.op.OpSHA256;
 public class Timestamp {
 
 
-    private static Logger log = Logger.getLogger(Timestamp.class.getName());
+    private static Logger log = Utils.getLogger(Timestamp.class.getName());
 
     public byte[] msg;
     public List<TimeAttestation> attestations;

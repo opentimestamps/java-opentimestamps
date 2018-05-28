@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
 
 
 /**
@@ -18,7 +19,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
  */
 public class OpCrypto extends OpUnary {
 
-    private static Logger log = Logger.getLogger(OpCrypto.class.getName());
+    private static Logger log = Utils.getLogger(OpCrypto.class.getName());
 
     public String _TAG_NAME = "";
 

@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 public class PendingAttestation extends TimeAttestation {
 
 
-    private static Logger log = Logger.getLogger(PendingAttestation.class.getName());
+    private static Logger log = Utils.getLogger(PendingAttestation.class.getName());
 
     public static byte[] _TAG = {(byte) 0x83, (byte) 0xdf, (byte) 0xe3, (byte) 0x0d, (byte) 0x2e, (byte) 0xf9, (byte) 0x0c, (byte) 0x8e};
 

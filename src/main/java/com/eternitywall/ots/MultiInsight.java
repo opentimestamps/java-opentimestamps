@@ -12,11 +12,8 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
-/**
- * Created by luca on 07/03/2017.
- */
 public class MultiInsight {
-    private static Logger log = Logger.getLogger(MultiInsight.class.getName());
+    private static Logger log = Utils.getLogger(MultiInsight.class.getName());
 
     private ExecutorService executor;
     private List<String> insightUrls;
