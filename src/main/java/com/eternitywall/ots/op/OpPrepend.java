@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class OpPrepend extends OpBinary {
 
 
-    private static Logger log = Logger.getLogger(OpPrepend.class.getName());
+    private static Logger log = Utils.getLogger(OpPrepend.class.getName());
 
 
     byte[] arg;

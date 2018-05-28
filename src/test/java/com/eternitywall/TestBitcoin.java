@@ -3,6 +3,7 @@ package com.eternitywall;
 import com.eternitywall.ots.BitcoinNode;
 import com.eternitywall.ots.BlockHeader;
 import com.eternitywall.ots.Timestamp;
+import com.eternitywall.ots.Utils;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by casatta on 06/03/17.
  */
 public class TestBitcoin {
-    private static Logger log = Logger.getLogger(TestBitcoin.class.getName());
+    private static Logger log = Utils.getLogger(TestBitcoin.class.getName());
 
 
     @Test

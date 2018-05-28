@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
+import com.eternitywall.ots.Utils;
 
 /**
  * Operations that act on a single message.
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
 public abstract class OpUnary extends Op {
 
 
-    private static Logger log = Logger.getLogger(OpUnary.class.getName());
+    private static Logger log = Utils.getLogger(OpUnary.class.getName());
 
 
     @Override

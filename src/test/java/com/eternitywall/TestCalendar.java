@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestCalendar {
 
-    private static Logger log = Logger.getLogger(TestCalendar.class.getName());
+    private static Logger log = Utils.getLogger(TestCalendar.class.getName());
 
 
     @Test

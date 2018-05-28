@@ -5,6 +5,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
+import com.eternitywall.ots.Utils;
 
 /**
  * Cryptographic SHA256 operation
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 public class OpSHA256 extends OpCrypto {
 
 
-    private static Logger log = Logger.getLogger(OpSHA256.class.getName());
+    private static Logger log = Utils.getLogger(OpSHA256.class.getName());
 
     public static byte _TAG = 0x08;
 

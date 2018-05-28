@@ -12,9 +12,10 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import com.eternitywall.ots.Utils;
 
 public class Request implements Callable<Response> {
-    private static Logger log = Logger.getLogger(MultiInsight.class.getName());
+    private static Logger log = Utils.getLogger(MultiInsight.class.getName());
 
     private URL url;
     private byte[] data;

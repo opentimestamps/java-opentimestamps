@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public abstract class TimeAttestation  implements Comparable<TimeAttestation> {
 
 
-    private static Logger log = Logger.getLogger(TimeAttestation.class.getName());
+    private static Logger log = Utils.getLogger(TimeAttestation.class.getName());
 
     public static int _TAG_SIZE = 8;
 

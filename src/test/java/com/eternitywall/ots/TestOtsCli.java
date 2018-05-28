@@ -26,7 +26,7 @@ public class TestOtsCli {
     private StreamHandler sh;
 
     public StringLoggerForTest() {
-      Logger logger = Logger.getLogger(OtsCli.class.getName());
+      Logger logger = Utils.getLogger(OtsCli.class.getName());
       this.baos = new ByteArrayOutputStream();
       this.sh = new StreamHandler(baos, new SimpleFormatter());
       this.sh.setLevel(Level.ALL);

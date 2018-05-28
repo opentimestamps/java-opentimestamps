@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public abstract class OpBinary extends Op implements Comparable<Op> {
 
-    private static Logger log = Logger.getLogger(OpBinary.class.getName());
+    private static Logger log = Utils.getLogger(OpBinary.class.getName());
 
     public byte[] arg;
 

@@ -25,7 +25,7 @@ public class Calendar{
     private String url;
     private ECKey key;
 
-    private static Logger log = Logger.getLogger(Calendar.class.getName());
+    private static Logger log = Utils.getLogger(Calendar.class.getName());
 
     /**
      * Create a RemoteCalendar.

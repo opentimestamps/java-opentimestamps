@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  */
 public class StreamDeserializationContext {
 
-    private static Logger log = Logger.getLogger(StreamDeserializationContext.class.getName());
+    private static Logger log = Utils.getLogger(StreamDeserializationContext.class.getName());
 
     byte[] buffer;
     int counter = 0;

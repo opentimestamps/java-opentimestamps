@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class StreamSerializationContext {
 
 
-    private static Logger log = Logger.getLogger(StreamSerializationContext.class.getName());
+    private static Logger log = Utils.getLogger(StreamSerializationContext.class.getName());
 
     List<Byte> buffer = new ArrayList<>();
 

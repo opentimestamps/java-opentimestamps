@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class UnknownAttestation extends TimeAttestation {
 
-    private static Logger log = Logger.getLogger(UnknownAttestation.class.getName());
+    private static Logger log = Utils.getLogger(UnknownAttestation.class.getName());
 
     byte[] payload;
 

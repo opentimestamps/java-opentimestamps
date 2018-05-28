@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class LitecoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x06, (byte) 0x86, (byte) 0x9a, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x1b, (byte) 0x45};
-    private static Logger log = Logger.getLogger(LitecoinBlockHeaderAttestation.class.getName());
+    private static Logger log = Utils.getLogger(LitecoinBlockHeaderAttestation.class.getName());
     public static String chain = "litecoin";
 
     @Override
