@@ -14,9 +14,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-/**
- * Created by luca on 26/02/2017.
- */
 public class Utils {
 
     public static void arrayFill(byte[] array, byte value) {

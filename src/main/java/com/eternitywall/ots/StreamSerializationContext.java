@@ -5,9 +5,6 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * Created by luca on 25/02/2017.
- */
 public class StreamSerializationContext {
 
 

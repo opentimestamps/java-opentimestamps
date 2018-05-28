@@ -1,6 +1,4 @@
-package com.eternitywall.ots.attestation; /**
- * Created by luca on 25/02/2017.
- */
+package com.eternitywall.ots.attestation;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;

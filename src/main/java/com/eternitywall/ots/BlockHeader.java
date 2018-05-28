@@ -1,8 +1,5 @@
 package com.eternitywall.ots;
 
-/**
- * Created by luca on 27/02/2017.
- */
 public class BlockHeader {
 
     private String merkleroot;

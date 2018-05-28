@@ -25,9 +25,6 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by luca on 05/04/2017.
- */
 public class TestCalendar {
 
     private static Logger log = Utils.getLogger(TestCalendar.class.getName());

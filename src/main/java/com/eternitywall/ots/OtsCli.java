@@ -1,6 +1,4 @@
-package com.eternitywall.ots; /**
- * Created by luca on 25/02/2017.
- */
+package com.eternitywall.ots;
 
 import java.security.NoSuchAlgorithmException;
 
