@@ -44,14 +44,14 @@ public class TestCalendar {
     @Test
     public void TestPrivate() throws Exception {
         byte[] digest = Utils.randBytes(32);
-        Path path = Paths.get("signature.key");
+        Path path = Paths.get("key.wif");
         if(!Files.exists(path)){
             assertTrue(true);
             return;
         }
 
         Properties properties = new Properties();
-        properties.load(new FileInputStream("signature.key"));
+        properties.load(new FileInputStream("key.wif"));
         HashMap<String,String> privateUrls = new HashMap<>();
         for(String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
@@ -61,15 +61,15 @@ public class TestCalendar {
 
         for(Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://"+entry.getKey();
-            String signature = entry.getValue();
+            String wifKey = entry.getValue();
 
             Calendar calendar = new Calendar(calendarUrl);
             ECKey key;
             try {
-                BigInteger privKey = new BigInteger(signature);
+                BigInteger privKey = new BigInteger(wifKey);
                 key = ECKey.fromPrivate(privKey);
             }catch (Exception e){
-                DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+                DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), wifKey);
                 key = dumpedPrivateKey.getKey();
             }
             calendar.setKey(key);
@@ -83,14 +83,14 @@ public class TestCalendar {
     @Test
     public void TestPrivateWif() throws Exception {
         byte[] digest = Utils.randBytes(32);
-        Path path = Paths.get("signature.wif");
+        Path path = Paths.get("key.wif");
         if(!Files.exists(path)){
             assertTrue(true);
             return;
         }
 
         Properties properties = new Properties();
-        properties.load(new FileInputStream("signature.wif"));
+        properties.load(new FileInputStream("key.wif"));
         HashMap<String,String> privateUrls = new HashMap<>();
         for(String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
@@ -100,11 +100,11 @@ public class TestCalendar {
 
         for(Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://"+entry.getKey();
-            String signature = entry.getValue();
+            String wifKey = entry.getValue();
 
             Calendar calendar = new Calendar(calendarUrl);
             ECKey key;
-            DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
+            DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), wifKey);
             key = dumpedPrivateKey.getKey();
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);

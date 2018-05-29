@@ -4,8 +4,7 @@ target/
 .DS_Store
 settings.xml
 deploy.sh
-signature.key
-signature.wif
+key.wif
 /.settings/
 /.classpath
 /.project
