@@ -41,9 +41,16 @@ public class TestCalendar {
     }
 
 
+
+
     @Test
     public void TestPrivate() throws Exception {
         byte[] digest = Utils.randBytes(32);
+
+        // key.wif it's a file of properties with the format
+        // <calendar url> = <private key in wif format>
+        // auth.calendar.eternitywall.com = KwT2r9sL........
+
         Path path = Paths.get("key.wif");
         if(!Files.exists(path)){
             assertTrue(true);
