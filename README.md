@@ -143,11 +143,11 @@ byte[] fileOts = Utils.hexToBytes("004f70656e54696d657374616d7073000050726f6f660
 DetachedTimestampFile detached = DetachedTimestampFile.from( new OpSHA256(), file )
 DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(fileOts);
 
-Long result = OpenTimestamps.verify(detachedOts,detached);
-if(timestamp==null){
+HashMap<String, Long> result = OpenTimestamps.verify(detachedOts,detached);
+if (result == null || result.isEmpty()) {
     System.out.println("Pending or Bad attestation");
-}else {
-    System.out.println("Success! Bitcoin attests data existed as of "+ new Date(timestamp*1000) );
+} else {
+    result.forEach((k, v) -> System.out.println("Success! " + k + " attests data existed as of "+ new Date(v.longValue() * 1000)));
 }
 ```
 
