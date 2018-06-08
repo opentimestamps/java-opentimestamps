@@ -289,7 +289,7 @@ public class OpenTimestamps {
      *
      * @param ots The DetachedTimestampFile containing the proof to verify.
      * @param stamped The DetachedTimestampFile containing the stamped data.
-     * @return Hashmap of block heights & timestamps indexed by chain: timestamp in seconds from 1 January 1970.
+     * @return Hashmap of block heights and timestamps indexed by chain: timestamp in seconds from 1 January 1970.
      * @throws Exception if the verification procedure fails.
      */
 
@@ -308,7 +308,7 @@ public class OpenTimestamps {
      * Verify a timestamp.
      *
      * @param timestamp The timestamp.
-     * @return HashMap of block heights & timestamps indexed by chain: timestamp in seconds from 1 January 1970.
+     * @return HashMap of block heights and timestamps indexed by chain: timestamp in seconds from 1 January 1970.
      * @throws Exception if the verification procedure fails.
      */
     public static HashMap<VerifyResult.Chains, VerifyResult> verify(Timestamp timestamp) throws Exception{
