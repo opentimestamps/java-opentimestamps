@@ -4,6 +4,7 @@ import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import com.eternitywall.ots.*;
 import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.exceptions.VerificationException;
 import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
@@ -171,6 +172,18 @@ public class TestOpenTimestamps{
             }
         }
 
+    }
+
+    @Test(expected = VerificationException.class)
+    public void verifyCheckForFileManipulation() throws Exception  {
+        DetachedTimestampFile helloOts = DetachedTimestampFile.deserialize(helloworldOts);
+        DetachedTimestampFile differentOts = DetachedTimestampFile.deserialize(differentBlockchainOts);
+
+        helloOts.getTimestamp().ops = differentOts.getTimestamp().ops;
+
+        DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
+        helloOts = DetachedTimestampFile.deserialize(helloOts.serialize());
+        OpenTimestamps.verify(helloOts, detached);
     }
 
     @Test
