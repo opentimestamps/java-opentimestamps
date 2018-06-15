@@ -151,7 +151,7 @@ if (result == null || result.isEmpty()) {
 }
 ```
 
-Variable `file` created from the hex representation of the file `test/hello-world.txt.ots` while `fileOts` contains `test/hello-world.txt`
+Variable `fileOts` created from the hex representation of the file `test/hello-world.txt.ots` while `file` contains `test/hello-world.txt`
 
 #### Upgrade
 
