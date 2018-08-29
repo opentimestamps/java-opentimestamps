@@ -2,6 +2,8 @@ package com.eternitywall.ots;
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
@@ -69,18 +71,22 @@ public class MultiInsight {
             Response take = queueBlockHeader.take();
             if(take.isOk()) {
                 JSONObject jsonObject = take.getJson();
-                String merkleroot = jsonObject.getString("merkleroot");
-                String time = String.valueOf(jsonObject.getInt("time"));
-                BlockHeader blockHeader = new BlockHeader();
-                blockHeader.setMerkleroot(merkleroot);
-                blockHeader.setTime(time);
-                blockHeader.setBlockHash(hash);
-                log.info(take.getFromUrl() + " " + blockHeader);
+				try {
+					String merkleroot = jsonObject.getString("merkleroot");
+					String time = String.valueOf(jsonObject.getInt("time"));
+					BlockHeader blockHeader = new BlockHeader();
+					blockHeader.setMerkleroot(merkleroot);
+					blockHeader.setTime(time);
+					blockHeader.setBlockHash(hash);
+					log.info(take.getFromUrl() + " " + blockHeader);
 
-                if (results.contains(blockHeader)) {
-                    return blockHeader;
-                }
-                results.add(blockHeader);
+					if (results.contains(blockHeader)) {
+						return blockHeader;
+					}
+					results.add(blockHeader);
+				} catch (JSONException e) {
+					log.warning("Cannot parse merkleroot from body: " + jsonObject);
+				}
             }
         }
 
