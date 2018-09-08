@@ -144,6 +144,20 @@ public class TestOpenTimestamps{
 
     }
 
+    @Test(expected = Exception.class)
+    public void verify2() throws Exception {
+        DetachedTimestampFile helloOts = DetachedTimestampFile.deserialize(helloworldOts);
+        DetachedTimestampFile differentOts = DetachedTimestampFile.deserialize(differentBlockchainOts);
+        helloOts.getTimestamp().attestations = differentOts.getTimestamp().attestations;
+
+        helloOts.getTimestamp().ops = differentOts.getTimestamp().ops;
+
+        DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
+        helloOts = DetachedTimestampFile.deserialize(helloOts.serialize());
+
+        System.out.println(OpenTimestamps.verify(helloOts, detached).toString()); // returns the timestamp of the second file
+    }
+
     @Test
     public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 

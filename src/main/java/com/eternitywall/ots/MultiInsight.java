@@ -27,12 +27,12 @@ public class MultiInsight {
     public MultiInsight(String chain) throws Exception{
         insightUrls = new ArrayList<>();
         if(chain.equals("bitcoin")) {
-            insightUrls.add("https://search.bitaccess.co/insight-api");
-            insightUrls.add("https://www.localbitcoinschain.com/api");
-            insightUrls.add("https://insight.bitpay.com/api");
-            insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
+            //insightUrls.add("https://search.bitaccess.co/insight-api");
+            //insightUrls.add("https://www.localbitcoinschain.com/api");
+            //insightUrls.add("https://insight.bitpay.com/api");
+            //insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
             insightUrls.add("https://btc-bitcore1.trezor.io/api");
-            insightUrls.add("https://btc-bitcore4.trezor.io/api");
+            //insightUrls.add("https://btc-bitcore4.trezor.io/api");
             insightUrls.add("https://blockexplorer.com/api");
         } else if(chain.equals("litecoin")) {
             insightUrls.add("https://ltc-bitcore1.trezor.io/api");
