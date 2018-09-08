@@ -21,7 +21,7 @@ Java 1.7+
 <dependency>
     <groupId>com.eternitywall</groupId>
     <artifactId>java-opentimestamps</artifactId>
-    <version>1.15</version>
+    <version>1.16</version>
 </dependency>
 ```
 
