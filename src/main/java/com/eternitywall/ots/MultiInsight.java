@@ -71,22 +71,22 @@ public class MultiInsight {
             Response take = queueBlockHeader.take();
             if(take.isOk()) {
                 JSONObject jsonObject = take.getJson();
-				try {
-					String merkleroot = jsonObject.getString("merkleroot");
-					String time = String.valueOf(jsonObject.getInt("time"));
-					BlockHeader blockHeader = new BlockHeader();
-					blockHeader.setMerkleroot(merkleroot);
-					blockHeader.setTime(time);
-					blockHeader.setBlockHash(hash);
-					log.info(take.getFromUrl() + " " + blockHeader);
+                try {
+                    String merkleroot = jsonObject.getString("merkleroot");
+                    String time = String.valueOf(jsonObject.getInt("time"));
+                    BlockHeader blockHeader = new BlockHeader();
+                    blockHeader.setMerkleroot(merkleroot);
+                    blockHeader.setTime(time);
+                    blockHeader.setBlockHash(hash);
+                    log.info(take.getFromUrl() + " " + blockHeader);
 
-					if (results.contains(blockHeader)) {
-						return blockHeader;
-					}
-					results.add(blockHeader);
-				} catch (JSONException e) {
-					log.warning("Cannot parse merkleroot from body: " + jsonObject);
-				}
+                    if (results.contains(blockHeader)) {
+                        return blockHeader;
+                    }
+                    results.add(blockHeader);
+                } catch (JSONException e) {
+                    log.warning("Cannot parse merkleroot from body: " + jsonObject);
+                }
             }
         }
 
