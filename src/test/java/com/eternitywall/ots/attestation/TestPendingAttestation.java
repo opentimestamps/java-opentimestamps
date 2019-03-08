@@ -1,6 +1,5 @@
 package com.eternitywall.ots.attestation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.eternitywall.ots.StreamDeserializationContext;
@@ -12,9 +11,7 @@ import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.Test;
 
-
 public class TestPendingAttestation {
-
 
   @Test
   public void serialization() throws IOException {
@@ -35,9 +32,7 @@ public class TestPendingAttestation {
 
     assertTrue(Arrays.equals(pendingAttestation2._TAG(), PendingAttestation._TAG));
     assertTrue(Arrays.equals(pendingAttestation2.getUri(), Utils.toBytes("foobar", "UTF-8")));
-
   }
-
 
   @Test
   public void deserialization() throws IOException {
@@ -85,7 +80,6 @@ public class TestPendingAttestation {
     ctx = new StreamDeserializationContext(baos.toByteArray());
     TimeAttestation.deserialize(ctx);
     // TODO exception DeserializationError
-
   }
 
   @Test
@@ -99,5 +93,4 @@ public class TestPendingAttestation {
     TimeAttestation.deserialize(ctx);
     // TODO exception TrailingGarbageError
   }
-
 }

@@ -3,18 +3,13 @@ package com.eternitywall;
 import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
-
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by casatta on 27/02/17.
- */
 public class TestUtils {
-
     Utils utils = new Utils();
 
     @Test
@@ -27,7 +22,6 @@ public class TestUtils {
         assertTrue( Utils.compare(arr,arr2)>0 );
         assertNull(Utils.arraysCopy(null));
     }
-
 
     @Test
     public void arraysConcat() {
@@ -44,7 +38,6 @@ public class TestUtils {
         String anObject = Utils.bytesToHex(array).toLowerCase();
         assertTrue("2030615a".equals(anObject));
     }
-
 
     @Test
     public void testRandBytes() {
@@ -75,19 +68,18 @@ public class TestUtils {
             Utils.hexToBytes("0");
             assertFalse(true);
         } catch (IllegalArgumentException e) {
-
+            // Empty
         }
 
         try {
             Utils.hexToBytes("xx");
             assertFalse(true);
         } catch (IllegalArgumentException e) {
-
+            // Empty
         }
 
         byte[] arr=Utils.hexToBytes("0000");
         assertTrue("0000".equals(Utils.bytesToHex(arr).toLowerCase()));
-
 
         byte[] arr2= Utils.hexToBytes("0aef");
         assertTrue("0aef".equals(Utils.bytesToHex(arr2).toLowerCase()));
@@ -98,7 +90,5 @@ public class TestUtils {
         byte[] a = new byte[10];
         Utils.arrayFill(a, (byte)0);
         assertEquals("00000000000000000000", Utils.bytesToHex(a).toLowerCase());
-
     }
 }
-

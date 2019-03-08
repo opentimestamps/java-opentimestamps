@@ -1,15 +1,11 @@
 package com.eternitywall.http;
 
-import com.eternitywall.http.Request;
 import org.junit.Test;
 
 import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by casatta on 28/02/17.
- */
 public class TestHttps {
 
     @Test
