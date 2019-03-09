@@ -1,6 +1,5 @@
-package com.eternitywall;
+package com.eternitywall.ots;
 
-import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -20,6 +19,17 @@ public class TestUtils {
         arr1[0] = (byte)13;
         assertTrue(Utils.compare(arr1, arr2) > 0 );
         assertNull(Utils.arraysCopy(null));
+    }
+
+    @Test
+    public void testCoalesce() {
+        assertEquals("abc", Utils.coalesce("abc"));
+        assertEquals("abc", Utils.coalesce("abc", "def"));
+
+        String aNull = null;
+        assertNull(Utils.coalesce(aNull));
+        assertNull(Utils.coalesce(aNull, aNull, aNull));
+        assertEquals("abc", Utils.coalesce(aNull, aNull, aNull, "abc"));
     }
 
     @Test
@@ -79,6 +89,12 @@ public class TestUtils {
         String zeroaef = "0aef";
         byte[] arr2 = Utils.hexToBytes(zeroaef);
         assertEquals(zeroaef, Utils.bytesToHex(arr2).toLowerCase());
+    }
+
+    @Test
+    public void testUppercase() {
+        assertEquals("Hello", Utils.toUpperFirstLetter(("hello")));
+        assertEquals("Hello", Utils.toUpperFirstLetter(("Hello")));
     }
 
     @Test

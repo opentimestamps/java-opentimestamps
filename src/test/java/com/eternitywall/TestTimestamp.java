@@ -184,7 +184,7 @@ public class TestTimestamp {
         assertTrue(Arrays.equals(stampRighter.getDigest(), Utils.hexToBytes("23388b16c66f1fa37ef14af8eb081712d570813e2afb8c8ae86efa726f3b7276")));
     }
 
-    public void defTimestamp(int n, byte[] expected_merkle_root) {
+    private void defTimestamp(int n, byte[] expected_merkle_root) {
         List<Timestamp> roots = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
