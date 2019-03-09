@@ -3,13 +3,8 @@ package com.eternitywall.ots.crypto;
 import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
-
-
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by casatta on 06/03/17.
- */
 public class TestKeccakDigest {
 
     @Test

@@ -21,7 +21,6 @@ public class TestOp {
         Utils.toBytes("msgsuffix", "UTF-8")));
   }
 
-
   @Test
   public void testPrepend() {
     // Prepend operation
@@ -60,7 +59,6 @@ public class TestOp {
     assertNotSame ( new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpPrepend(Utils.toBytes("foo", "UTF-8")));
   }
 
-
   @Test
   public void testOrdering() {
     // Operation ordering
@@ -76,5 +74,4 @@ public class TestOp {
     assertTrue(op3.compareTo(op4) < 0);
     assertFalse(op3.compareTo(op4) > 0);
   }
-
 }

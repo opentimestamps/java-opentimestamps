@@ -1,14 +1,7 @@
 package com.eternitywall;
 
-import com.eternitywall.ots.BlockHeader;
-import com.eternitywall.ots.MultiInsight;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
-/**
- * Created by casatta on 07/03/17.
- */
 public class TestMultiInsight {
 
     @Test
