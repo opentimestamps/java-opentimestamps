@@ -10,33 +10,32 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class TestUtils {
-    Utils utils = new Utils();
 
     @Test
     public void arraysCopy() throws Exception {
-        byte[] arr = Utils.hexToBytes("001100");
-        byte[] arr2 = Utils.arraysCopy(arr);
-        assertTrue( Utils.compare(arr,arr2)==0 );
-        assertFalse(arr==arr2);
-        arr[0]=(byte)13;
-        assertTrue( Utils.compare(arr,arr2)>0 );
+        byte[] arr1 = Utils.hexToBytes("001100");
+        byte[] arr2 = Utils.arraysCopy(arr1);
+        assertTrue(Utils.compare(arr1, arr2) == 0);
+        assertNotSame(arr1, arr2);
+        arr1[0] = (byte)13;
+        assertTrue(Utils.compare(arr1, arr2) > 0 );
         assertNull(Utils.arraysCopy(null));
     }
 
     @Test
     public void arraysConcat() {
-        byte[] array = "foo".getBytes();
+        byte[] array1 = "foo".getBytes();
         byte[] array2 = "bar".getBytes();
-        byte[] array3 = Utils.arraysConcat(array,array2);
+        byte[] array3 = Utils.arraysConcat(array1, array2);
         String str = new String(array3, StandardCharsets.UTF_8);
-        assertTrue("foobar".equals(str));
+        assertEquals("foobar", str);
     }
 
     @Test
     public void bytesToHex() {
         byte[] array = " 0aZ".getBytes();
         String anObject = Utils.bytesToHex(array).toLowerCase();
-        assertTrue("2030615a".equals(anObject));
+        assertEquals("2030615a", anObject);
     }
 
     @Test
@@ -44,12 +43,11 @@ public class TestUtils {
         try {
             byte[] array1 = Utils.randBytes(8);
             byte[] array2 = Utils.randBytes(8);
-            assertTrue(array1.length==8);
-            assertTrue(array2.length==8);
-            assertFalse(Arrays.equals(array1,array2));
+            assertEquals(8, array1.length);
+            assertEquals(8, array2.length);
+            assertFalse(Arrays.equals(array1, array2));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            assertTrue(false);
+            fail(e.toString());
         }
     }
 
@@ -58,31 +56,29 @@ public class TestUtils {
         byte[] array1 = "0125121512512".getBytes();
         byte[] array2 = Utils.arrayReverse(array1);
         byte[] array3 = Utils.arrayReverse(array2);
-        assertFalse(Arrays.equals(array1,array2));
-        assertTrue(Arrays.equals(array1,array3));
+        assertFalse(Arrays.equals(array1, array2));
+        assertTrue(Arrays.equals(array1, array3));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void hexBytesOf_0_ShouldThrow() {
+        Utils.hexToBytes("0");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void hexBytesOf_xx_ShouldThrow() {
+        Utils.hexToBytes("xx");
     }
 
     @Test
-    public void testHexBytes() {
-        try {
-            Utils.hexToBytes("0");
-            assertFalse(true);
-        } catch (IllegalArgumentException e) {
-            // Empty
-        }
+    public void testValidHexBytes() {
+        String zeroes = "0000";
+        byte[] arr1 = Utils.hexToBytes(zeroes);
+        assertEquals(zeroes, Utils.bytesToHex(arr1).toLowerCase());
 
-        try {
-            Utils.hexToBytes("xx");
-            assertFalse(true);
-        } catch (IllegalArgumentException e) {
-            // Empty
-        }
-
-        byte[] arr=Utils.hexToBytes("0000");
-        assertTrue("0000".equals(Utils.bytesToHex(arr).toLowerCase()));
-
-        byte[] arr2= Utils.hexToBytes("0aef");
-        assertTrue("0aef".equals(Utils.bytesToHex(arr2).toLowerCase()));
+        String zeroaef = "0aef";
+        byte[] arr2 = Utils.hexToBytes(zeroaef);
+        assertEquals(zeroaef, Utils.bytesToHex(arr2).toLowerCase());
     }
 
     @Test
