@@ -11,16 +11,18 @@ import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.Test;
 
+import static org.bitcoinj.core.Utils.toBytes;
+
 public class TestPendingAttestation {
 
   @Test
   public void serialization() throws IOException {
     // Serialization of pending attestations
-    PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("foobar", "UTF-8"));
+    PendingAttestation pendingAttestation = new PendingAttestation(toBytes("foobar", "UTF-8"));
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"07"+"06"));
-    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    baos.write(toBytes("foobar", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
 
     StreamSerializationContext ctx = new StreamSerializationContext();
@@ -31,20 +33,20 @@ public class TestPendingAttestation {
     PendingAttestation pendingAttestation2 = (PendingAttestation) TimeAttestation.deserialize(ctx1);
 
     assertTrue(Arrays.equals(pendingAttestation2._TAG(), PendingAttestation._TAG));
-    assertTrue(Arrays.equals(pendingAttestation2.getUri(), Utils.toBytes("foobar", "UTF-8")));
+    assertTrue(Arrays.equals(pendingAttestation2.getUri(), toBytes("foobar", "UTF-8")));
   }
 
   @Test
   public void deserialization() throws IOException {
     // Deserialization of attestations
 
-    PendingAttestation pendingAttestation = new PendingAttestation(Utils.toBytes("foobar", "UTF-8"));
+    PendingAttestation pendingAttestation = new PendingAttestation(toBytes("foobar", "UTF-8"));
     StreamSerializationContext ctx = new StreamSerializationContext();
     pendingAttestation.serialize(ctx);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e"+"07"+"06"));
-    baos.write(Utils.toBytes("foobar", "UTF-8"));
+    baos.write(toBytes("foobar", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
     assertTrue(Arrays.equals(expected_serialized, ctx.getOutput()));
   }
@@ -55,7 +57,7 @@ public class TestPendingAttestation {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"07"+"06"));
-    baos.write(Utils.toBytes("fo%bar", "UTF-8"));
+    baos.write(toBytes("fo%bar", "UTF-8"));
     StreamDeserializationContext ctx = new StreamDeserializationContext(baos.toByteArray());
     TimeAttestation.deserialize(ctx);
     // TODO exception DeserializationError
@@ -86,7 +88,7 @@ public class TestPendingAttestation {
   public void deserializationTrailingGarbage() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"+"08"+"06"));
-    baos.write(Utils.toBytes("foobarx", "UTF-8"));
+    baos.write(toBytes("foobarx", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
 
     StreamDeserializationContext ctx = new StreamDeserializationContext(expected_serialized);

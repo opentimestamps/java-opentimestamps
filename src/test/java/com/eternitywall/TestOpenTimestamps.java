@@ -160,7 +160,7 @@ public class TestOpenTimestamps{
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
                 assertTrue(results.size()>0);
                 assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
-                assertEquals(1432827678L, results.get(VerifyResult.Chains.BITCOIN).timestamp);
+                assertEquals(1432827678L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
             } catch (Exception e){
                 fail(e.toString());
             }

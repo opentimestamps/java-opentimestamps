@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class VerifyResult implements Comparable<VerifyResult> {
-
     private static final String DATE_PATTERN = "YYYY-MM-dd z";
     private static final DateFormatSymbols DATE_FORMAT_SYMBOLS = new DateFormatSymbols(new Locale("en", "UK"));
 
@@ -21,6 +20,7 @@ public class VerifyResult implements Comparable<VerifyResult> {
         this.timestamp = timestamp;
         this.height = height;
     }
+
     /**
      * Returns, if existing, a string representation describing the existence of a block attest
      */

@@ -106,7 +106,7 @@ public class Timestamp {
      */
     public void serialize(StreamSerializationContext ctx) {
         // TODO: Not sure if this does what the author intended...
-        List<TimeAttestation> sortedAttestations = this.attestations;
+        List<TimeAttestation> sortedAttestations = attestations;
         Collections.sort(sortedAttestations);
 
         if (sortedAttestations.size() > 1) {
@@ -116,26 +116,26 @@ public class Timestamp {
             }
         }
 
-        if (this.ops.isEmpty()) {
+        if (ops.isEmpty()) {
             ctx.writeByte((byte) 0x00);
 
             if (!sortedAttestations.isEmpty()) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
-        } else if (!this.ops.isEmpty()) {
+        } else {
             if (!sortedAttestations.isEmpty()) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
 
             int counter = 0;
-            List<Map.Entry<Op, Timestamp>> list = sortToList(this.ops.entrySet());
+            List<Map.Entry<Op, Timestamp>> list = sortToList(ops.entrySet());
 
             for (Map.Entry<Op, Timestamp> entry : list) {
                 Timestamp stamp = entry.getValue();
                 Op op = entry.getKey();
 
-                if (counter < this.ops.size() - 1) {
+                if (counter < ops.size() - 1) {
                     ctx.writeBytes(new byte[]{(byte) 0xff});
                     counter++;
                 }
@@ -153,23 +153,21 @@ public class Timestamp {
      * @throws Exception different timestamps messages
      */
     public void merge(Timestamp other) throws Exception {
-        if (!Arrays.equals(this.msg, other.msg)) {
+        if (!Arrays.equals(msg, other.msg)) {
             //log.severe("Can\'t merge timestamps for different messages together");
             throw new Exception("Can\'t merge timestamps for different messages together");
         }
 
-        for (final TimeAttestation attestation : other.attestations) {
-            this.attestations.add(attestation);
-        }
+        attestations.addAll(other.attestations);
 
         for (Map.Entry<Op, Timestamp> entry : other.ops.entrySet()) {
             Timestamp otherOpStamp = entry.getValue();
             Op otherOp = entry.getKey();
-            Timestamp ourOpStamp = this.ops.get(otherOp);
+            Timestamp ourOpStamp = ops.get(otherOp);
 
             if (ourOpStamp == null) {
-                ourOpStamp = new Timestamp(otherOp.call(this.msg));
-                this.ops.put(otherOp, ourOpStamp);
+                ourOpStamp = new Timestamp(otherOp.call(msg));
+                ops.put(otherOp, ourOpStamp);
             }
 
             ourOpStamp.merge(otherOpStamp);
@@ -185,21 +183,21 @@ public class Timestamp {
      */
     public TimeAttestation shrink() throws Exception {
         // Get all attestations
-        HashMap<byte[], TimeAttestation> allAttestations = this.allAttestations();
+        HashMap<byte[], TimeAttestation> allAttestations = allAttestations();
 
         if (allAttestations.size() == 0) {
-            throw new Exception();
+            throw new Exception("There are no attestations");
         } else if (allAttestations.size() == 1) {
             return allAttestations.values().iterator().next();
-        } else if (this.ops.size() == 0) {
-            throw new Exception();
+        } else if (ops.size() == 0) {
+            throw new Exception();     // TODO: Need a descriptive exception string here
         }
 
         // Fore >1 attestations :
         // Search first BitcoinBlockHeaderAttestation
         TimeAttestation minAttestation = null;
 
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
             Timestamp timestamp = entry.getValue();
             //Op op = entry.getKey();
 
@@ -227,10 +225,10 @@ public class Timestamp {
         // Remove attestation if not min attestation
         boolean shrinked = false;
 
-        for (Iterator<Entry<Op, Timestamp>> it = this.ops.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Entry<Op, Timestamp>> it = ops.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Op, Timestamp> entry = it.next();
             Timestamp timestamp = entry.getValue();
-            Op op = entry.getKey();
+            Op op = entry.getKey();    // TODO: Never used...
             Set<TimeAttestation> attestations = timestamp.getAttestations();
 
             if (attestations.size() > 0 && attestations.contains(minAttestation) && !shrinked) {
@@ -246,12 +244,12 @@ public class Timestamp {
     }
 
     /**
-     * Print the digest of the timestamp.
+     * Return the digest of the timestamp.
      *
      * @return The byte[] digest string.
      */
     public byte[] getDigest() {
-        return this.msg;
+        return msg;
     }
 
     /**
@@ -262,24 +260,24 @@ public class Timestamp {
      */
     public String toString(int indent) {
         StringBuilder builder = new StringBuilder();
-        builder.append(Timestamp.indention(indent) + "msg: " + Utils.bytesToHex(this.msg).toLowerCase() + "\n");
-        builder.append(Timestamp.indention(indent) + this.attestations.size() + " attestations: \n");
+        builder.append(Timestamp.indention(indent)).append("msg: ").append(Utils.bytesToHex(msg).toLowerCase()).append("\n");
+        builder.append(Timestamp.indention(indent)).append(attestations.size()).append(" attestations: \n");
         int i = 0;
 
-        for (final TimeAttestation attestation : this.attestations) {
-            builder.append(Timestamp.indention(indent) + "[" + i + "] " + attestation.toString() + "\n");
+        for (final TimeAttestation attestation : attestations) {
+            builder.append(Timestamp.indention(indent)).append("[").append(i).append("] ").append(attestation.toString()).append("\n");
             i++;
         }
 
         i = 0;
-        builder.append(Timestamp.indention(indent) + this.ops.size() + " ops: \n");
+        builder.append(Timestamp.indention(indent)).append(ops.size()).append(" ops: \n");
 
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
             Timestamp stamp = entry.getValue();
             Op op = entry.getKey();
 
-            builder.append(Timestamp.indention(indent) + "[" + i + "] op: " + op.toString() + "\n");
-            builder.append(Timestamp.indention(indent) + "[" + i + "] timestamp: \n");
+            builder.append(Timestamp.indention(indent)).append("[").append(i).append("] op: ").append(op.toString()).append("\n");
+            builder.append(Timestamp.indention(indent)).append("[").append(i).append("] timestamp: \n");
             builder.append(stamp.toString(indent + 1));
             i++;
         }
@@ -320,9 +318,9 @@ public class Timestamp {
     private final String ANSI_UNDERLINE = "\u001B[4m";
 
     private String strResult(boolean verbosity, byte[] parameter, byte[] result) {
-        String rr = "";
+        String rr = "";       // TODO: Replace with StringBuilder
 
-        if (verbosity == true && result != null) {
+        if (verbosity && result != null) {
             rr += " == ";
             String resultHex = Utils.bytesToHex(result);
 
@@ -359,65 +357,68 @@ public class Timestamp {
     String strTree(int indent, boolean verbosity) {
         StringBuilder sb = new StringBuilder();
 
-        if (!this.attestations.isEmpty()) {
-            for (final TimeAttestation attestation : this.attestations) {
+        if (!attestations.isEmpty()) {
+            for (final TimeAttestation attestation : attestations) {
                 sb.append(Timestamp.indention(indent));
-                sb.append("verify " + attestation.toString() + strResult(verbosity, this.msg, null) + "\n");
+                sb.append("verify ").append(attestation.toString()).append(strResult(verbosity, msg, null)).append("\n");
 
                 if (attestation instanceof BitcoinBlockHeaderAttestation) {
-                    String tx = Utils.bytesToHex(Utils.arrayReverse(this.msg));
-                    sb.append(Timestamp.indention(indent) + "# Bitcoin block merkle root " + tx.toLowerCase() + "\n");
+                    String tx = Utils.bytesToHex(Utils.arrayReverse(msg));
+                    sb.append(Timestamp.indention(indent)).append("# Bitcoin block merkle root ").append(tx.toLowerCase()).append("\n");
                 }
             }
         }
 
-        if (this.ops.size() > 1) {
-            TreeMap<Op, Timestamp> ordered = new TreeMap<>(this.ops);
+        if (ops.size() > 1) {
+            TreeMap<Op, Timestamp> ordered = new TreeMap<>(ops);
 
             for (Map.Entry<Op, Timestamp> entry : ordered.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
 
                 try {
-                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
-                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(this.msg)));
-                    sb.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
+                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), msg);    // TODO: Not used...
+                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(msg)));
+                    sb.append(Timestamp.indention(indent)).append("# Bitcoin transaction id ").append(Utils.bytesToHex(tx).toLowerCase()).append("\n");
                 } catch (Exception err) {
                     // TODO: Is this expected??
                 }
 
-                byte[] curRes = op.call(this.msg);
+                byte[] curRes = op.call(msg);
                 byte[] curPar = null;
 
                 if (op instanceof OpBinary) {
                     curPar = ((OpBinary) op).arg;
                 }
 
-                sb.append(Timestamp.indention(indent) + " -> " + op.toString().toLowerCase() + strResult(verbosity, curPar, curRes).toLowerCase() + "\n");
+                sb.append(Timestamp.indention(indent)).append(" -> ").append(op.toString().toLowerCase());
+                sb.append(strResult(verbosity, curPar, curRes).toLowerCase()).append("\n");
                 sb.append(timestamp.strTree(indent + 1, verbosity));
             }
-        } else if (this.ops.size() > 0) {
+        } else if (ops.size() > 0) {
             // output += com.eternitywall.ots.Timestamp.indention(indent);
-            for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+            for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
                 Timestamp timestamp = entry.getValue();
                 Op op = entry.getKey();
 
                 try {
-                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), this.msg);
-                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(this.msg)));
-                    sb.append(Timestamp.indention(indent) + "# Bitcoin transaction id " + Utils.bytesToHex(tx).toLowerCase() + "\n");
+                    Transaction transaction = new Transaction(NetworkParameters.prodNet(), msg);
+                    byte[] tx = Utils.arrayReverse(new OpSHA256().call(new OpSHA256().call(msg)));
+                    sb.append(Timestamp.indention(indent)).append("# Bitcoin transaction id ");
+                    sb.append(Utils.bytesToHex(tx).toLowerCase()).append("\n");
                 } catch (Exception err) {
                     // TODO: Is this expected??
                 }
 
-                byte[] curRes = op.call(this.msg);
+                byte[] curRes = op.call(msg);
                 byte[] curPar = null;
 
                 if (op instanceof OpBinary) {
                     curPar = ((OpBinary) op).arg;
                 }
 
-                sb.append(Timestamp.indention(indent) + op.toString().toLowerCase() + strResult(verbosity, curPar, curRes).toLowerCase() + "\n");
+                sb.append(Timestamp.indention(indent)).append(op.toString().toLowerCase());
+                sb.append(strResult(verbosity, curPar, curRes).toLowerCase()).append("\n");
                 sb.append(timestamp.strTree(indent, verbosity));
             }
         }
@@ -426,12 +427,12 @@ public class Timestamp {
     }
 
     /**
-     * Set of al Attestations.
+     * Set of all Attestations.
      *
      * @return Array of all sub timestamps with attestations.
      */
-    public List<Timestamp> directlyVerified() {
-        if (!this.attestations.isEmpty()) {
+    List<Timestamp> directlyVerified() {
+        if (!attestations.isEmpty()) {
             List<Timestamp> list = new ArrayList<>();
             list.add(this);
 
@@ -440,7 +441,7 @@ public class Timestamp {
 
         List<Timestamp> list = new ArrayList<>();
 
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
             Timestamp ts = entry.getValue();
             //Op op = entry.getKey();
 
@@ -452,14 +453,14 @@ public class Timestamp {
     }
 
     /**
-     * Set of al Attestations.
+     * Set of all Attestations.
      *
      * @return Set of all timestamp attestations.
      */
     public Set<TimeAttestation> getAttestations() {
-        Set set = new HashSet<TimeAttestation>();
+        Set<TimeAttestation> set = new HashSet<>();
 
-        for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
+        for (Map.Entry<byte[], TimeAttestation> item : allAttestations().entrySet()) {
             //byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
             set.add(attestation);
@@ -474,7 +475,7 @@ public class Timestamp {
      * @return True if the timestamp is complete, False otherwise.
      */
     Boolean isTimestampComplete() {
-        for (Map.Entry<byte[], TimeAttestation> item : this.allAttestations().entrySet()) {
+        for (Map.Entry<byte[], TimeAttestation> item : allAttestations().entrySet()) {
             //byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
 
@@ -494,11 +495,11 @@ public class Timestamp {
     public HashMap<byte[], TimeAttestation> allAttestations() {
         HashMap<byte[], TimeAttestation> map = new HashMap<>();
 
-        for (TimeAttestation attestation : this.attestations) {
-            map.put(this.msg, attestation);
+        for (TimeAttestation attestation: attestations) {
+            map.put(msg, attestation);
         }
 
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry: ops.entrySet()) {
             Timestamp ts = entry.getValue();
             //Op op = entry.getKey();
 
@@ -522,19 +523,15 @@ public class Timestamp {
     public Set<byte[]> allTips() {
         Set<byte[]> set = new HashSet<>();
 
-        if (this.ops.size() == 0) {
-            set.add(this.msg);
+        if (ops.size() == 0) {
+            set.add(msg);
         }
 
-        for (Map.Entry<Op, Timestamp> entry : this.ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
             Timestamp ts = entry.getValue();
             //Op op = entry.getKey();
 
-            Set<byte[]> subSet = ts.allTips();
-
-            for (byte[] msg : subSet) {
-                set.add(msg);
-            }
+            set.addAll(ts.allTips());
         }
 
         return set;
@@ -543,22 +540,22 @@ public class Timestamp {
     /**
      * Compare timestamps.
      *
-     * @param timestamp the timestamp to compare with
-     * @return Returns true if timestamps are equals
+     * @param other the timestamp to compare with
+     * @return Returns true if the timestamps are equals
      */
-    public boolean equals(Timestamp timestamp) {
-        if (!Arrays.equals(this.getDigest(), timestamp.getDigest())) {
+    public boolean equals(Timestamp other) {
+        if (!Arrays.equals(getDigest(), other.getDigest())) {
             return false;
         }
 
         // Check attestations
-        if (this.attestations.size() != timestamp.attestations.size()) {
+        if (attestations.size() != other.attestations.size()) {
             return false;
         }
 
-        for (int i = 0; i < this.attestations.size(); i++) {
-            TimeAttestation ta1 = this.attestations.get(i);
-            TimeAttestation ta2 = timestamp.attestations.get(i);
+        for (int i = 0; i < attestations.size(); i++) {
+            TimeAttestation ta1 = attestations.get(i);
+            TimeAttestation ta2 = other.attestations.get(i);
 
             if (!ta1.equals(ta2)) {
                 return false;
@@ -566,13 +563,13 @@ public class Timestamp {
         }
 
         // Check operations
-        if (this.ops.size() != timestamp.ops.size()) {
+        if (ops.size() != other.ops.size()) {
             return false;
         }
 
         // Order list of operations
-        List<Map.Entry<Op, Timestamp>> list1 = sortToList(this.ops.entrySet());
-        List<Map.Entry<Op, Timestamp>> list2 = sortToList(this.ops.entrySet());
+        List<Map.Entry<Op, Timestamp>> list1 = sortToList(ops.entrySet());
+        List<Map.Entry<Op, Timestamp>> list2 = sortToList(other.ops.entrySet());
 
         for (int i = 0; i < list1.size(); i++) {
             Op op1 = list1.get(i).getKey();
@@ -603,12 +600,12 @@ public class Timestamp {
         // nonce_appended_stamp = timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
         // Op opAppend = new OpAppend(bytes);
 
-        if (this.ops.containsKey(op)) {
-            return this.ops.get(op);
+        if (ops.containsKey(op)) {
+            return ops.get(op);
         }
 
-        Timestamp stamp = new Timestamp(op.call(this.msg));
-        this.ops.put(op, stamp);
+        Timestamp stamp = new Timestamp(op.call(msg));
+        ops.put(op, stamp);
 
         return stamp;
     }

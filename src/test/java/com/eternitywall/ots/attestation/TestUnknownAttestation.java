@@ -11,13 +11,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.junit.Test;
 
+import static org.bitcoinj.core.Utils.toBytes;
+
 public class TestUnknownAttestation {
 
   @Test
   public void string() {
     UnknownAttestation a = new UnknownAttestation(
         Utils.hexToBytes("0102030405060708"),
-        Utils.toBytes("Hello World!", "UTF-8"));
+        toBytes("Hello World!", "UTF-8"));
 
     String string = "UnknownAttestation " + Utils.bytesToHex(a._TAG()) + ' ' + Utils.bytesToHex(a.payload);
     assertEquals(a.toString(), string);
@@ -29,13 +31,13 @@ public class TestUnknownAttestation {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(Utils.hexToBytes("0102030405060708"));
     baos.write(0x0c);
-    baos.write(Utils.toBytes("Hello World!", "UTF-8"));
+    baos.write(toBytes("Hello World!", "UTF-8"));
     byte[] expected_serialized = baos.toByteArray();
 
     StreamDeserializationContext ctx = new StreamDeserializationContext(baos.toByteArray());
     UnknownAttestation a = (UnknownAttestation) TimeAttestation.deserialize(ctx);
     assertTrue(Arrays.equals(a._TAG(), Utils.hexToBytes("0102030405060708")));
-    assertTrue(Arrays.equals(a.payload, Utils.toBytes("Hello World!", "UTF-8")));
+    assertTrue(Arrays.equals(a.payload, toBytes("Hello World!", "UTF-8")));
 
     StreamSerializationContext ctx1 = new StreamSerializationContext();
     a.serialize(ctx1);

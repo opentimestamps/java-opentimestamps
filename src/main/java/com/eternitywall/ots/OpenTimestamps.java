@@ -383,7 +383,7 @@ public class OpenTimestamps {
             log.fine("There is no local node available");
             try {
                 MultiInsight insight = new MultiInsight(attestation.chain);
-                String blockHash = blockHash = insight.blockHash(height);
+                String blockHash = insight.blockHash(height);
                 blockInfo = insight.block(blockHash);
                 log.info("Lite-client verification, assuming block " + blockHash + " is valid");
                 insight.getExecutor().shutdown();
