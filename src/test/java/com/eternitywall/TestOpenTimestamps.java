@@ -38,12 +38,10 @@ public class TestOpenTimestamps {
     private byte[] differentBlockchainOts;
     private String differentBlockchainOtsInfo;
 
-    private String helloWorldHashHex = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
-
-    private String baseUrl = "https://raw.githubusercontent.com/opentimestamps/java-opentimestamps/master";
-
     @Before
     public void loadData() throws ExecutionException, InterruptedException, IOException {
+        String baseUrl = "https://raw.githubusercontent.com/opentimestamps/java-opentimestamps/master";
+
         executor = Executors.newFixedThreadPool(4);
         Future<Response> incompleteFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt")));
         Future<Response> incompleteOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots")));
@@ -96,14 +94,16 @@ public class TestOpenTimestamps {
             DetachedTimestampFile detached = DetachedTimestampFile.from(new Hash(bytes, OpSHA256._TAG));
             Timestamp stamp = OpenTimestamps.stamp(detached);
             byte[] digest = detached.fileDigest();
-            assertTrue(Arrays.equals(digest, bytes));
+            assertArrayEquals(digest, bytes);
         }
+
+        String helloWorldHashHex = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
 
         {
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
             Timestamp stamp = OpenTimestamps.stamp(detached);
             byte[] digest = detached.fileDigest();
-            assertTrue(Arrays.equals(digest, Utils.hexToBytes(helloWorldHashHex)));
+            assertArrayEquals(digest, Utils.hexToBytes(helloWorldHashHex));
         }
     }
 
@@ -129,7 +129,7 @@ public class TestOpenTimestamps {
             Set<byte[]> tips = fileTimestamp.getTimestamp().allTips();
 
             for (byte[] tip : tips) {
-                assertTrue(Arrays.equals(tip, merkleTip.getDigest()));
+                assertArrayEquals(tip, merkleTip.getDigest());
             }
         }
     }
@@ -256,14 +256,15 @@ public class TestOpenTimestamps {
         {
             DetachedTimestampFile detached = DetachedTimestampFile.deserialize(incompleteOts);
             Timestamp timestamp = detached.getTimestamp();
-
             assertEquals(timestamp.getAttestations().size(), 1);
+
             TimeAttestation resultAttestation = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 1);
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
             assertEquals(timestamp.allAttestations().size(), 2);
+
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
@@ -272,14 +273,15 @@ public class TestOpenTimestamps {
         {
             DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle1Ots);
             Timestamp timestamp = detached.getTimestamp();
-
             assertEquals(timestamp.getAttestations().size(), 2);
+
             TimeAttestation resultAttestation = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
             assertEquals(timestamp.allAttestations().size(), 4);
+
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
@@ -288,14 +290,15 @@ public class TestOpenTimestamps {
         {
             DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle2Ots);
             Timestamp timestamp = detached.getTimestamp();
-
             assertEquals(timestamp.getAttestations().size(), 2);
+
             TimeAttestation resultAttestation = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
             assertEquals(timestamp.allAttestations().size(), 4);
+
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
@@ -304,14 +307,15 @@ public class TestOpenTimestamps {
         {
             DetachedTimestampFile detached = DetachedTimestampFile.deserialize(merkle3Ots);
             Timestamp timestamp = detached.getTimestamp();
-
             assertEquals(timestamp.getAttestations().size(), 2);
+
             TimeAttestation resultAttestation = timestamp.shrink();
             assertEquals(timestamp.getAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestation));
 
             OpenTimestamps.upgrade(detached);
             assertEquals(timestamp.allAttestations().size(), 4);
+
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));

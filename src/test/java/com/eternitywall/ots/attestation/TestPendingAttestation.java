@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.bitcoinj.core.Utils.toBytes;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 public class TestPendingAttestation {
 
@@ -27,19 +27,18 @@ public class TestPendingAttestation {
 
         StreamSerializationContext ctx = new StreamSerializationContext();
         pendingAttestation.serialize(ctx);
-        assertTrue(Arrays.equals(expected_serialized, ctx.getOutput()));
+        assertArrayEquals(expected_serialized, ctx.getOutput());
 
         StreamDeserializationContext ctx1 = new StreamDeserializationContext(expected_serialized);
         PendingAttestation pendingAttestation2 = (PendingAttestation) TimeAttestation.deserialize(ctx1);
 
-        assertTrue(Arrays.equals(pendingAttestation2._TAG(), PendingAttestation._TAG));
-        assertTrue(Arrays.equals(pendingAttestation2.getUri(), toBytes("foobar", "UTF-8")));
+        assertArrayEquals(pendingAttestation2._TAG(), PendingAttestation._TAG);
+        assertArrayEquals(pendingAttestation2.getUri(), toBytes("foobar", "UTF-8"));
     }
 
     @Test
     public void deserialization() throws IOException {
         // Deserialization of attestations
-
         PendingAttestation pendingAttestation = new PendingAttestation(toBytes("foobar", "UTF-8"));
         StreamSerializationContext ctx = new StreamSerializationContext();
         pendingAttestation.serialize(ctx);
@@ -48,13 +47,12 @@ public class TestPendingAttestation {
         baos.write(DatatypeConverter.parseHexBinary("83dfe30d2ef90c8e" + "07" + "06"));
         baos.write(toBytes("foobar", "UTF-8"));
         byte[] expected_serialized = baos.toByteArray();
-        assertTrue(Arrays.equals(expected_serialized, ctx.getOutput()));
+        assertArrayEquals(expected_serialized, ctx.getOutput());
     }
 
     @Test
     public void invalidUriDeserialization() throws IOException {
         // illegal character
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
         baos.write(toBytes("fo%bar", "UTF-8"));

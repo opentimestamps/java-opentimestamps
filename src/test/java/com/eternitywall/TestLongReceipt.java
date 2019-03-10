@@ -9,8 +9,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestLongReceipt {
     @Test
@@ -38,7 +37,7 @@ public class TestLongReceipt {
             try {
                 root.merge(timestamp);
             } catch (Exception e) {
-                assertTrue(false);
+                fail();
             }
         }
 
@@ -49,6 +48,5 @@ public class TestLongReceipt {
         StreamDeserializationContext ctx2 = new StreamDeserializationContext(streamSerializationContext.getOutput());
         Timestamp timestamp = Timestamp.deserialize(ctx2, digestByte);
         assertNotNull(timestamp);
-        //System.out.println(timestamp.strTree(2));
     }
 }

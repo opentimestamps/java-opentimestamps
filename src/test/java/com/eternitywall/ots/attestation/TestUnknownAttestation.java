@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.bitcoinj.core.Utils.toBytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestUnknownAttestation {
 
@@ -32,37 +31,37 @@ public class TestUnknownAttestation {
         baos.write(Utils.hexToBytes("0102030405060708"));
         baos.write(0x0c);
         baos.write(toBytes("Hello World!", "UTF-8"));
-        byte[] expected_serialized = baos.toByteArray();
+        byte[] expectedSerialized = baos.toByteArray();
 
         StreamDeserializationContext ctx = new StreamDeserializationContext(baos.toByteArray());
         UnknownAttestation a = (UnknownAttestation) TimeAttestation.deserialize(ctx);
-        assertTrue(Arrays.equals(a._TAG(), Utils.hexToBytes("0102030405060708")));
-        assertTrue(Arrays.equals(a.payload, toBytes("Hello World!", "UTF-8")));
+        assertArrayEquals(a._TAG(), Utils.hexToBytes("0102030405060708"));
+        assertArrayEquals(a.payload, toBytes("Hello World!", "UTF-8"));
 
         StreamSerializationContext ctx1 = new StreamSerializationContext();
         a.serialize(ctx1);
-        assertTrue(Arrays.equals(expected_serialized, ctx1.getOutput()));
+        assertArrayEquals(expectedSerialized, ctx1.getOutput());
     }
 
     @Test
     public void deserializationTooLong() throws IOException {
         // Deserialization of attestations with oversized payloads
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(Utils.hexToBytes("0102030405060708"));
-        baos.write(0x81);
-        baos.write(0x40);
-        baos.write('x' * 8193);
-        StreamDeserializationContext ctx = new StreamDeserializationContext(baos.toByteArray());
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        baos1.write(Utils.hexToBytes("0102030405060708"));
+        baos1.write(0x81);
+        baos1.write(0x40);
+        baos1.write('x' * 8193);
+        StreamDeserializationContext ctx = new StreamDeserializationContext(baos1.toByteArray());
         UnknownAttestation a = (UnknownAttestation) TimeAttestation.deserialize(ctx);
         // TODO: exception
 
         // pending attestation
-        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-        baos.write(Utils.hexToBytes("83dfe30d2ef90c8e"));
-        baos.write(0x81);
-        baos.write(0x40);
-        baos.write('x' * 8193);
-        StreamDeserializationContext ctx1 = new StreamDeserializationContext(baos.toByteArray());
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        baos2.write(Utils.hexToBytes("83dfe30d2ef90c8e"));
+        baos2.write(0x81);
+        baos2.write(0x40);
+        baos2.write('x' * 8193);
+        StreamDeserializationContext ctx1 = new StreamDeserializationContext(baos2.toByteArray());
         UnknownAttestation a1 = (UnknownAttestation) TimeAttestation.deserialize(ctx1);
         // TODO: exception
     }

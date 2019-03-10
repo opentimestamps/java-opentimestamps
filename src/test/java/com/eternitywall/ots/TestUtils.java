@@ -67,7 +67,7 @@ public class TestUtils {
         byte[] array2 = Utils.arrayReverse(array1);
         byte[] array3 = Utils.arrayReverse(array2);
         assertFalse(Arrays.equals(array1, array2));
-        assertTrue(Arrays.equals(array1, array3));
+        assertArrayEquals(array1, array3);
     }
 
     @Test(expected = IllegalArgumentException.class)

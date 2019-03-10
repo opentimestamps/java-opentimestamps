@@ -13,17 +13,15 @@ public class TestOp {
     @Test
     public void testAppend() {
         // Append operation
-        assertTrue(Arrays.equals(
-                new OpAppend(Utils.toBytes("suffix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
-                Utils.toBytes("msgsuffix", "UTF-8")));
+        assertArrayEquals(new OpAppend(Utils.toBytes("suffix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
+                          Utils.toBytes("msgsuffix", "UTF-8"));
     }
 
     @Test
     public void testPrepend() {
         // Prepend operation
-        assertTrue(Arrays.equals(
-                new OpPrepend(Utils.toBytes("prefix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
-                Utils.toBytes("prefixmsg", "UTF-8")));
+        assertArrayEquals(new OpPrepend(Utils.toBytes("prefix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
+                          Utils.toBytes("prefixmsg", "UTF-8"));
     }
 
     @Test
@@ -31,8 +29,8 @@ public class TestOp {
         // SHA256 operation
         OpSHA256 opSHA256 = new OpSHA256();
         byte[] msg = {};
-        assertTrue(Arrays.equals(opSHA256.call(msg), DatatypeConverter
-                .parseHexBinary("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")));
+        assertArrayEquals(opSHA256.call(msg),
+                          DatatypeConverter.parseHexBinary("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
     }
 
     @Test
@@ -40,20 +38,17 @@ public class TestOp {
         // RIPEMD160 operation
         OpRIPEMD160 opRIPEMD160 = new OpRIPEMD160();
         byte[] msg = {};
-        assertTrue(Arrays.equals(opRIPEMD160.call(msg), DatatypeConverter
-                .parseHexBinary("9c1185a5c5e9fc54612808977ee8f548b2258d31")));
+        assertArrayEquals(opRIPEMD160.call(msg),
+                          DatatypeConverter.parseHexBinary("9c1185a5c5e9fc54612808977ee8f548b2258d31"));
     }
 
     @Test
     public void testEquality() {
         // Operation equality
 
-        //self.assertEqual(OpReverse(), OpReverse())
-        //self.assertNotEqual(OpReverse(), OpSHA1())
-
         assertEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpAppend(Utils.toBytes("foo", "UTF-8")));
-        assertNotSame(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpAppend(Utils.toBytes("bar", "UTF-8")));
-        assertNotSame(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpPrepend(Utils.toBytes("foo", "UTF-8")));
+        assertNotEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpAppend(Utils.toBytes("bar", "UTF-8")));
+        assertNotEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpPrepend(Utils.toBytes("foo", "UTF-8")));
     }
 
     @Test

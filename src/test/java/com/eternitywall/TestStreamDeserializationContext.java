@@ -9,10 +9,8 @@ import com.eternitywall.ots.attestation.TimeAttestation;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestStreamDeserializationContext {
 
@@ -44,7 +42,7 @@ public class TestStreamDeserializationContext {
         StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(streamSerializationContext.getOutput());
         PendingAttestation pendingAttestationCheck = (PendingAttestation) TimeAttestation.deserialize(streamDeserializationContext);
 
-        assertTrue(Arrays.equals(uri, pendingAttestationCheck.getUri()));
+        assertArrayEquals(uri, pendingAttestationCheck.getUri());
     }
 
     @Test
@@ -62,6 +60,6 @@ public class TestStreamDeserializationContext {
         byte[] otsSerialized = streamSerializationContext.getOutput();
         //System.out.println("fullOts hex:" + Utils.bytesToHex(otsSerialized));
 
-        assertTrue(Arrays.equals(ots, otsSerialized));
+        assertArrayEquals(ots, otsSerialized);
     }
 }
