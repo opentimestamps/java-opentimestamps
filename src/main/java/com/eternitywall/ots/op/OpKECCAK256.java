@@ -49,15 +49,16 @@ public class OpKECCAK256 extends OpCrypto {
         digest.update(msg, 0, msg.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
+
         return hash;
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         return OpCrypto.deserializeFromTag(ctx, tag);
     }
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof OpKECCAK256);
-    }
 
+    @Override
+    public boolean equals(Object other) {
+        return (other instanceof OpKECCAK256);
+    }
 }

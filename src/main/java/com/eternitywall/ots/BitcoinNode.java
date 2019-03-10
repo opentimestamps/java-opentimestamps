@@ -11,9 +11,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
-/**
- * Created by casatta on 06/03/17.
- */
 public class BitcoinNode {
 
     private String authString;
@@ -34,28 +31,28 @@ public class BitcoinNode {
 
     public static Properties readBitcoinConf() throws Exception {
         String home = System.getProperty("user.home");
-
         List<String> list= Arrays.asList("/.bitcoin/bitcoin.conf", "\\AppData\\Roaming\\Bitcoin\\bitcoin.conf", "/Library/Application Support/Bitcoin/bitcoin.conf");
-        for(String dir : list) {
+
+        for (String dir : list) {
             Properties prop = new Properties();
             InputStream input = null;
 
             try {
-
                 input = new FileInputStream(home+dir);
 
                 // load a properties file
                 prop.load(input);
 
                 // get the property value and print it out
-                if(prop.getProperty(RPCUSER)!=null && prop.getProperty(RPCPASSWORD)!=null) {
-                    if(prop.getProperty(RPCCONNECT)==null)
+                if (prop.getProperty(RPCUSER)!=null && prop.getProperty(RPCPASSWORD) != null) {
+                    if (prop.getProperty(RPCCONNECT) == null)
                         prop.setProperty(RPCCONNECT,"127.0.0.1");
-                    if(prop.getProperty(RPCPORT)==null)
+
+                    if (prop.getProperty(RPCPORT) == null)
                         prop.setProperty(RPCPORT,"8332");
+
                     return prop;
                 }
-
             } catch (IOException ex) {
                 //ex.printStackTrace();
             } finally {
@@ -68,6 +65,7 @@ public class BitcoinNode {
                 }
             }
         }
+
         throw new Exception();
     }
 
@@ -75,6 +73,7 @@ public class BitcoinNode {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getinfo");
+
         return callRPC(json);
     }
 
@@ -83,20 +82,24 @@ public class BitcoinNode {
     }
 
     public BlockHeader getBlockHeader(String hash) throws Exception {
-        if(hash==null)
-            return null;
+        if (hash == null) {
+            return null;    // TODO: This is not nice - it creates harder to diagnose NPEs later down the call chain
+        }
+
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getblockheader");
-        JSONArray array=new JSONArray();
+        JSONArray array = new JSONArray();
         array.put(hash);
         json.put("params", array);
         JSONObject jsonObject = callRPC(json);
+
         BlockHeader blockHeader = new BlockHeader();
         JSONObject result = jsonObject.getJSONObject("result");
         blockHeader.setMerkleroot(result.getString("merkleroot"));
         blockHeader.setBlockHash(hash);
         blockHeader.setTime(String.valueOf(result.getInt("time")));
+
         return blockHeader;
     }
 
@@ -104,30 +107,33 @@ public class BitcoinNode {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getblockhash");
-        JSONArray array=new JSONArray();
+        JSONArray array = new JSONArray();
         array.put(height);
         json.put("params", array);
         JSONObject jsonObject = callRPC(json);
-        if(jsonObject==null)
+
+        if (jsonObject == null) {
             return null;
+        }
+
         return jsonObject.getString("result");
     }
 
     private JSONObject callRPC(JSONObject query) throws Exception {
-
-        String s=query.toString();
+        String s = query.toString();
         URL url = new URL(urlString);
         Request request = new Request(url);
         Map<String,String> headers = new HashMap<>();
         headers.put("Authorization", "Basic " + authString);
         request.setHeaders(headers);
         request.setData(s.getBytes());
-        Response response = null;  //sync call
+        Response response = null;  // sync call TODO: What?
         response = request.call();
-        if(response==null)
+
+        if (response == null) {
             throw new Exception();
+        }
 
         return new JSONObject(response.getString());
-
     }
 }

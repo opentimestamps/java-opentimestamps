@@ -5,7 +5,6 @@ import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
-
 import java.util.logging.Logger;
 
 /**
@@ -29,13 +28,14 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         this.arg = new byte[]{};
     }
 
-    public OpBinary(byte[] arg_) {
+    public OpBinary(byte[] arg) {
         super();
-        this.arg = arg_;
+        this.arg = arg;
     }
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         byte[] arg = ctx.readVarbytes(_MAX_RESULT_LENGTH, 1);
+
         if (tag == OpAppend._TAG) {
             return new OpAppend(arg);
         } else if (tag == OpPrepend._TAG) {
@@ -57,13 +57,13 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         return this._TAG_NAME() + ' ' + Utils.bytesToHex(this.arg).toLowerCase();
     }
 
-
     @Override
-    public int compareTo(Op o) {
-        if(o instanceof OpBinary && this._TAG()==o._TAG()) {
-            return Utils.compare(this.arg, ((OpBinary) o).arg );
+    public int compareTo(Op other) {
+        if (other instanceof OpBinary && this._TAG() == other._TAG()) {
+            return Utils.compare(this.arg, ((OpBinary) other).arg);
         }
-        return this._TAG()-o._TAG();
+
+        return this._TAG() - other._TAG();
     }
 
     @Override

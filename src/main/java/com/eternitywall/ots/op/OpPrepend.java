@@ -4,7 +4,6 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Prepend a prefix to a message.
@@ -12,10 +11,6 @@ import java.util.logging.Logger;
  * @see com.eternitywall.ots.op.OpBinary
  */
 public class OpPrepend extends OpBinary {
-
-
-    private static Logger log = Utils.getLogger(OpPrepend.class.getName());
-
 
     byte[] arg;
 
@@ -51,11 +46,12 @@ public class OpPrepend extends OpBinary {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof OpPrepend)){
+    public boolean equals(Object other) {
+        if (!(other instanceof OpPrepend)) {
             return false;
         }
-        return Arrays.equals(this.arg,((OpPrepend)obj).arg);
+
+        return Arrays.equals(this.arg, ((OpPrepend)other).arg);
     }
 
     @Override

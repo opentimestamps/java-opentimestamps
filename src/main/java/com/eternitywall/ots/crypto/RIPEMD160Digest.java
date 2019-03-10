@@ -1,42 +1,35 @@
 package com.eternitywall.ots.crypto;
 
-
 /**
- * implementation of RIPEMD see,
- * http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html
+ * implementation of RIPEMD see, http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html
  */
-public class RIPEMD160Digest
-    extends GeneralDigest
-{
+public class RIPEMD160Digest extends GeneralDigest {
     private static final int DIGEST_LENGTH = 20;
 
     private int H0, H1, H2, H3, H4; // IV's
-
     private int[] X = new int[16];
     private int xOff;
 
     /**
      * Standard constructor
      */
-    public RIPEMD160Digest()
-    {
+    public RIPEMD160Digest() {
         reset();
     }
 
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     *
      * @param t RIPEMD160Digest
      */
-    public RIPEMD160Digest(RIPEMD160Digest t)
-    {
+    public RIPEMD160Digest(RIPEMD160Digest t) {
         super(t);
 
         copyIn(t);
     }
 
-    private void copyIn(RIPEMD160Digest t)
-    {
+    private void copyIn(RIPEMD160Digest t) {
         super.copyIn(t);
 
         H0 = t.H0;
@@ -49,56 +42,40 @@ public class RIPEMD160Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
-    {
+    public String getAlgorithmName() {
         return "RIPEMD160";
     }
 
-    public int getDigestSize()
-    {
+    public int getDigestSize() {
         return DIGEST_LENGTH;
     }
 
-    protected void processWord(
-        byte[] in,
-        int inOff)
-    {
+    protected void processWord(byte[] in, int inOff) {
         X[xOff++] = (in[inOff] & 0xff) | ((in[inOff + 1] & 0xff) << 8)
-            | ((in[inOff + 2] & 0xff) << 16) | ((in[inOff + 3] & 0xff) << 24); 
+                | ((in[inOff + 2] & 0xff) << 16) | ((in[inOff + 3] & 0xff) << 24);
 
-        if (xOff == 16)
-        {
+        if (xOff == 16) {
             processBlock();
         }
     }
 
-    protected void processLength(
-        long bitLength)
-    {
-        if (xOff > 14)
-        {
-        processBlock();
+    protected void processLength(long bitLength) {
+        if (xOff > 14) {
+            processBlock();
         }
 
-        X[14] = (int)(bitLength & 0xffffffff);
-        X[15] = (int)(bitLength >>> 32);
+        X[14] = (int) (bitLength & 0xffffffff);
+        X[15] = (int) (bitLength >>> 32);
     }
 
-    private void unpackWord(
-        int word,
-        byte[] out,
-        int outOff)
-    {
-        out[outOff]     = (byte)word;
-        out[outOff + 1] = (byte)(word >>> 8);
-        out[outOff + 2] = (byte)(word >>> 16);
-        out[outOff + 3] = (byte)(word >>> 24);
+    private void unpackWord(int word, byte[] out, int outOff) {
+        out[outOff]     = (byte) word;
+        out[outOff + 1] = (byte) (word >>> 8);
+        out[outOff + 2] = (byte) (word >>> 16);
+        out[outOff + 3] = (byte) (word >>> 24);
     }
 
-    public int doFinal(
-        byte[] out,
-        int outOff)
-    {
+    public int doFinal(byte[] out, int outOff) {
         finish();
 
         unpackWord(H0, out, outOff);
@@ -113,10 +90,9 @@ public class RIPEMD160Digest
     }
 
     /**
-    * reset the chaining variables to the IV values.
-    */
-    public void reset()
-    {
+     * reset the chaining variables to the IV values.
+     */
+    public void reset() {
         super.reset();
 
         H0 = 0x67452301;
@@ -127,8 +103,7 @@ public class RIPEMD160Digest
 
         xOff = 0;
 
-        for (int i = 0; i != X.length; i++)
-        {
+        for (int i = 0; i != X.length; i++) {
             X[i] = 0;
         }
     }
@@ -136,10 +111,7 @@ public class RIPEMD160Digest
     /*
      * rotate int x left n bits.
      */
-    private int RL(
-        int x,
-        int n)
-    {
+    private int RL(int x, int n) {
         return (x << n) | (x >>> (32 - n));
     }
 
@@ -150,60 +122,39 @@ public class RIPEMD160Digest
     /*
      * rounds 0-15
      */
-    private int f1(
-        int x,
-        int y,
-        int z)
-    {
+    private int f1(int x, int y, int z) {
         return x ^ y ^ z;
     }
 
     /*
      * rounds 16-31
      */
-    private int f2(
-        int x,
-        int y,
-        int z)
-    {
+    private int f2(int x, int y, int z) {
         return (x & y) | (~x & z);
     }
 
     /*
      * rounds 32-47
      */
-    private int f3(
-        int x,
-        int y,
-        int z)
-    {
+    private int f3(int x, int y, int z) {
         return (x | ~y) ^ z;
     }
 
     /*
      * rounds 48-63
      */
-    private int f4(
-        int x,
-        int y,
-        int z)
-    {
+    private int f4(int x, int y, int z) {
         return (x & z) | (y & ~z);
     }
 
     /*
      * rounds 64-79
      */
-    private int f5(
-        int x,
-        int y,
-        int z)
-    {
+    private int f5(int x, int y, int z) {
         return x ^ (y | ~z);
     }
 
-    protected void processBlock()
-    {
+    protected void processBlock() {
         int a, aa;
         int b, bb;
         int c, cc;
@@ -422,21 +373,18 @@ public class RIPEMD160Digest
         // reset the offset and clean out the word buffer.
         //
         xOff = 0;
-        for (int i = 0; i != X.length; i++)
-        {
+
+        for (int i = 0; i != X.length; i++) {
             X[i] = 0;
         }
     }
 
-    public Memoable copy()
-    {
+    public Memoable copy() {
         return new RIPEMD160Digest(this);
     }
 
-    public void reset(Memoable other)
-    {
-        RIPEMD160Digest d = (RIPEMD160Digest)other;
-
+    public void reset(Memoable other) {
+        RIPEMD160Digest d = (RIPEMD160Digest) other;
         copyIn(d);
     }
 }

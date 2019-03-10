@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * Class representing com.eternitywall.ots.Timestamp interface.
+ * Class representing a blockchain Timestamp.
  * Proof that one or more attestations commit to a message.
  * The proof is in the form of a tree, with each node being a message, and the
  * edges being operations acting on those messages. The leafs of the tree are
@@ -25,9 +25,6 @@ public class Timestamp {
     public List<TimeAttestation> attestations;
     public HashMap<Op, Timestamp> ops;
 
-    /**
-     * Create a com.eternitywall.ots.Timestamp object.
-     */
     public Timestamp(byte[] msg) {
         this.msg = msg;
         this.attestations = new ArrayList<>();
@@ -58,7 +55,7 @@ public class Timestamp {
      *
      * @param ctx        - The stream deserialization context.
      * @param initialMsg - The initial message.
-     * @return The generated com.eternitywall.ots.Timestamp.
+     * @return The deserialized com.eternitywall.ots.Timestamp.
      */
     public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
         Timestamp self = new Timestamp(initialMsg);

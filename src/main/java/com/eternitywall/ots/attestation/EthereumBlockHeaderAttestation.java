@@ -4,8 +4,6 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
-import com.eternitywall.ots.Utils;
 
 /**
  * Ethereum Block Header Attestation.
@@ -15,7 +13,6 @@ import com.eternitywall.ots.Utils;
 public class EthereumBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x30, (byte) 0xfe, (byte) 0x80, (byte) 0x87, (byte) 0xb5, (byte) 0xc7, (byte) 0xea, (byte) 0xd7};
-    private static Logger log = Utils.getLogger(EthereumBlockHeaderAttestation.class.getName());
     public static String chain = "ethereum";
 
     @Override
@@ -48,7 +45,6 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
         return "EthereumBlockHeaderAttestation(" + this.height + ")";
     }
 
-
     @Override
     public int compareTo(TimeAttestation o) {
         EthereumBlockHeaderAttestation ob = (EthereumBlockHeaderAttestation) o;
@@ -56,21 +52,20 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(!(obj instanceof EthereumBlockHeaderAttestation)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof EthereumBlockHeaderAttestation)) {
             return false;
         }
-        if(!Arrays.equals(this._TAG(), ((EthereumBlockHeaderAttestation) obj)._TAG())){
+
+        if (!Arrays.equals(this._TAG(), ((EthereumBlockHeaderAttestation) obj)._TAG())) {
             return false;
         }
-        if(this.height != ((EthereumBlockHeaderAttestation) obj).height){
-            return false;
-        }
-        return true;
+
+        return this.height == ((EthereumBlockHeaderAttestation) obj).height;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Arrays.hashCode(this._TAG()) ^ this.height;
     }
 }

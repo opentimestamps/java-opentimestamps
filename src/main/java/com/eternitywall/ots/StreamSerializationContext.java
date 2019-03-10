@@ -1,24 +1,15 @@
 package com.eternitywall.ots;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 
 public class StreamSerializationContext {
-
-
-    private static Logger log = Utils.getLogger(StreamSerializationContext.class.getName());
-
     List<Byte> buffer = new ArrayList<>();
-
-    public StreamSerializationContext() {
-        this.buffer = new ArrayList<>();
-    }
 
     public byte[] getOutput() {
         byte[] bytes = new byte[this.buffer.size()];
-        for(int i = 0; i < this.buffer.size(); i++){
+        for (int i = 0; i < this.buffer.size(); i++) {
             bytes[i] = this.buffer.get(i);
         }
         return bytes;
@@ -29,7 +20,7 @@ public class StreamSerializationContext {
     }
 
     public void writeBool(boolean value) {
-        if (value == true) {
+        if (value) {
             this.writeByte((byte) 0xff);
         } else {
             this.writeByte((byte) 0x00);
@@ -41,7 +32,7 @@ public class StreamSerializationContext {
             this.writeByte((byte) 0x00);
         } else {
             while (value != 0) {
-                byte b = (byte) ((value&0xff) & 0b01111111);
+                byte b = (byte) ((value & 0xff) & 0b01111111);
                 if ((value) > 0b01111111) {
                     b |= 0b10000000;
                 }
@@ -55,17 +46,16 @@ public class StreamSerializationContext {
     }
 
     public void writeByte(byte value) {
-        this.buffer.add( new Byte(value) );
+        this.buffer.add(new Byte(value));
     }
 
     public void writeByte(Byte value) {
-        this.buffer.add( value );
+        this.buffer.add(value);
     }
 
-
     public void writeBytes(byte[] value) {
-        for (int i = 0; i < value.length; i++) {
-            this.writeByte(value[i]);
+        for (byte b : value) {
+            this.writeByte(b);
         }
     }
 
@@ -75,7 +65,6 @@ public class StreamSerializationContext {
     }
 
     public String toString() {
-        return Arrays.toString( this.getOutput() );
+        return Arrays.toString(this.getOutput());
     }
-
 }

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+
 import com.eternitywall.ots.Utils;
 
 public class Request implements Callable<Response> {
@@ -19,7 +20,7 @@ public class Request implements Callable<Response> {
 
     private URL url;
     private byte[] data;
-    private Map<String,String> headers;
+    private Map<String, String> headers;
     private BlockingQueue<Response> queue;
 
     public Request(URL url) {
@@ -53,11 +54,13 @@ public class Request implements Callable<Response> {
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(10000);
             httpURLConnection.setRequestProperty("User-Agent", "java");
-            if(headers!=null) {
+
+            if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     httpURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
             }
+
             if (data != null) {
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setRequestMethod("POST");
@@ -69,6 +72,7 @@ public class Request implements Callable<Response> {
             } else {
                 httpURLConnection.setRequestMethod("GET");
             }
+
             httpURLConnection.connect();
 
             int responseCode = httpURLConnection.getResponseCode();
@@ -76,10 +80,10 @@ public class Request implements Callable<Response> {
             response.setFromUrl(url.toString());
             InputStream is = httpURLConnection.getInputStream();
             response.setStream(is);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.warning(url.toString() + " exception " + e);
         } finally {
-            if(queue!=null) {
+            if (queue != null) {
                 queue.offer(response);
             }
         }
@@ -94,12 +98,15 @@ public class Request implements Callable<Response> {
             throw new UnsupportedOperationException(e);
         }
     }
-    public static String urlEncodeUTF8(Map<?,?> map) {
+
+    public static String urlEncodeUTF8(Map<?, ?> map) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<?,?> entry : map.entrySet()) {
+
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (sb.length() > 0) {
                 sb.append("&");
             }
+
             sb.append(String.format("%s=%s",
                     urlEncodeUTF8(entry.getKey().toString()),
                     urlEncodeUTF8(entry.getValue().toString())

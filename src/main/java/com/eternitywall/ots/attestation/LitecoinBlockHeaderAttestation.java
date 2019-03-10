@@ -50,7 +50,6 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
         return "LitecoinBlockHeaderAttestation(" + this.height + ")";
     }
 
-
     @Override
     public int compareTo(TimeAttestation o) {
         LitecoinBlockHeaderAttestation ob = (LitecoinBlockHeaderAttestation) o;
@@ -58,34 +57,34 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(!(obj instanceof LitecoinBlockHeaderAttestation)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof LitecoinBlockHeaderAttestation)) {
             return false;
         }
-        if(!Arrays.equals(this._TAG(), ((LitecoinBlockHeaderAttestation) obj)._TAG())){
+
+        if (!Arrays.equals(this._TAG(), ((LitecoinBlockHeaderAttestation) obj)._TAG())) {
             return false;
         }
-        if(this.height != ((LitecoinBlockHeaderAttestation) obj).height){
-            return false;
-        }
-        return true;
+
+        return this.height == ((LitecoinBlockHeaderAttestation) obj).height;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Arrays.hashCode(this._TAG()) ^ this.height;
     }
 
-    /*
-     Verify attestation against a block header
-     Returns the block time on success; raises VerificationError on failure.
+    /**
+     * Verify attestation against a block header
+     * Returns the block time on success; raises VerificationError on failure.
      */
-    public Long verifyAgainstBlockheader (byte[] digest, BlockHeader block) throws VerificationException {
+    public Long verifyAgainstBlockheader(byte[] digest, BlockHeader block) throws VerificationException {
         if (digest.length != 32) {
             throw new VerificationException("Expected digest with length 32 bytes; got " + digest.length + " bytes");
         } else if (!Arrays.equals(digest, Utils.hexToBytes(block.getMerkleroot()))) {
             throw new VerificationException("Digest does not match merkleroot");
         }
+
         return block.getTime();
     }
 }

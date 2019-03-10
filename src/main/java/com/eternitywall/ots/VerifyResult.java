@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * A class that lets us compare, store and sort verification results.
+ */
 public class VerifyResult implements Comparable<VerifyResult> {
     private static final String DATE_PATTERN = "YYYY-MM-dd z";
     private static final DateFormatSymbols DATE_FORMAT_SYMBOLS = new DateFormatSymbols(new Locale("en", "UK"));
@@ -24,6 +27,7 @@ public class VerifyResult implements Comparable<VerifyResult> {
     /**
      * Returns, if existing, a string representation describing the existence of a block attest
      */
+    @Override
     public String toString() {
         if (height == 0 || timestamp == null) {
             return "";

@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
-
 /**
  * Cryptographic transformations.
  * These transformations have the unique property that for any length message,
@@ -44,11 +43,9 @@ public class OpCrypto extends OpUnary {
         // For Sha1 & Sha256 use java.security.MessageDigest library
         try {
             MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
-            byte[] hash = digest.digest(msg);
-            return hash;
+            return digest.digest(msg);
         } catch (NoSuchAlgorithmException e) {
-            log.severe("NoSuchAlgorithmException");
-            e.printStackTrace();
+            log.severe("NoSuchAlgorithmException: " + e);
             return new byte[]{};
         }
     }
@@ -56,12 +53,13 @@ public class OpCrypto extends OpUnary {
     public byte[] hashFd(StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
             MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
             byte[] chunk = ctx.read(1048576);
+
             while (chunk != null && chunk.length > 0) {
                 digest.update(chunk);
                 chunk = ctx.read(1048576);
             }
-            byte[] hash = digest.digest();
-            return hash;
+
+        return digest.digest();
     }
 
     public byte[] hashFd(File file) throws IOException, NoSuchAlgorithmException {
@@ -77,13 +75,14 @@ public class OpCrypto extends OpUnary {
         MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
         byte[] chunk = new byte[1048576];
         int count = inputStream.read(chunk, 0, 1048576);
+
         while (count >= 0) {
             digest.update(chunk,0,count);
             count = inputStream.read(chunk, 0, 1048576);
         }
-        inputStream.close();
-        byte[] hash = digest.digest();
-        return hash;
-    }
 
+        inputStream.close();
+
+        return digest.digest();
+    }
 }

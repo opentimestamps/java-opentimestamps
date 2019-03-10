@@ -105,6 +105,7 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         } else if (!Arrays.equals(digest, Utils.hexToBytes(block.getMerkleroot()))) {
             throw new VerificationException("Digest does not match merkleroot");
         }
+
         return block.getTime();
     }
 }

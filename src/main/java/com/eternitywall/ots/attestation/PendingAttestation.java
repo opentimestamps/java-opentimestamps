@@ -30,19 +30,16 @@ import java.util.logging.Logger;
  */
 public class PendingAttestation extends TimeAttestation {
 
-
     private static Logger log = Utils.getLogger(PendingAttestation.class.getName());
 
     public static byte[] _TAG = {(byte) 0x83, (byte) 0xdf, (byte) 0xe3, (byte) 0x0d, (byte) 0x2e, (byte) 0xf9, (byte) 0x0c, (byte) 0x8e};
+    public static int _MAX_URI_LENGTH = 1000;
+    public static String _ALLOWED_URI_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._/:";
 
     @Override
     public byte[] _TAG() {
         return PendingAttestation._TAG;
     }
-
-    public static int _MAX_URI_LENGTH = 1000;
-
-    public static String _ALLOWED_URI_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._/:";
 
     private byte[] uri;
 
@@ -60,22 +57,26 @@ public class PendingAttestation extends TimeAttestation {
             System.err.print("URI exceeds maximum length");
             return false;
         }
-        for (int i = 0; i < uri.length; i++) {
-            Character c = String.format("%c", uri[i]).charAt(0);
+
+        for (byte b : uri) {
+            Character c = String.format("%c", b).charAt(0);
             if (PendingAttestation._ALLOWED_URI_CHARS.indexOf(c) < 0) {
                 log.severe("URI contains invalid character ");
                 return false;
             }
         }
+
         return true;
     }
 
     public static PendingAttestation deserialize(StreamDeserializationContext ctxPayload) {
         byte[] utf8Uri = ctxPayload.readVarbytes(PendingAttestation._MAX_URI_LENGTH);
-        if (PendingAttestation.checkUri(utf8Uri) == false) {
+
+        if (!PendingAttestation.checkUri(utf8Uri)) {
             log.severe("Invalid URI: ");
             return null;
         }
+
         return new PendingAttestation(utf8Uri);
     }
 
@@ -91,25 +92,24 @@ public class PendingAttestation extends TimeAttestation {
     @Override
     public int compareTo(TimeAttestation o) {
         PendingAttestation opa = (PendingAttestation) o;
-        return Utils.compare(this.uri, opa.uri) ;
+        return Utils.compare(this.uri, opa.uri);
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(!(obj instanceof PendingAttestation)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PendingAttestation)) {
             return false;
         }
-        if(!Arrays.equals(this._TAG(), ((PendingAttestation)obj)._TAG())){
+
+        if (!Arrays.equals(this._TAG(), ((PendingAttestation) obj)._TAG())) {
             return false;
         }
-        if(!Arrays.equals(this.uri, ((PendingAttestation)obj).uri)){
-            return false;
-        }
-        return true;
+
+        return Arrays.equals(this.uri, ((PendingAttestation) obj).uri);
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Arrays.hashCode(this._TAG()) ^ Arrays.hashCode(this.uri);
     }
 }

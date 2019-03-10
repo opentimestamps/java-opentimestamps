@@ -26,8 +26,8 @@ public class Utils {
      * @deprecated Not used by Java OpenTimestamps itself, and doesn't offer much useful functionality.
      */
     @Deprecated
-    public static <T> T coalesce(T ...items) {
-        for (T i: items) {
+    public static <T> T coalesce(T... items) {
+        for (T i : items) {
             if (i != null) {
                 return i;
             }
@@ -126,7 +126,7 @@ public class Utils {
      *
      * @throws IllegalArgumentException if the passed in HEX string can't be converted to a byte array
      */
-    public static byte[] hexToBytes(String s) throws IllegalArgumentException{
+    public static byte[] hexToBytes(String s) throws IllegalArgumentException {
         int len = s.length();
 
         if (len % 2 == 1) {
@@ -136,7 +136,7 @@ public class Utils {
         byte[] data = new byte[len / 2];
 
         for (int i = 0; i < len; i += 2) {
-            if ((Character.digit(s.charAt(i), 16) == -1) || (Character.digit(s.charAt(i+1), 16) == -1)) {
+            if ((Character.digit(s.charAt(i), 16) == -1) || (Character.digit(s.charAt(i + 1), 16) == -1)) {
                 throw new IllegalArgumentException();
             }
 
@@ -160,13 +160,13 @@ public class Utils {
     /**
      * Returns a string with the first letter uppercase
      */
-    static String toUpperFirstLetter(String string){
+    static String toUpperFirstLetter(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
     }
 
-    // TODO: This is not the way to do logging. Fix later, probably with slf4j
+    // TODO: This is not the way to do logging. Fix later, possibly with slf4j annotation
     public static Logger getLogger(String name) {
-        Logger log = Logger.getLogger( name );
+        Logger log = Logger.getLogger(name);
         ConsoleHandler handler = new ConsoleHandler();
 
         handler.setFormatter(new SimpleFormatter() {

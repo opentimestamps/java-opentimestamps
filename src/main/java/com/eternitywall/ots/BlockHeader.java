@@ -32,14 +32,23 @@ public class BlockHeader {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object other) {
+        if (!(other instanceof BlockHeader)) {
+            return false;
+        }
 
-        BlockHeader that = (BlockHeader) o;
+        if (this == other) return true;
 
-        if (merkleroot != null ? !merkleroot.equals(that.merkleroot) : that.merkleroot != null) return false;
-        if (blockHash != null ? !blockHash.equals(that.blockHash) : that.blockHash != null) return false;
+        BlockHeader that = (BlockHeader) other;
+
+        if (merkleroot != null ? !merkleroot.equals(that.merkleroot) : that.merkleroot != null) {
+            return false;
+        }
+
+        if (blockHash != null ? !blockHash.equals(that.blockHash) : that.blockHash != null) {
+            return false;
+        }
+
         return time != null ? time.equals(that.time) : that.time == null;
 
     }
