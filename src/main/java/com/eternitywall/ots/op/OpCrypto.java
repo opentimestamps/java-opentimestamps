@@ -1,12 +1,15 @@
 package com.eternitywall.ots.op;
 
-import java.io.*;
+import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
-
-import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
 
 /**
  * Cryptographic transformations.
@@ -51,13 +54,13 @@ public class OpCrypto extends OpUnary {
     }
 
     public byte[] hashFd(StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
-            MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
-            byte[] chunk = ctx.read(1048576);
+        MessageDigest digest = MessageDigest.getInstance(this._HASHLIB_NAME());
+        byte[] chunk = ctx.read(1048576);
 
-            while (chunk != null && chunk.length > 0) {
-                digest.update(chunk);
-                chunk = ctx.read(1048576);
-            }
+        while (chunk != null && chunk.length > 0) {
+            digest.update(chunk);
+            chunk = ctx.read(1048576);
+        }
 
         return digest.digest();
     }
@@ -77,7 +80,7 @@ public class OpCrypto extends OpUnary {
         int count = inputStream.read(chunk, 0, 1048576);
 
         while (count >= 0) {
-            digest.update(chunk,0,count);
+            digest.update(chunk, 0, count);
             count = inputStream.read(chunk, 0, 1048576);
         }
 

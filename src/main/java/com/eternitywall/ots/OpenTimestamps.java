@@ -1,8 +1,10 @@
 package com.eternitywall.ots;
 
 import com.eternitywall.ots.attestation.*;
-import com.eternitywall.ots.op.*;
-import com.eternitywall.ots.exceptions.*;
+import com.eternitywall.ots.exceptions.VerificationException;
+import com.eternitywall.ots.op.OpAppend;
+import com.eternitywall.ots.op.OpCrypto;
+import com.eternitywall.ots.op.OpSHA256;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -12,7 +14,9 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class OpenTimestamps {

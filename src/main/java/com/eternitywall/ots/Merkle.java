@@ -64,7 +64,7 @@ public class Merkle {
             List<Timestamp> subStamps = stamps.subList(1, stamps.size());
             List<Timestamp> nextStamps = new ArrayList<>();
 
-            for (Timestamp stamp: subStamps) {
+            for (Timestamp stamp : subStamps) {
                 if (prevStamp == null) {
                     prevStamp = stamp;
                 } else {

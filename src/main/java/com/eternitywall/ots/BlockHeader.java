@@ -6,7 +6,6 @@ public class BlockHeader {
     private String blockHash;
     private String time;
 
-
     public void setTime(String time) {
         this.time = time;
     }
@@ -50,7 +49,6 @@ public class BlockHeader {
         }
 
         return time != null ? time.equals(that.time) : that.time == null;
-
     }
 
     @Override

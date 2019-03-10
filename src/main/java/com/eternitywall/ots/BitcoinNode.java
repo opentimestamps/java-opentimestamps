@@ -25,31 +25,31 @@ public class BitcoinNode {
     }
 
     public BitcoinNode(Properties bitcoinConf) {
-        authString = String.valueOf(Base64Coder.encode( String.format("%s:%s",bitcoinConf.getProperty(RPCUSER), bitcoinConf.getProperty(RPCPASSWORD)).getBytes()));
+        authString = String.valueOf(Base64Coder.encode(String.format("%s:%s", bitcoinConf.getProperty(RPCUSER), bitcoinConf.getProperty(RPCPASSWORD)).getBytes()));
         urlString = String.format("http://%s:%s", bitcoinConf.getProperty(RPCCONNECT), bitcoinConf.getProperty(RPCPORT));
     }
 
     public static Properties readBitcoinConf() throws Exception {
         String home = System.getProperty("user.home");
-        List<String> list= Arrays.asList("/.bitcoin/bitcoin.conf", "\\AppData\\Roaming\\Bitcoin\\bitcoin.conf", "/Library/Application Support/Bitcoin/bitcoin.conf");
+        List<String> list = Arrays.asList("/.bitcoin/bitcoin.conf", "\\AppData\\Roaming\\Bitcoin\\bitcoin.conf", "/Library/Application Support/Bitcoin/bitcoin.conf");
 
         for (String dir : list) {
             Properties prop = new Properties();
             InputStream input = null;
 
             try {
-                input = new FileInputStream(home+dir);
+                input = new FileInputStream(home + dir);
 
                 // load a properties file
                 prop.load(input);
 
                 // get the property value and print it out
-                if (prop.getProperty(RPCUSER)!=null && prop.getProperty(RPCPASSWORD) != null) {
+                if (prop.getProperty(RPCUSER) != null && prop.getProperty(RPCPASSWORD) != null) {
                     if (prop.getProperty(RPCCONNECT) == null)
-                        prop.setProperty(RPCCONNECT,"127.0.0.1");
+                        prop.setProperty(RPCCONNECT, "127.0.0.1");
 
                     if (prop.getProperty(RPCPORT) == null)
-                        prop.setProperty(RPCPORT,"8332");
+                        prop.setProperty(RPCPORT, "8332");
 
                     return prop;
                 }
@@ -69,7 +69,7 @@ public class BitcoinNode {
         throw new Exception();
     }
 
-    public JSONObject getInfo()  throws Exception {
+    public JSONObject getInfo() throws Exception {
         JSONObject json = new JSONObject();
         json.put("id", "java");
         json.put("method", "getinfo");
@@ -123,7 +123,7 @@ public class BitcoinNode {
         String s = query.toString();
         URL url = new URL(urlString);
         Request request = new Request(url);
-        Map<String,String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Basic " + authString);
         request.setHeaders(headers);
         request.setData(s.getBytes());

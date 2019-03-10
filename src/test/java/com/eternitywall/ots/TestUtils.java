@@ -16,8 +16,8 @@ public class TestUtils {
         byte[] arr2 = Utils.arraysCopy(arr1);
         assertTrue(Utils.compare(arr1, arr2) == 0);
         assertNotSame(arr1, arr2);
-        arr1[0] = (byte)13;
-        assertTrue(Utils.compare(arr1, arr2) > 0 );
+        arr1[0] = (byte) 13;
+        assertTrue(Utils.compare(arr1, arr2) > 0);
         assertNull(Utils.arraysCopy(null));
     }
 
@@ -100,7 +100,7 @@ public class TestUtils {
     @Test
     public void testArrayFill() {
         byte[] a = new byte[10];
-        Utils.arrayFill(a, (byte)0);
+        Utils.arrayFill(a, (byte) 0);
         assertEquals("00000000000000000000", Utils.bytesToHex(a).toLowerCase());
     }
 }

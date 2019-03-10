@@ -19,7 +19,7 @@ public class VerifyResult implements Comparable<VerifyResult> {
     public Long timestamp;
     int height;
 
-    VerifyResult(Long timestamp, int height){
+    VerifyResult(Long timestamp, int height) {
         this.timestamp = timestamp;
         this.height = height;
     }
@@ -56,7 +56,7 @@ public class VerifyResult implements Comparable<VerifyResult> {
     }
 
     @Override
-    public int hashCode(){
-        return ((int) (long)(timestamp)) ^ height;
+    public int hashCode() {
+        return ((int) (long) (timestamp)) ^ height;
     }
 }

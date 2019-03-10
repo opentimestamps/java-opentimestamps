@@ -32,7 +32,7 @@ public class TestCalendar {
         Calendar calendar = new Calendar(calendarUrl);
         Timestamp timestamp = calendar.submit(digest);
         assertTrue(timestamp != null);
-        assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+        assertTrue(Arrays.equals(timestamp.getDigest(), digest));
     }
 
     @Test
@@ -45,24 +45,24 @@ public class TestCalendar {
 
         Path path = Paths.get("key.wif");
 
-        if (!Files.exists(path)){
+        if (!Files.exists(path)) {
             assertTrue(true);
             return;
         }
 
         Properties properties = new Properties();
         properties.load(new FileInputStream("key.wif"));
-        HashMap<String,String> privateUrls = new HashMap<>();
+        HashMap<String, String> privateUrls = new HashMap<>();
 
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            privateUrls.put(key,value);
+            privateUrls.put(key, value);
         }
 
         assertFalse(privateUrls.size() == 0);
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
-            String calendarUrl = "https://"+entry.getKey();
+            String calendarUrl = "https://" + entry.getKey();
             String wifKey = entry.getValue();
 
             Calendar calendar = new Calendar(calendarUrl);
@@ -71,7 +71,7 @@ public class TestCalendar {
             try {
                 BigInteger privKey = new BigInteger(wifKey);
                 key = ECKey.fromPrivate(privKey);
-            } catch (Exception e){
+            } catch (Exception e) {
                 DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), wifKey);
                 key = dumpedPrivateKey.getKey();
             }
@@ -79,7 +79,7 @@ public class TestCalendar {
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);
             assertTrue(timestamp != null);
-            assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+            assertTrue(Arrays.equals(timestamp.getDigest(), digest));
         }
     }
 
@@ -88,24 +88,24 @@ public class TestCalendar {
         byte[] digest = Utils.randBytes(32);
         Path path = Paths.get("key.wif");
 
-        if (!Files.exists(path)){
+        if (!Files.exists(path)) {
             assertTrue(true);
             return;
         }
 
         Properties properties = new Properties();
         properties.load(new FileInputStream("key.wif"));
-        HashMap<String,String> privateUrls = new HashMap<>();
+        HashMap<String, String> privateUrls = new HashMap<>();
 
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            privateUrls.put(key,value);
+            privateUrls.put(key, value);
         }
 
         assertFalse(privateUrls.size() == 0);
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
-            String calendarUrl = "https://"+entry.getKey();
+            String calendarUrl = "https://" + entry.getKey();
             String wifKey = entry.getValue();
 
             Calendar calendar = new Calendar(calendarUrl);
@@ -115,7 +115,7 @@ public class TestCalendar {
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);
             assertTrue(timestamp != null);
-            assertTrue(Arrays.equals(timestamp.getDigest() , digest));
+            assertTrue(Arrays.equals(timestamp.getDigest(), digest));
         }
     }
 
@@ -131,7 +131,7 @@ public class TestCalendar {
         Optional<Timestamp> timestamp = queue.take();
         assertTrue(timestamp.isPresent());
         assertTrue(timestamp.get() != null);
-        assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
+        assertTrue(Arrays.equals(timestamp.get().getDigest(), digest));
     }
 
     @Test
@@ -141,24 +141,24 @@ public class TestCalendar {
         byte[] digest = Utils.randBytes(32);
         Path path = Paths.get("signature.key");
 
-        if (!Files.exists(path)){
+        if (!Files.exists(path)) {
             assertTrue(true);
             return;
         }
 
         Properties properties = new Properties();
         properties.load(new FileInputStream("signature.key"));
-        HashMap<String,String> privateUrls = new HashMap<>();
+        HashMap<String, String> privateUrls = new HashMap<>();
 
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            privateUrls.put(key,value);
+            privateUrls.put(key, value);
         }
 
         assertFalse(privateUrls.size() == 0);
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
-            String calendarUrl = "https://"+entry.getKey();
+            String calendarUrl = "https://" + entry.getKey();
             String signature = entry.getValue();
 
             CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
@@ -171,7 +171,7 @@ public class TestCalendar {
             Optional<Timestamp> timestamp = queue.take();
             assertTrue(timestamp.isPresent());
             assertTrue(timestamp.get() != null);
-            assertTrue(Arrays.equals(timestamp.get().getDigest() , digest));
+            assertTrue(Arrays.equals(timestamp.get().getDigest(), digest));
         }
     }
 
@@ -185,14 +185,13 @@ public class TestCalendar {
         byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
-        int m=calendarsUrl.size();
+        int m = calendarsUrl.size();
 
         for (final String calendarUrl : calendarsUrl) {
             try {
                 CalendarAsyncSubmit task = new CalendarAsyncSubmit(calendarUrl, digest);
                 task.setQueue(queue);
                 executor.submit(task);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -237,7 +236,7 @@ public class TestCalendar {
         byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(calendarsUrl.size());
         ExecutorService executor = Executors.newFixedThreadPool(calendarsUrl.size());
-        int m=2;
+        int m = 2;
 
         for (final String calendarUrl : calendarsUrl) {
             try {
@@ -256,7 +255,7 @@ public class TestCalendar {
                 Optional<Timestamp> stamp = queue.take();
                 //timestamp.merge(stamp);
 
-                if(stamp.isPresent()) {
+                if (stamp.isPresent()) {
                     count++;
                 }
 

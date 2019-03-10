@@ -1,9 +1,9 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
 
 import java.util.logging.Logger;
-import com.eternitywall.ots.Utils;
 
 /**
  * Operations that act on a single message.

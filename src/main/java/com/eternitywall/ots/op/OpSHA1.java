@@ -58,7 +58,7 @@ public class OpSHA1 extends OpCrypto {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG;
     }
 }

@@ -98,7 +98,7 @@ public abstract class Op implements Comparable<Op> {
      * @param ctx The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
-        if (this._TAG()==0x00) {
+        if (this._TAG() == 0x00) {
             log.severe("No valid serialized Op");
         }
 

@@ -41,7 +41,7 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         } else if (tag == OpPrepend._TAG) {
             return new OpPrepend(arg);
         } else {
-            log.severe("Unknown operation tag: " + tag  + " 0x" + String.format("%02x", tag));
+            log.severe("Unknown operation tag: " + tag + " 0x" + String.format("%02x", tag));
             return null;
         }
     }
@@ -67,7 +67,7 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG ^ Arrays.hashCode(this.arg);
     }
 }

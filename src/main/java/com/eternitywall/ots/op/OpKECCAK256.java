@@ -1,10 +1,10 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.crypto.KeccakDigest;
 
 import java.util.logging.Logger;
-import com.eternitywall.ots.Utils;
 
 /**
  * Cryptographic RIPEMD160 operation

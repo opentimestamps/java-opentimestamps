@@ -9,14 +9,14 @@ public class TestKeccakDigest {
 
     @Test
     public void testKeccak() {
-        byte[] msg=new byte[0];
+        byte[] msg = new byte[0];
         KeccakDigest digest = new KeccakDigest(256);
         digest.update(msg, 0, msg.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
         assertEquals("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470", Utils.bytesToHex(hash).toLowerCase());
 
-        byte[] msg2=Utils.hexToBytes("80");
+        byte[] msg2 = Utils.hexToBytes("80");
         digest.reset();
         digest.update(msg2, 0, msg2.length);
         byte[] hash2 = new byte[digest.getDigestSize()];

@@ -54,11 +54,11 @@ public class OpAppend extends OpBinary {
             return false;
         }
 
-        return Arrays.equals(this.arg,((OpAppend)other).arg);
+        return Arrays.equals(this.arg, ((OpAppend) other).arg);
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG ^ Arrays.hashCode(this.arg);
     }
 }

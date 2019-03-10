@@ -237,7 +237,6 @@ public class Timestamp {
         }
 
         return minAttestation;
-
     }
 
     /**
@@ -299,7 +298,6 @@ public class Timestamp {
 
         return builder.toString();
     }
-
 
     String strTree(int indent) {
         return strTree(indent, false);
@@ -492,11 +490,11 @@ public class Timestamp {
     public HashMap<byte[], TimeAttestation> allAttestations() {
         HashMap<byte[], TimeAttestation> map = new HashMap<>();
 
-        for (TimeAttestation attestation: attestations) {
+        for (TimeAttestation attestation : attestations) {
             map.put(msg, attestation);
         }
 
-        for (Map.Entry<Op, Timestamp> entry: ops.entrySet()) {
+        for (Map.Entry<Op, Timestamp> entry : ops.entrySet()) {
             Timestamp ts = entry.getValue();
             //Op op = entry.getKey();
 
@@ -606,7 +604,6 @@ public class Timestamp {
 
         return stamp;
     }
-
 
     /**
      * Retrieve.

@@ -6,27 +6,25 @@ import com.eternitywall.ots.*;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.exceptions.VerificationException;
 import com.eternitywall.ots.op.OpSHA256;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
-public class TestOpenTimestamps{
+public class TestOpenTimestamps {
     private ExecutorService executor;
     private byte[] incomplete;
     private byte[] incompleteOts;
@@ -40,24 +38,24 @@ public class TestOpenTimestamps{
     private byte[] differentBlockchainOts;
     private String differentBlockchainOtsInfo;
 
-    private String helloWorldHashHex="03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
+    private String helloWorldHashHex = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
 
     private String baseUrl = "https://raw.githubusercontent.com/opentimestamps/java-opentimestamps/master";
 
     @Before
     public void loadData() throws ExecutionException, InterruptedException, IOException {
         executor = Executors.newFixedThreadPool(4);
-        Future<Response> incompleteFuture = executor.submit(new Request(new URL( baseUrl + "/examples/incomplete.txt")));
-        Future<Response> incompleteOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/incomplete.txt.ots")));
-        Future<Response> incompleteOtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/incomplete.txt.ots.info")));
-        Future<Response> helloworldFuture = executor.submit(new Request(new URL( baseUrl + "/examples/hello-world.txt")));
-        Future<Response> helloworldOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/hello-world.txt.ots")));
-        Future<Response> merkle1OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle1.txt.ots")));
-        Future<Response> merkle2OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots")));
-        Future<Response> merkle2OtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle2.txt.ots.info")));
-        Future<Response> merkle3OtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/merkle3.txt.ots")));
-        Future<Response> differentBlockchainOtsFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots")));
-        Future<Response> differentBlockchainOtsInfoFuture = executor.submit(new Request(new URL( baseUrl + "/examples/different-blockchains.txt.ots.info")));
+        Future<Response> incompleteFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt")));
+        Future<Response> incompleteOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots")));
+        Future<Response> incompleteOtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots.info")));
+        Future<Response> helloworldFuture = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt")));
+        Future<Response> helloworldOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt.ots")));
+        Future<Response> merkle1OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle1.txt.ots")));
+        Future<Response> merkle2OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots")));
+        Future<Response> merkle2OtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots.info")));
+        Future<Response> merkle3OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle3.txt.ots")));
+        Future<Response> differentBlockchainOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/different-blockchains.txt.ots")));
+        Future<Response> differentBlockchainOtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/different-blockchains.txt.ots.info")));
 
         incompleteOts = incompleteOtsFuture.get().getBytes();
         incomplete = incompleteFuture.get().getBytes();
@@ -118,20 +116,20 @@ public class TestOpenTimestamps{
 
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
 
-        for (byte[] file : files){
+        for (byte[] file : files) {
             InputStream is = new ByteArrayInputStream(helloworld);
             DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.from(new OpSHA256(), is);
-            fileTimestamps.add( detachedTimestampFile );
+            fileTimestamps.add(detachedTimestampFile);
         }
 
         Timestamp merkleTip = OpenTimestamps.makeMerkleTree(fileTimestamps);
 
         // For each fileTimestamps check the tip
-        for (DetachedTimestampFile fileTimestamp : fileTimestamps){
+        for (DetachedTimestampFile fileTimestamp : fileTimestamps) {
             Set<byte[]> tips = fileTimestamp.getTimestamp().allTips();
 
-            for (byte[] tip : tips){
-                assertTrue( Arrays.equals(tip, merkleTip.getDigest()) );
+            for (byte[] tip : tips) {
+                assertTrue(Arrays.equals(tip, merkleTip.getDigest()));
             }
         }
     }
@@ -158,10 +156,10 @@ public class TestOpenTimestamps{
 
             try {
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
-                assertTrue(results.size()>0);
+                assertTrue(results.size() > 0);
                 assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
                 assertEquals(1432827678L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
-            } catch (Exception e){
+            } catch (Exception e) {
                 fail(e.toString());
             }
         }
@@ -174,14 +172,14 @@ public class TestOpenTimestamps{
             try {
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
                 assertEquals(results.size(), 0);
-            } catch (Exception e){
+            } catch (Exception e) {
                 assertNull(e);
             }
         }
     }
 
     @Test(expected = VerificationException.class)
-    public void verifyCheckForFileManipulation() throws Exception  {
+    public void verifyCheckForFileManipulation() throws Exception {
         DetachedTimestampFile helloOts = DetachedTimestampFile.deserialize(helloworldOts);
         DetachedTimestampFile differentOts = DetachedTimestampFile.deserialize(differentBlockchainOts);
 
@@ -200,7 +198,7 @@ public class TestOpenTimestamps{
             boolean changed = OpenTimestamps.upgrade(detachedOts);
             assertTrue(changed);
             HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
-            assertTrue(results.size()>0);
+            assertTrue(results.size() > 0);
             assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
             assertEquals(1473227803L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
         } catch (Exception e) {
@@ -221,8 +219,8 @@ public class TestOpenTimestamps{
     @Test
     public void test() throws ExecutionException, InterruptedException, IOException {
 
-        byte []ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
-        byte []digest= Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
+        byte[] ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
+        byte[] digest = Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
         Logger log = Utils.getLogger(MultiInsight.class.getName());
         //log.info("ots hex: " + Utils.bytesToHex(ots));
 
@@ -232,7 +230,7 @@ public class TestOpenTimestamps{
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         timestamp.serialize(streamSerializationContext);
-        byte []otsBefore = streamSerializationContext.getOutput();
+        byte[] otsBefore = streamSerializationContext.getOutput();
         //log.info("fullOts hex: " + Utils.bytesToHex(otsBefore));
 
         try {

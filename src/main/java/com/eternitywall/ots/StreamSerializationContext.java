@@ -1,8 +1,8 @@
 package com.eternitywall.ots;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 public class StreamSerializationContext {
     List<Byte> buffer = new ArrayList<>();

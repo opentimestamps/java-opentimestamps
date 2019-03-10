@@ -1,8 +1,9 @@
 package com.eternitywall.ots.attestation;
-import com.eternitywall.ots.Utils;
+
 import com.eternitywall.ots.BlockHeader;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
+import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.exceptions.VerificationException;
 
 import java.util.Arrays;
@@ -69,7 +70,6 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return "BitcoinBlockHeaderAttestation(" + this.height + ")";
     }
 
-
     @Override
     public int compareTo(TimeAttestation o) {
         BitcoinBlockHeaderAttestation ob = (BitcoinBlockHeaderAttestation) o;
@@ -77,21 +77,21 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(!(obj instanceof BitcoinBlockHeaderAttestation)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BitcoinBlockHeaderAttestation)) {
             return false;
         }
-        if(!Arrays.equals(this._TAG(), ((BitcoinBlockHeaderAttestation) obj)._TAG())){
+        if (!Arrays.equals(this._TAG(), ((BitcoinBlockHeaderAttestation) obj)._TAG())) {
             return false;
         }
-        if(this.height != ((BitcoinBlockHeaderAttestation) obj).height){
+        if (this.height != ((BitcoinBlockHeaderAttestation) obj).height) {
             return false;
         }
         return true;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Arrays.hashCode(this._TAG()) ^ this.height;
     }
 
@@ -99,7 +99,7 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
      Verify attestation against a block header
      Returns the block time on success; raises VerificationError on failure.
      */
-    public Long verifyAgainstBlockheader (byte[] digest, BlockHeader block) throws VerificationException {
+    public Long verifyAgainstBlockheader(byte[] digest, BlockHeader block) throws VerificationException {
         if (digest.length != 32) {
             throw new VerificationException("Expected digest with length 32 bytes; got " + digest.length + " bytes");
         } else if (!Arrays.equals(digest, Utils.hexToBytes(block.getMerkleroot()))) {

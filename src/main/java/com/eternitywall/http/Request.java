@@ -1,6 +1,7 @@
 package com.eternitywall.http;
 
 import com.eternitywall.ots.MultiInsight;
+import com.eternitywall.ots.Utils;
 
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -12,8 +13,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
-
-import com.eternitywall.ots.Utils;
 
 public class Request implements Callable<Response> {
     private static Logger log = Utils.getLogger(MultiInsight.class.getName());
@@ -112,6 +111,7 @@ public class Request implements Callable<Response> {
                     urlEncodeUTF8(entry.getValue().toString())
             ));
         }
+
         return sb.toString();
     }
 }
