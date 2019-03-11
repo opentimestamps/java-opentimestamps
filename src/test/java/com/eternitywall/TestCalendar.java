@@ -36,8 +36,6 @@ public class TestCalendar {
 
     @Test
     public void testPrivate() throws Exception {
-        byte[] digest = Utils.randBytes(32);
-
         // key.wif it's a file of properties with the format
         // <calendar url> = <private key in wif format>
         // auth.calendar.eternitywall.com = KwT2r9sL........
@@ -58,7 +56,7 @@ public class TestCalendar {
             privateUrls.put(key, value);
         }
 
-        assertEquals(0, privateUrls.size());
+        assertFalse(privateUrls.isEmpty());
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://" + entry.getKey();
@@ -76,6 +74,7 @@ public class TestCalendar {
             }
 
             calendar.setKey(key);
+            byte[] digest = Utils.randBytes(32);
             Timestamp timestamp = calendar.submit(digest);
             assertNotNull(timestamp);
             assertArrayEquals(timestamp.getDigest(), digest);

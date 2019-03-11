@@ -163,7 +163,7 @@ public class Utils {
     /**
      * Returns a string with the first letter uppercase
      */
-    static String toUpperFirstLetter(String string) {
+    public static String toUpperFirstLetter(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
     }
 

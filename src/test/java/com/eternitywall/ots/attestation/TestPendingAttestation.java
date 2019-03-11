@@ -23,13 +23,13 @@ public class TestPendingAttestation {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
         baos.write(toBytes("foobar", "UTF-8"));
-        byte[] expected_serialized = baos.toByteArray();
+        byte[] expectedSerialized = baos.toByteArray();
 
         StreamSerializationContext ctx = new StreamSerializationContext();
         pendingAttestation.serialize(ctx);
-        assertArrayEquals(expected_serialized, ctx.getOutput());
+        assertArrayEquals(expectedSerialized, ctx.getOutput());
 
-        StreamDeserializationContext ctx1 = new StreamDeserializationContext(expected_serialized);
+        StreamDeserializationContext ctx1 = new StreamDeserializationContext(expectedSerialized);
         PendingAttestation pendingAttestation2 = (PendingAttestation) TimeAttestation.deserialize(ctx1);
 
         assertArrayEquals(pendingAttestation2._TAG(), PendingAttestation._TAG);

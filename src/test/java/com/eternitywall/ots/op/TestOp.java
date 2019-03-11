@@ -1,11 +1,10 @@
 package com.eternitywall.ots.op;
 
-import org.bitcoinj.core.Utils;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
-import java.util.Arrays;
 
+import static org.bitcoinj.core.Utils.toBytes;
 import static org.junit.Assert.*;
 
 public class TestOp {
@@ -13,15 +12,15 @@ public class TestOp {
     @Test
     public void testAppend() {
         // Append operation
-        assertArrayEquals(new OpAppend(Utils.toBytes("suffix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
-                          Utils.toBytes("msgsuffix", "UTF-8"));
+        assertArrayEquals(new OpAppend(toBytes("suffix", "UTF-8")).call(toBytes("msg", "UTF-8")),
+                          toBytes("msgsuffix", "UTF-8"));
     }
 
     @Test
     public void testPrepend() {
         // Prepend operation
-        assertArrayEquals(new OpPrepend(Utils.toBytes("prefix", "UTF-8")).call(Utils.toBytes("msg", "UTF-8")),
-                          Utils.toBytes("prefixmsg", "UTF-8"));
+        assertArrayEquals(new OpPrepend(toBytes("prefix", "UTF-8")).call(toBytes("msg", "UTF-8")),
+                          toBytes("prefixmsg", "UTF-8"));
     }
 
     @Test
@@ -46,9 +45,9 @@ public class TestOp {
     public void testEquality() {
         // Operation equality
 
-        assertEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpAppend(Utils.toBytes("foo", "UTF-8")));
-        assertNotEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpAppend(Utils.toBytes("bar", "UTF-8")));
-        assertNotEquals(new OpAppend(Utils.toBytes("foo", "UTF-8")), new OpPrepend(Utils.toBytes("foo", "UTF-8")));
+        assertEquals(new OpAppend(toBytes("foo", "UTF-8")), new OpAppend(toBytes("foo", "UTF-8")));
+        assertNotEquals(new OpAppend(toBytes("foo", "UTF-8")), new OpAppend(toBytes("bar", "UTF-8")));
+        assertNotEquals(new OpAppend(toBytes("foo", "UTF-8")), new OpPrepend(toBytes("foo", "UTF-8")));
     }
 
     @Test
@@ -61,8 +60,8 @@ public class TestOp {
         assertFalse(op1.compareTo(op2) < 0);
         assertFalse(op1.compareTo(op2) > 0);
 
-        OpAppend op3 = new OpAppend(Utils.toBytes("00", "UTF-8"));
-        OpAppend op4 = new OpAppend(Utils.toBytes("01", "UTF-8"));
+        OpAppend op3 = new OpAppend(toBytes("00", "UTF-8"));
+        OpAppend op4 = new OpAppend(toBytes("01", "UTF-8"));
         assertTrue(op3.compareTo(op4) < 0);
         assertFalse(op3.compareTo(op4) > 0);
     }

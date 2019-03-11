@@ -17,9 +17,9 @@ public class VerifyResult implements Comparable<VerifyResult> {
     }
 
     public Long timestamp;
-    int height;
+    public int height;
 
-    VerifyResult(Long timestamp, int height) {
+    public VerifyResult(Long timestamp, int height) {
         this.timestamp = timestamp;
         this.height = height;
     }

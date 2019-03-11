@@ -119,7 +119,7 @@ public class Timestamp {
             if (!sortedAttestations.isEmpty()) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
-        } else {
+        } else if (!this.ops.isEmpty()) {   // TODO: Isn't this always true?
             if (!sortedAttestations.isEmpty()) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
@@ -182,11 +182,11 @@ public class Timestamp {
         // Get all attestations
         HashMap<byte[], TimeAttestation> allAttestations = allAttestations();
 
-        if (allAttestations.size() == 0) {
+        if (allAttestations.isEmpty()) {
             throw new Exception("There are no attestations");
         } else if (allAttestations.size() == 1) {
             return allAttestations.values().iterator().next();
-        } else if (ops.size() == 0) {
+        } else if (ops.isEmpty()) {
             throw new Exception();     // TODO: Need a descriptive exception string here
         }
 
@@ -289,7 +289,7 @@ public class Timestamp {
      * @param pos - Initial hierarchical indention.
      * @return The output space string.
      */
-    private static String indention(int pos) {
+    public static String indention(int pos) {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < pos; i++) {
@@ -299,7 +299,7 @@ public class Timestamp {
         return builder.toString();
     }
 
-    String strTree(int indent) {
+    public String strTree(int indent) {
         return strTree(indent, false);
     }
 
@@ -426,7 +426,7 @@ public class Timestamp {
      *
      * @return Array of all sub timestamps with attestations.
      */
-    List<Timestamp> directlyVerified() {
+    public List<Timestamp> directlyVerified() {
         if (!attestations.isEmpty()) {
             List<Timestamp> list = new ArrayList<>();
             list.add(this);
@@ -469,7 +469,7 @@ public class Timestamp {
      *
      * @return True if the timestamp is complete, False otherwise.
      */
-    Boolean isTimestampComplete() {
+    public Boolean isTimestampComplete() {
         for (Map.Entry<byte[], TimeAttestation> item : allAttestations().entrySet()) {
             //byte[] msg = item.getKey();
             TimeAttestation attestation = item.getValue();
@@ -518,7 +518,7 @@ public class Timestamp {
     public Set<byte[]> allTips() {
         Set<byte[]> set = new HashSet<>();
 
-        if (ops.size() == 0) {
+        if (ops.isEmpty()) {
             set.add(msg);
         }
 

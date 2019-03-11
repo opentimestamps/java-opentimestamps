@@ -119,7 +119,7 @@ public class OpenTimestamps {
      */
     public static Timestamp stamp(List<DetachedTimestampFile> fileTimestamps, List<String> calendarsUrl, Integer m, HashMap<String, String> privateCalendarsUrl) throws IOException {
         // Parse parameters
-        if (fileTimestamps == null || fileTimestamps.size() == 0) {
+        if (fileTimestamps == null || fileTimestamps.isEmpty()) {
             throw new IOException();
         }
 
@@ -127,7 +127,7 @@ public class OpenTimestamps {
             privateCalendarsUrl = new HashMap<>();
         }
 
-        if ((calendarsUrl == null || calendarsUrl.size() == 0) && (privateCalendarsUrl.size() == 0)) {
+        if ((calendarsUrl == null || calendarsUrl.isEmpty()) && (privateCalendarsUrl.isEmpty())) {
             calendarsUrl = new ArrayList<String>();
             calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
             calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
@@ -280,7 +280,7 @@ public class OpenTimestamps {
             merkleRoots.add(merkleRoot);
         }
 
-        return Merkle.makeMerkleTree(merkleRoots);
+        return Merkle.makeMerkleTree(merkleRoots);    // merkleTip
     }
 
     /**

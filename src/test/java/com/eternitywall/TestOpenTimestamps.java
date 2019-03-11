@@ -42,16 +42,16 @@ public class TestOpenTimestamps {
         String baseUrl = "https://raw.githubusercontent.com/opentimestamps/java-opentimestamps/master";
 
         executor = Executors.newFixedThreadPool(4);
-        Future<Response> incompleteFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt")));
-        Future<Response> incompleteOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots")));
-        Future<Response> incompleteOtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots.info")));
-        Future<Response> helloworldFuture = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt")));
-        Future<Response> helloworldOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt.ots")));
-        Future<Response> merkle1OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle1.txt.ots")));
-        Future<Response> merkle2OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots")));
-        Future<Response> merkle2OtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots.info")));
-        Future<Response> merkle3OtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/merkle3.txt.ots")));
-        Future<Response> differentBlockchainOtsFuture = executor.submit(new Request(new URL(baseUrl + "/examples/different-blockchains.txt.ots")));
+        Future<Response> incompleteFuture                 = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt")));
+        Future<Response> incompleteOtsFuture              = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots")));
+        Future<Response> incompleteOtsInfoFuture          = executor.submit(new Request(new URL(baseUrl + "/examples/incomplete.txt.ots.info")));
+        Future<Response> helloworldFuture                 = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt")));
+        Future<Response> helloworldOtsFuture              = executor.submit(new Request(new URL(baseUrl + "/examples/hello-world.txt.ots")));
+        Future<Response> merkle1OtsFuture                 = executor.submit(new Request(new URL(baseUrl + "/examples/merkle1.txt.ots")));
+        Future<Response> merkle2OtsFuture                 = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots")));
+        Future<Response> merkle2OtsInfoFuture             = executor.submit(new Request(new URL(baseUrl + "/examples/merkle2.txt.ots.info")));
+        Future<Response> merkle3OtsFuture                 = executor.submit(new Request(new URL(baseUrl + "/examples/merkle3.txt.ots")));
+        Future<Response> differentBlockchainOtsFuture     = executor.submit(new Request(new URL(baseUrl + "/examples/different-blockchains.txt.ots")));
         Future<Response> differentBlockchainOtsInfoFuture = executor.submit(new Request(new URL(baseUrl + "/examples/different-blockchains.txt.ots.info")));
 
         incompleteOts = incompleteOtsFuture.get().getBytes();
