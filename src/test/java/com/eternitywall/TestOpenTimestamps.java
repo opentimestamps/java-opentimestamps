@@ -115,6 +115,7 @@ public class TestOpenTimestamps {
 
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
 
+        // TODO: file is not used in this loop... :-/
         for (byte[] file : files) {
             InputStream is = new ByteArrayInputStream(helloworld);
             DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.from(new OpSHA256(), is);
