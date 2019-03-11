@@ -5,8 +5,6 @@ import com.eternitywall.http.Response;
 import com.eternitywall.ots.*;
 import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.exceptions.VerificationException;
-import com.eternitywall.ots.op.OpAppend;
-import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 import java.io.*;
 import java.net.URL;
@@ -29,9 +26,6 @@ import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by casatta on 28/02/17.
- */
 public class TestOpenTimestamps{
     private ExecutorService executor;
     private byte[] incomplete;
@@ -45,7 +39,6 @@ public class TestOpenTimestamps{
     private byte[] merkle3Ots;
     private byte[] differentBlockchainOts;
     private String differentBlockchainOtsInfo;
-
 
     private String helloWorldHashHex="03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
 
@@ -98,7 +91,6 @@ public class TestOpenTimestamps{
         assertEquals(differentBlockchainOtsInfo, result3);
     }
 
-
     @Test
     public void stamp() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
         {
@@ -115,18 +107,17 @@ public class TestOpenTimestamps{
             byte[] digest = detached.fileDigest();
             assertTrue(Arrays.equals(digest, Utils.hexToBytes(helloWorldHashHex)));
         }
-
     }
 
     @Test
     public void merkle() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
-
         List<byte[]> files = new ArrayList<>();
         files.add(helloworld);
         files.add(merkle2Ots);
         files.add(incomplete);
 
         List<DetachedTimestampFile> fileTimestamps = new ArrayList<>();
+
         for (byte[] file : files){
             InputStream is = new ByteArrayInputStream(helloworld);
             DetachedTimestampFile detachedTimestampFile = DetachedTimestampFile.from(new OpSHA256(), is);
@@ -134,14 +125,15 @@ public class TestOpenTimestamps{
         }
 
         Timestamp merkleTip = OpenTimestamps.makeMerkleTree(fileTimestamps);
+
         // For each fileTimestamps check the tip
         for (DetachedTimestampFile fileTimestamp : fileTimestamps){
             Set<byte[]> tips = fileTimestamp.getTimestamp().allTips();
+
             for (byte[] tip : tips){
                 assertTrue( Arrays.equals(tip, merkleTip.getDigest()) );
             }
         }
-
     }
 
     @Test(expected = Exception.class)
@@ -160,16 +152,16 @@ public class TestOpenTimestamps{
 
     @Test
     public void verify() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
-
         {
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(helloworldOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloworld, OpSHA256._TAG));
+
             try {
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
                 assertTrue(results.size()>0);
                 assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
                 assertEquals(1432827678L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
-            }catch(Exception e){
+            } catch (Exception e){
                 assertNull(e);
             }
         }
@@ -178,14 +170,14 @@ public class TestOpenTimestamps{
         {
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(incompleteOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(incomplete, OpSHA256._TAG));
+
             try {
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
                 assertEquals(results.size(), 0);
-            }catch(Exception e){
+            } catch (Exception e){
                 assertNull(e);
             }
         }
-
     }
 
     @Test(expected = VerificationException.class)
@@ -224,7 +216,6 @@ public class TestOpenTimestamps{
         } catch (Exception e) {
             assertNull(e);
         }
-
     }
 
     @Test
@@ -250,7 +241,6 @@ public class TestOpenTimestamps{
         } catch (Exception e) {
             assertNull(e);
         }
-
     }
 
     @Test
@@ -295,7 +285,6 @@ public class TestOpenTimestamps{
             TimeAttestation resultAttestationBitcoin = timestamp.shrink();
             assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
-
         }
 
         {
@@ -329,12 +318,10 @@ public class TestOpenTimestamps{
             assertEquals(timestamp.allAttestations().size(), 2);
             assertTrue(timestamp.getAttestations().contains(resultAttestationBitcoin));
         }
-
     }
 
     @After
     public void tearDown() {
         executor.shutdown();
     }
-
 }

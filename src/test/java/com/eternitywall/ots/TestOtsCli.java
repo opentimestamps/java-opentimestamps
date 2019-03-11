@@ -21,7 +21,6 @@ public class TestOtsCli {
   }
   
   private class StringLoggerForTest {
-    
     private ByteArrayOutputStream baos;
     private StreamHandler sh;
 
@@ -39,5 +38,4 @@ public class TestOtsCli {
       return this.baos.toString();
     }
   }
-
 }

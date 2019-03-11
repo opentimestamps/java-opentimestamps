@@ -34,12 +34,14 @@ public class TestLongReceipt {
             final byte[] bytes = DatatypeConverter.parseBase64Binary(el);
             StreamDeserializationContext ctx = new StreamDeserializationContext(bytes);
             Timestamp timestamp = Timestamp.deserialize(ctx, digestByte);
+
             try {
                 root.merge(timestamp);
             } catch (Exception e) {
                 assertTrue(false);
             }
         }
+
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         root.serialize(streamSerializationContext);
         assertTrue(true);
@@ -48,6 +50,5 @@ public class TestLongReceipt {
         Timestamp timestamp = Timestamp.deserialize(ctx2, digestByte);
         assertNotNull(timestamp);
         //System.out.println(timestamp.strTree(2));
-
     }
 }

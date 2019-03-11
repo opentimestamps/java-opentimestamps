@@ -5,16 +5,10 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
-
-
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by casatta on 06/03/17.
- */
 public class TestOps {
 
     @Test
@@ -92,5 +86,4 @@ public class TestOps {
         byte[] fileDigest = timestampFile.fileDigest();
         assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
     }
-
 }

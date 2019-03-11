@@ -5,15 +5,11 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Timestamp;
 import com.eternitywall.ots.attestation.PendingAttestation;
-import com.eternitywall.ots.attestation.TimeAttestation;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpAppend;
-import com.eternitywall.ots.op.OpPrepend;
 import com.eternitywall.ots.op.OpSHA256;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +23,6 @@ import static org.junit.Assert.*;
 import com.eternitywall.ots.Utils;
 
 public class TestTimestamp {
-
 
   @Test
   public void addOp() {
@@ -54,13 +49,13 @@ public class TestTimestamp {
     assertTrue( Arrays.equals( t1.ops.get(opAppend1).ops.get(opAppend2).msg, Utils.toBytes("foobarbaz", "UTF-8")) );
 
     t1.ops.put(opAppend1, new Timestamp(Utils.toBytes("foobar", "UTF-8")) );
+
     for (Map.Entry<Op, Timestamp> entry : t1.ops.get(opAppend1).ops.entrySet()) {
       Timestamp timestamp = entry.getValue();
       Op op = entry.getKey();
       assertFalse(op.equals(opAppend2));
     }
   }
-
 
   void Tserialize(Timestamp expected_instance, byte[] expected_serialized){
     StreamSerializationContext ssc = new StreamSerializationContext();
@@ -73,7 +68,6 @@ public class TestTimestamp {
     Timestamp actual_instance = Timestamp.deserialize(sdc,expected_instance.msg);
     assertTrue(expected_instance.equals(actual_instance));
   }
-
 
   @Test
   public void serialization() throws IOException {
@@ -145,7 +139,6 @@ public class TestTimestamp {
     baos.write(Utils.hexToBytes("83dfe30d2ef90c8e" + "07" + "06"));
     baos.write(Utils.toBytes("deeper", "UTF-8"));
     Tserialize(stamp, baos.toByteArray());
-
   }
 
   @Test
@@ -155,17 +148,20 @@ public class TestTimestamp {
     Timestamp stampA = new Timestamp(Utils.toBytes("a", "UTF-8"));
     Timestamp stampB = new Timestamp(Utils.toBytes("b", "UTF-8"));
     Exception err = null;
+
     try {
       stampA.merge(stampB);
     } catch (Exception e) {
       err = e;
     }
+
     assertNotNull(err);
 
     Timestamp stamp1 = new Timestamp(Utils.toBytes("a", "UTF-8"));
     Timestamp stamp2 = new Timestamp(Utils.toBytes("a", "UTF-8"));
     stamp2.attestations.add(new PendingAttestation(Utils.toBytes("foobar", "UTF-8")));
     err = null;
+
     try {
       stamp1.merge(stamp2);
       assertTrue(stamp1.equals(stamp2));
@@ -173,12 +169,12 @@ public class TestTimestamp {
       e.printStackTrace();
       err = e;
     }
+
     assertNull(err);
   }
 
   @Test
-  public void makeMerkleTree()
-      throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+  public void makeMerkleTree() throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
     defTimestamp(2, Utils.hexToBytes("b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"));
     defTimestamp(3, Utils.hexToBytes("e6aa639123d8aac95d13d365ec3779dade4b49c083a8fed97d7bfc0d89bb6a5e"));
@@ -207,11 +203,13 @@ public class TestTimestamp {
       byte[] bytes = {(byte) i};
       roots.add( new Timestamp( bytes ));
     }
+
     Timestamp merkleTip = Merkle.makeMerkleTree(roots);
     assertTrue(Arrays.equals(merkleTip.getDigest(),expected_merkle_root));
 
     for (Timestamp root : roots){
       Set<byte[]> tips = root.allTips();
+
       for (byte[] tip : tips){
         assertTrue( Arrays.equals(tip, merkleTip.getDigest()) );
       }

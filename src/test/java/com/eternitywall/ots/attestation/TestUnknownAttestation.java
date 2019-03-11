@@ -1,8 +1,6 @@
 package com.eternitywall.ots.attestation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import com.eternitywall.ots.StreamDeserializationContext;
@@ -10,12 +8,8 @@ import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
-import javax.xml.bind.DatatypeConverter;
 import org.junit.Test;
-import org.slf4j.helpers.Util;
-
 
 public class TestUnknownAttestation {
 
@@ -48,7 +42,6 @@ public class TestUnknownAttestation {
     assertTrue(Arrays.equals(expected_serialized, ctx1.getOutput()));
   }
 
-
   @Test
   public void deserializationTooLong() throws IOException {
     // Deserialization of attestations with oversized payloads
@@ -71,6 +64,4 @@ public class TestUnknownAttestation {
     UnknownAttestation a1 = (UnknownAttestation) TimeAttestation.deserialize(ctx1);
     // TODO: exception
   }
-
-
 }
