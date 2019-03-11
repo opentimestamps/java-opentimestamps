@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
@@ -173,7 +172,7 @@ public class TestOpenTimestamps {
                 HashMap<VerifyResult.Chains, VerifyResult> results = OpenTimestamps.verify(detachedOts, detached);
                 assertEquals(results.size(), 0);
             } catch (Exception e) {
-                assertNull(e);
+                fail(e.toString());
             }
         }
     }
@@ -202,7 +201,7 @@ public class TestOpenTimestamps {
             assertTrue(results.containsKey(VerifyResult.Chains.BITCOIN));
             assertEquals(1473227803L, results.get(VerifyResult.Chains.BITCOIN).timestamp.longValue());
         } catch (Exception e) {
-            assertNull(e);
+            fail(e.toString());
         }
 
         try {
@@ -212,32 +211,26 @@ public class TestOpenTimestamps {
             boolean changed = OpenTimestamps.upgrade(stamp);
             assertFalse(changed);
         } catch (Exception e) {
-            assertNull(e);
+            fail(e.toString());
         }
     }
 
     @Test
     public void test() throws ExecutionException, InterruptedException, IOException {
-
         byte[] ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
         byte[] digest = Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
-        Logger log = Utils.getLogger(MultiInsight.class.getName());
-        //log.info("ots hex: " + Utils.bytesToHex(ots));
 
         StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(ots);
         Timestamp timestamp = Timestamp.deserialize(streamDeserializationContext, digest);
-        //log.info(Timestamp.strTreeExtended(timestamp,2));
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         timestamp.serialize(streamSerializationContext);
-        byte[] otsBefore = streamSerializationContext.getOutput();
-        //log.info("fullOts hex: " + Utils.bytesToHex(otsBefore));
 
         try {
             boolean changed = OpenTimestamps.upgrade(timestamp);
             assertTrue(changed);
         } catch (Exception e) {
-            assertNull(e);
+            fail(e.toString());
         }
     }
 

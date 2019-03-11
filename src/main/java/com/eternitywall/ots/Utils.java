@@ -7,6 +7,9 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/**
+ * Various utility functions, mostly for byte array manipulation
+ */
 public class Utils {
     /**
      * Fills a byte array with the given byte value.

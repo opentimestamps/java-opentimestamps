@@ -18,6 +18,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * Command Line Interface (CLI) to openTimestamps
+ */
 public class OtsCli {
 
     private static Logger log = Utils.getLogger(OtsCli.class.getName());

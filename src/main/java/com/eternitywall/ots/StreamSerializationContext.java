@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StreamSerializationContext {
-    List<Byte> buffer = new ArrayList<>();
+    List<Byte> buffer;
+
+    public StreamSerializationContext() {
+        buffer = new ArrayList<>();
+    }
 
     public byte[] getOutput() {
         byte[] bytes = new byte[this.buffer.size()];
