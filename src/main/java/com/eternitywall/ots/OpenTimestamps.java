@@ -210,7 +210,7 @@ public class OpenTimestamps {
                 task.setQueue(queue);
                 executor.submit(task);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning("Could not submit to private calendar: " + e.toString());
             }
         }
 
@@ -223,7 +223,7 @@ public class OpenTimestamps {
                 task.setQueue(queue);
                 executor.submit(task);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning("Could not submit to public calendar: " + e.toString());
             }
         }
 
@@ -237,11 +237,11 @@ public class OpenTimestamps {
                     try {
                         timestamp.merge(optionalStamp.get());
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.warning("Could not merge timestamp: " + e.toString());
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning("Could not take timestamp: " + e.toString());
             }
         }
 
@@ -270,7 +270,7 @@ public class OpenTimestamps {
             try {
                 bytesRandom16 = Utils.randBytes(16);
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+                log.severe("Could not fetch random bytes: " + e.toString());
             }
 
             // nonce_appended_stamp = file_timestamp.timestamp.ops.add(com.eternitywall.ots.op.OpAppend(os.urandom(16)))
@@ -368,7 +368,7 @@ public class OpenTimestamps {
      *
      * @param attestation The BitcoinBlockHeaderAttestation attestation.
      * @param msg         The digest to verify.
-     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @return The unix timestamp in seconds from 1 January 1970.
      * @throws VerificationException if it doesn't check the merkle root of the block.
      * @throws Exception             if the verification procedure fails.
      */
@@ -390,7 +390,7 @@ public class OpenTimestamps {
                 log.info("Lite-client verification, assuming block " + blockHash + " is valid");
                 insight.getExecutor().shutdown();
             } catch (Exception e2) {
-                e2.printStackTrace();
+                log.severe("Could not verify: " + e2.toString());
                 throw e2;
             }
         }
@@ -403,22 +403,23 @@ public class OpenTimestamps {
      *
      * @param attestation The LitecoinBlockHeaderAttestation attestation.
      * @param msg         The digest to verify.
-     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @return The unix timestamp in seconds from 1 January 1970.
      * @throws VerificationException if it doesn't check the merkle root of the block.
      * @throws Exception             if the verification procedure fails.
      */
     public static Long verify(LitecoinBlockHeaderAttestation attestation, byte[] msg) throws VerificationException, Exception {
         Integer height = attestation.getHeight();
         BlockHeader blockInfo;
+
         try {
             MultiInsight insight = new MultiInsight(attestation.chain);
             String blockHash = insight.blockHash(height);
             blockInfo = insight.block(blockHash);
             log.info("Lite-client verification, assuming block " + blockHash + " is valid");
             insight.getExecutor().shutdown();
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            throw e2;
+        } catch (Exception e) {
+            log.severe("Could not verify: " + e.toString());
+            throw e;
         }
 
         return attestation.verifyAgainstBlockheader(Utils.arrayReverse(msg), blockInfo);
@@ -446,14 +447,12 @@ public class OpenTimestamps {
     public static boolean upgrade(Timestamp timestamp) throws Exception {
         // Check remote calendars for upgrades.
         // This time we only check PendingAttestations - we can't be as agressive.
-
         boolean upgraded = false;
         Set<TimeAttestation> existingAttestations = timestamp.getAttestations();
 
         for (Timestamp subStamp : timestamp.directlyVerified()) {
             for (TimeAttestation attestation : subStamp.attestations) {
                 if (attestation instanceof PendingAttestation && !subStamp.isTimestampComplete()) {
-
                     String calendarUrl = new String(((PendingAttestation) attestation).getUri(), StandardCharsets.UTF_8);
                     // var calendarUrl = calendarUrls[0];
                     byte[] commitment = subStamp.msg;
@@ -465,7 +464,7 @@ public class OpenTimestamps {
                         try {
                             subStamp.merge(upgradedStamp);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.severe("Could not upgrade an incomplete timestamp to make it verifiable: " + e.toString());
                         }
                         upgraded = true;
                     } catch (Exception e) {
@@ -474,12 +473,13 @@ public class OpenTimestamps {
                 }
             }
         }
+
         return upgraded;
     }
 
     private static Timestamp upgrade(Timestamp subStamp, Calendar calendar, byte[] commitment, Set<TimeAttestation> existingAttestations) throws Exception {
-
         Timestamp upgradedStamp;
+
         try {
             upgradedStamp = calendar.getTimestamp(commitment);
 
