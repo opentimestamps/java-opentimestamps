@@ -611,7 +611,7 @@ public class Timestamp {
      * @param setEntries - The entries set of ops hashmap
      * @return Returns the sorted list of map entries
      */
-    private List<Map.Entry<Op, Timestamp>> sortToList(Set<Entry<Op, Timestamp>> setEntries) {
+    public List<Map.Entry<Op, Timestamp>> sortToList(Set<Entry<Op, Timestamp>> setEntries) {
         List<Map.Entry<Op, Timestamp>> entries = new ArrayList<>(setEntries);
 
         Collections.sort(entries, new Comparator<Map.Entry<Op, Timestamp>>() {

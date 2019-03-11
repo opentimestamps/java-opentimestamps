@@ -7,7 +7,6 @@ import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.exceptions.VerificationException;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Bitcoin Block Header Attestation.
@@ -37,7 +36,6 @@ import java.util.logging.Logger;
 public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
-    private static Logger log = Utils.getLogger(BitcoinBlockHeaderAttestation.class.getName());
     public static String chain = "bitcoin";
 
     @Override
@@ -51,9 +49,9 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
         return height;
     }
 
-    public BitcoinBlockHeaderAttestation(int height_) {
+    public BitcoinBlockHeaderAttestation(int height) {
         super();
-        this.height = height_;
+        this.height = height;
     }
 
     public static BitcoinBlockHeaderAttestation deserialize(StreamDeserializationContext ctxPayload) {
@@ -63,36 +61,38 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     @Override
     public void serializePayload(StreamSerializationContext ctx) {
-        ctx.writeVaruint(this.height);
+        ctx.writeVaruint(height);
     }
 
     public String toString() {
-        return "BitcoinBlockHeaderAttestation(" + this.height + ")";
+        return "BitcoinBlockHeaderAttestation(" + height + ")";
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        BitcoinBlockHeaderAttestation ob = (BitcoinBlockHeaderAttestation) o;
-        return this.height - ob.height;
+    public int compareTo(TimeAttestation other) {
+        BitcoinBlockHeaderAttestation that = (BitcoinBlockHeaderAttestation) other;
+
+        return height - that.height;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof BitcoinBlockHeaderAttestation)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof BitcoinBlockHeaderAttestation)) {
             return false;
         }
-        if (!Arrays.equals(this._TAG(), ((BitcoinBlockHeaderAttestation) obj)._TAG())) {
+
+        BitcoinBlockHeaderAttestation otherAttestation = (BitcoinBlockHeaderAttestation) other;
+
+        if (!Arrays.equals(_TAG(), otherAttestation._TAG())) {
             return false;
         }
-        if (this.height != ((BitcoinBlockHeaderAttestation) obj).height) {
-            return false;
-        }
-        return true;
+
+        return (height == otherAttestation.height);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._TAG()) ^ this.height;
+        return Arrays.hashCode(_TAG()) ^ height;
     }
 
     /*

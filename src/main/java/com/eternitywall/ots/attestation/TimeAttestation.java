@@ -69,11 +69,11 @@ public abstract class TimeAttestation implements Comparable<TimeAttestation> {
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        int deltaTag = Utils.compare(this._TAG(), o._TAG());
+    public int compareTo(TimeAttestation other) {
+        int deltaTag = Utils.compare(_TAG(), other._TAG());
 
         if (deltaTag == 0) {
-            return this.compareTo(o);
+            return compareTo(other);
         } else {
             return deltaTag;
         }

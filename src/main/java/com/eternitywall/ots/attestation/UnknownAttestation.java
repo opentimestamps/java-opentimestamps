@@ -39,35 +39,33 @@ public class UnknownAttestation extends TimeAttestation {
     }
 
     public String toString() {
-        return "UnknownAttestation " + Utils.bytesToHex(this._TAG()) + ' ' + Utils.bytesToHex(this.payload);
+        return "UnknownAttestation " + Utils.bytesToHex(_TAG()) + ' ' + Utils.bytesToHex(payload);
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        UnknownAttestation ota = (UnknownAttestation) o;
+    public int compareTo(TimeAttestation other) {
+        UnknownAttestation otherAttestation = (UnknownAttestation) other;
 
-        return Utils.compare(this.payload, ota.payload);
+        return Utils.compare(payload, otherAttestation.payload);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof UnknownAttestation)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof UnknownAttestation)) {
             return false;
         }
 
-        if (!Arrays.equals(this._TAG(), ((UnknownAttestation) obj)._TAG())) {
+        UnknownAttestation otherAttestation = (UnknownAttestation) other;
+
+        if (!Arrays.equals(_TAG(), otherAttestation._TAG())) {
             return false;
         }
 
-        if (!Arrays.equals(this.payload, ((UnknownAttestation) obj).payload)) {
-            return false;
-        }
-
-        return true;
+        return Arrays.equals(payload, otherAttestation.payload);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._TAG()) ^ Arrays.hashCode(this.payload);
+        return Arrays.hashCode(_TAG()) ^ Arrays.hashCode(payload);
     }
 }

@@ -26,9 +26,9 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
         return height;
     }
 
-    EthereumBlockHeaderAttestation(int height_) {
+    EthereumBlockHeaderAttestation(int height) {
         super();
-        this.height = height_;
+        this.height = height;
     }
 
     public static EthereumBlockHeaderAttestation deserialize(StreamDeserializationContext ctxPayload) {
@@ -38,34 +38,37 @@ public class EthereumBlockHeaderAttestation extends TimeAttestation {
 
     @Override
     public void serializePayload(StreamSerializationContext ctx) {
-        ctx.writeVaruint(this.height);
+        ctx.writeVaruint(height);
     }
 
     public String toString() {
-        return "EthereumBlockHeaderAttestation(" + this.height + ")";
+        return "EthereumBlockHeaderAttestation(" + height + ")";
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        EthereumBlockHeaderAttestation ob = (EthereumBlockHeaderAttestation) o;
-        return this.height - ob.height;
+    public int compareTo(TimeAttestation other) {
+        EthereumBlockHeaderAttestation that = (EthereumBlockHeaderAttestation) other;
+
+        return height - that.height;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof EthereumBlockHeaderAttestation)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof EthereumBlockHeaderAttestation)) {
             return false;
         }
 
-        if (!Arrays.equals(this._TAG(), ((EthereumBlockHeaderAttestation) obj)._TAG())) {
+        EthereumBlockHeaderAttestation otherAttestation = (EthereumBlockHeaderAttestation) other;
+
+        if (!Arrays.equals(_TAG(), otherAttestation._TAG())) {
             return false;
         }
 
-        return this.height == ((EthereumBlockHeaderAttestation) obj).height;
+        return height == otherAttestation.height;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._TAG()) ^ this.height;
+        return Arrays.hashCode(_TAG()) ^ height;
     }
 }

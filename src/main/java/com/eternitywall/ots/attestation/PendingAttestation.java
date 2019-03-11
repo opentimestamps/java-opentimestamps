@@ -47,9 +47,9 @@ public class PendingAttestation extends TimeAttestation {
         return uri;
     }
 
-    public PendingAttestation(byte[] uri_) {
+    public PendingAttestation(byte[] uri) {
         super();
-        this.uri = uri_;
+        this.uri = uri;
     }
 
     public static boolean checkUri(byte[] uri) {
@@ -82,34 +82,37 @@ public class PendingAttestation extends TimeAttestation {
 
     @Override
     public void serializePayload(StreamSerializationContext ctx) {
-        ctx.writeVarbytes(this.uri);
+        ctx.writeVarbytes(uri);
     }
 
     public String toString() {
-        return "PendingAttestation(\'" + new String(this.uri, StandardCharsets.UTF_8) + "\')";
+        return "PendingAttestation(\'" + new String(uri, StandardCharsets.UTF_8) + "\')";
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        PendingAttestation opa = (PendingAttestation) o;
-        return Utils.compare(this.uri, opa.uri);
+    public int compareTo(TimeAttestation other) {
+        PendingAttestation otherAttestation = (PendingAttestation) other;
+
+        return Utils.compare(uri, otherAttestation.uri);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof PendingAttestation)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof PendingAttestation)) {
             return false;
         }
 
-        if (!Arrays.equals(this._TAG(), ((PendingAttestation) obj)._TAG())) {
+        PendingAttestation otherAttestation = (PendingAttestation) other;
+
+        if (!Arrays.equals(_TAG(), otherAttestation._TAG())) {
             return false;
         }
 
-        return Arrays.equals(this.uri, ((PendingAttestation) obj).uri);
+        return Arrays.equals(uri, otherAttestation.uri);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._TAG()) ^ Arrays.hashCode(this.uri);
+        return Arrays.hashCode(_TAG()) ^ Arrays.hashCode(uri);
     }
 }

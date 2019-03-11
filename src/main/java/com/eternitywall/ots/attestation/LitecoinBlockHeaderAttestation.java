@@ -7,7 +7,6 @@ import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.exceptions.VerificationException;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Litecoin Block Header Attestation.
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 public class LitecoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x06, (byte) 0x86, (byte) 0x9a, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x1b, (byte) 0x45};
-    private static Logger log = Utils.getLogger(LitecoinBlockHeaderAttestation.class.getName());
     public static String chain = "litecoin";
 
     @Override
@@ -31,9 +29,9 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
         return height;
     }
 
-    public LitecoinBlockHeaderAttestation(int height_) {
+    public LitecoinBlockHeaderAttestation(int height) {
         super();
-        this.height = height_;
+        this.height = height;
     }
 
     public static LitecoinBlockHeaderAttestation deserialize(StreamDeserializationContext ctxPayload) {
@@ -43,35 +41,38 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
 
     @Override
     public void serializePayload(StreamSerializationContext ctx) {
-        ctx.writeVaruint(this.height);
+        ctx.writeVaruint(height);
     }
 
     public String toString() {
-        return "LitecoinBlockHeaderAttestation(" + this.height + ")";
+        return "LitecoinBlockHeaderAttestation(" + height + ")";
     }
 
     @Override
-    public int compareTo(TimeAttestation o) {
-        LitecoinBlockHeaderAttestation ob = (LitecoinBlockHeaderAttestation) o;
-        return this.height - ob.height;
+    public int compareTo(TimeAttestation other) {
+        LitecoinBlockHeaderAttestation that = (LitecoinBlockHeaderAttestation) other;
+
+        return height - that.height;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof LitecoinBlockHeaderAttestation)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof LitecoinBlockHeaderAttestation)) {
             return false;
         }
 
-        if (!Arrays.equals(this._TAG(), ((LitecoinBlockHeaderAttestation) obj)._TAG())) {
+        LitecoinBlockHeaderAttestation otherAttestation = (LitecoinBlockHeaderAttestation) other;
+
+        if (!Arrays.equals(_TAG(), otherAttestation._TAG())) {
             return false;
         }
 
-        return this.height == ((LitecoinBlockHeaderAttestation) obj).height;
+        return height == otherAttestation.height;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._TAG()) ^ this.height;
+        return Arrays.hashCode(_TAG()) ^ height;
     }
 
     /**
