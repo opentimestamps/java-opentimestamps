@@ -4,14 +4,11 @@ import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import org.bitcoinj.core.ECKey;
 
-
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 
 public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
@@ -22,11 +19,12 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     public CalendarAsyncSubmit(String url, byte[] digest) {
         this.url = url;
-        this.digest=digest;
+        this.digest = digest;
     }
 
     /**
      * Set private key.
+     *
      * @param key The private key.
      */
     public void setKey(ECKey key) {
@@ -35,6 +33,7 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     /**
      * Get private key.
+     *
      * @return The private key.
      */
     public ECKey getKey() {
@@ -49,11 +48,11 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
     public Optional<Timestamp> call() throws Exception {
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Accept","application/vnd.opentimestamps.v1");
-        headers.put("User-Agent","java-opentimestamps");
-        headers.put("Content-Type","application/x-www-form-urlencoded");
+        headers.put("Accept", "application/vnd.opentimestamps.v1");
+        headers.put("User-Agent", "java-opentimestamps");
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
 
-        if (key != null ) {
+        if (key != null) {
             String signature = key.signMessage(Utils.bytesToHex(digest).toLowerCase());
             headers.put("x-signature", signature);
         }
@@ -63,16 +62,19 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
         task.setData(digest);
         task.setHeaders(headers);
         Response response = task.call();
-        if(response.isOk()) {
-            byte[] body = response.getBytes();
 
+        if (response.isOk()) {
+            byte[] body = response.getBytes();
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             Timestamp timestamp = Timestamp.deserialize(ctx, digest);
             Optional<Timestamp> of = Optional.of(timestamp);
             queue.add(of);
+
             return of;
         }
+
         queue.add(Optional.<Timestamp>absent());
+
         return Optional.absent();
     }
 }

@@ -27,6 +27,7 @@ public class StreamDeserializationContext {
         if (this.counter == this.buffer.length) {
             return null;
         }
+
         if (l > this.buffer.length) {
             l = this.buffer.length;
         }
@@ -34,16 +35,19 @@ public class StreamDeserializationContext {
         // const uint8Array = new Uint8Array(this.buffer,this.counter,l);
         byte[] uint8Array = Arrays.copyOfRange(this.buffer, this.counter, this.counter + l);
         this.counter += l;
+
         return uint8Array;
     }
 
     public boolean readBool() {
         byte b = this.read(1)[0];
+
         if (b == 0xff) {
             return true;
         } else if (b == 0x00) {
             return false;
         }
+
         return false;
     }
 
@@ -51,6 +55,7 @@ public class StreamDeserializationContext {
         int value = 0;
         byte shift = 0;
         byte b;
+
         do {
             b = this.read(1)[0];
             value |= (b & 0b01111111) << shift;
@@ -60,11 +65,11 @@ public class StreamDeserializationContext {
         return value;
     }
 
-
     public byte[] readBytes(int expectedLength) {
         if (expectedLength == 0) {
             return this.readVarbytes(1024, 0);
         }
+
         return this.read(expectedLength);
     }
 
@@ -74,6 +79,7 @@ public class StreamDeserializationContext {
 
     public byte[] readVarbytes(int maxLen, int minLen) {
         int l = this.readVaruint();
+
         if ((l & 0xff) > maxLen) {
             log.severe("varbytes max length exceeded;");
             return null;
@@ -81,10 +87,9 @@ public class StreamDeserializationContext {
             log.severe("varbytes min length not met;");
             return null;
         }
+
         return this.read(l);
     }
-
-
 
     public boolean assertMagic(byte[] expectedMagic) {
         byte[] actualMagic = this.read(expectedMagic.length);
@@ -100,6 +105,4 @@ public class StreamDeserializationContext {
     public String toString() {
         return Arrays.toString(this.buffer);
     }
-
-
 }

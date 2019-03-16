@@ -7,7 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
     Utils utils = new Utils();
@@ -16,10 +19,10 @@ public class TestUtils {
     public void arraysCopy() throws Exception {
         byte[] arr = Utils.hexToBytes("001100");
         byte[] arr2 = Utils.arraysCopy(arr);
-        assertTrue( Utils.compare(arr,arr2)==0 );
-        assertFalse(arr==arr2);
-        arr[0]=(byte)13;
-        assertTrue( Utils.compare(arr,arr2)>0 );
+        assertTrue(Utils.compare(arr, arr2) == 0);
+        assertFalse(arr == arr2);
+        arr[0] = (byte) 13;
+        assertTrue(Utils.compare(arr, arr2) > 0);
         assertNull(Utils.arraysCopy(null));
     }
 
@@ -27,7 +30,7 @@ public class TestUtils {
     public void arraysConcat() {
         byte[] array = "foo".getBytes();
         byte[] array2 = "bar".getBytes();
-        byte[] array3 = Utils.arraysConcat(array,array2);
+        byte[] array3 = Utils.arraysConcat(array, array2);
         String str = new String(array3, StandardCharsets.UTF_8);
         assertTrue("foobar".equals(str));
     }
@@ -44,9 +47,9 @@ public class TestUtils {
         try {
             byte[] array1 = Utils.randBytes(8);
             byte[] array2 = Utils.randBytes(8);
-            assertTrue(array1.length==8);
-            assertTrue(array2.length==8);
-            assertFalse(Arrays.equals(array1,array2));
+            assertTrue(array1.length == 8);
+            assertTrue(array2.length == 8);
+            assertFalse(Arrays.equals(array1, array2));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             assertTrue(false);
@@ -58,8 +61,8 @@ public class TestUtils {
         byte[] array1 = "0125121512512".getBytes();
         byte[] array2 = Utils.arrayReverse(array1);
         byte[] array3 = Utils.arrayReverse(array2);
-        assertFalse(Arrays.equals(array1,array2));
-        assertTrue(Arrays.equals(array1,array3));
+        assertFalse(Arrays.equals(array1, array2));
+        assertTrue(Arrays.equals(array1, array3));
     }
 
     @Test
@@ -78,17 +81,17 @@ public class TestUtils {
             // Empty
         }
 
-        byte[] arr=Utils.hexToBytes("0000");
+        byte[] arr = Utils.hexToBytes("0000");
         assertTrue("0000".equals(Utils.bytesToHex(arr).toLowerCase()));
 
-        byte[] arr2= Utils.hexToBytes("0aef");
+        byte[] arr2 = Utils.hexToBytes("0aef");
         assertTrue("0aef".equals(Utils.bytesToHex(arr2).toLowerCase()));
     }
 
     @Test
     public void testArrayFill() {
         byte[] a = new byte[10];
-        Utils.arrayFill(a, (byte)0);
+        Utils.arrayFill(a, (byte) 0);
         assertEquals("00000000000000000000", Utils.bytesToHex(a).toLowerCase());
     }
 }

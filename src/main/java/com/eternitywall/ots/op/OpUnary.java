@@ -1,10 +1,9 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-
-import java.util.Arrays;
-import java.util.logging.Logger;
 import com.eternitywall.ots.Utils;
+
+import java.util.logging.Logger;
 
 /**
  * Operations that act on a single message.
@@ -13,9 +12,7 @@ import com.eternitywall.ots.Utils;
  */
 public abstract class OpUnary extends Op {
 
-
     private static Logger log = Utils.getLogger(OpUnary.class.getName());
-
 
     @Override
     public String _TAG_NAME() {
@@ -25,7 +22,6 @@ public abstract class OpUnary extends Op {
     public OpUnary() {
         super();
     }
-
 
     public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
         if (tag == OpSHA1._TAG) {
@@ -38,6 +34,7 @@ public abstract class OpUnary extends Op {
             return new OpKECCAK256();
         } else {
             log.severe("Unknown operation tag: " + tag);
+
             return null;
         }
     }
@@ -46,5 +43,4 @@ public abstract class OpUnary extends Op {
     public String toString() {
         return this._TAG_NAME();
     }
-
 }

@@ -1,10 +1,10 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.crypto.RIPEMD160Digest;
 
 import java.util.logging.Logger;
-import com.eternitywall.ots.Utils;
 
 /**
  * Cryptographic RIPEMD160 operation
@@ -49,6 +49,7 @@ public class OpRIPEMD160 extends OpCrypto {
         digest.update(msg, 0, msg.length);
         byte[] hash = new byte[digest.getDigestSize()];
         digest.doFinal(hash, 0);
+
         return hash;
     }
 
@@ -62,8 +63,7 @@ public class OpRIPEMD160 extends OpCrypto {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG;
     }
-
 }

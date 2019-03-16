@@ -13,9 +13,7 @@ import java.util.logging.Logger;
  */
 public class OpPrepend extends OpBinary {
 
-
     private static Logger log = Utils.getLogger(OpPrepend.class.getName());
-
 
     byte[] arg;
 
@@ -52,14 +50,15 @@ public class OpPrepend extends OpBinary {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof OpPrepend)){
+        if (!(obj instanceof OpPrepend)) {
             return false;
         }
-        return Arrays.equals(this.arg,((OpPrepend)obj).arg);
+
+        return Arrays.equals(this.arg, ((OpPrepend) obj).arg);
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG ^ Arrays.hashCode(this.arg);
     }
 }

@@ -1,17 +1,16 @@
 package com.eternitywall.ots.crypto;
 
-
 /**
  * Interface for Memoable objects. Memoable objects allow the taking of a snapshot of their internal state
  * via the copy() method and then reseting the object back to that state later using the reset() method.
  */
-public interface Memoable
-{
+public interface Memoable {
     /**
      * Produce a copy of this object with its configuration and in its current state.
      * <p>
      * The returned object may be used simply to store the state, or may be used as a similar object
      * starting from the copied state.
+     *
      * @return Memoable object
      */
     Memoable copy();
