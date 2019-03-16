@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Logger;
 
 /**
  * Class representing Detached com.eternitywall.ots.Timestamp File.
@@ -57,6 +56,7 @@ public class DetachedTimestampFile {
 
     /**
      * The digest of the file that was timestamped.
+     *
      * @return The message inside the timestamp.
      */
     public byte[] fileDigest() {
@@ -65,6 +65,7 @@ public class DetachedTimestampFile {
 
     /**
      * Retrieve the internal timestamp.
+     *
      * @return the timestamp.
      */
     public Timestamp getTimestamp() {
@@ -73,6 +74,7 @@ public class DetachedTimestampFile {
 
     /**
      * Serialize a com.eternitywall.ots.Timestamp File.
+     *
      * @param ctx The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
@@ -85,16 +87,19 @@ public class DetachedTimestampFile {
 
     /**
      * Serialize a com.eternitywall.ots.Timestamp File.
+     *
      * @return The byte array of serialized data.
      */
     public byte[] serialize() {
         StreamSerializationContext ctx = new StreamSerializationContext();
         this.serialize(ctx);
+
         return ctx.getOutput();
     }
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp File.
+     *
      * @param ctx The stream deserialization context.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
@@ -107,45 +112,53 @@ public class DetachedTimestampFile {
         Timestamp timestamp = Timestamp.deserialize(ctx, fileHash);
 
         ctx.assertEof();
+
         return new DetachedTimestampFile(fileHashOp, timestamp);
     }
 
     /**
      * Deserialize a com.eternitywall.ots.Timestamp File.
+     *
      * @param ots The byte array of deserialization DetachedFileTimestamped.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
     public static DetachedTimestampFile deserialize(byte[] ots) {
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
+
         return DetachedTimestampFile.deserialize(ctx);
     }
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from bytes.
+     *
      * @param fileHashOp The file hash operation.
-     * @param ctx The stream deserialization context.
-     * @return  The generated com.eternitywall.ots.DetachedTimestampFile object.
+     * @param ctx        The stream deserialization context.
+     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, StreamDeserializationContext ctx) throws NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(ctx);
+
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from bytes.
+     *
      * @param fileHashOp The file hash operation.
-     * @param bytes The byte array of data to hash
-     * @return  The generated com.eternitywall.ots.DetachedTimestampFile object.
+     * @param bytes      The byte array of data to hash
+     * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, byte[] bytes) throws Exception {
         byte[] fdHash = fileHashOp.hashFd(bytes);
+
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from hash.
+     *
      * @param inputStream The InputStream of the file to hash
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      * @throws Exception desc
@@ -154,6 +167,7 @@ public class DetachedTimestampFile {
         if (inputStream == null) {
             throw new Exception();
         }
+
         // Read from file reader stream
         try {
             DetachedTimestampFile fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
@@ -166,19 +180,22 @@ public class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from InputStream.
-     * @param fileHashOp The file hash operation.
-     * @param inputStream  The input stream file.
+     *
+     * @param fileHashOp  The file hash operation.
+     * @param inputStream The input stream file.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
-     * @throws IOException desc
+     * @throws IOException              desc
      * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, InputStream inputStream) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(inputStream);
+
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from hash.
+     *
      * @param hash The hash of the file.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
@@ -188,19 +205,22 @@ public class DetachedTimestampFile {
 
     /**
      * Read the Detached com.eternitywall.ots.Timestamp File from File.
-     * @param  fileHashOp The file hash operation.
-     * @param  file The hash file.
+     *
+     * @param fileHashOp The file hash operation.
+     * @param file       The hash file.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
-     * @throws IOException desc
+     * @throws IOException              desc
      * @throws NoSuchAlgorithmException desc
      */
     public static DetachedTimestampFile from(OpCrypto fileHashOp, File file) throws IOException, NoSuchAlgorithmException {
         byte[] fdHash = fileHashOp.hashFd(file);
+
         return new DetachedTimestampFile(fileHashOp, new Timestamp(fdHash));
     }
 
     /**
      * Print the object.
+     *
      * @return The output.
      */
     @Override
@@ -208,7 +228,7 @@ public class DetachedTimestampFile {
         String output = "com.eternitywall.ots.DetachedTimestampFile\n";
         output += "fileHashOp: " + this.fileHashOp.toString() + '\n';
         output += "timestamp: " + this.timestamp.toString() + '\n';
+
         return output;
     }
-
 }

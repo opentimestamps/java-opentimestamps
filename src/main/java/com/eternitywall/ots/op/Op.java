@@ -4,14 +4,12 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 public abstract class Op implements Comparable<Op> {
-
 
     private static Logger log = Utils.getLogger(Op.class.getName());
 
@@ -34,7 +32,6 @@ public abstract class Op implements Comparable<Op> {
      * for them.
      */
     public static int _MAX_RESULT_LENGTH = 4096;
-
 
     /**
      * Maximum length of the message an com.eternitywall.ots.op.Op can be applied too.
@@ -66,6 +63,7 @@ public abstract class Op implements Comparable<Op> {
      */
     public static Op deserialize(StreamDeserializationContext ctx) {
         byte tag = ctx.readBytes(1)[0];
+
         return Op.deserializeFromTag(ctx, tag);
     }
 
@@ -101,10 +99,10 @@ public abstract class Op implements Comparable<Op> {
      * @param ctx The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
-
-        if(this._TAG()==0x00){
+        if (this._TAG() == 0x00) {
             log.severe("No valid serialized Op");
         }
+
         ctx.writeByte(this._TAG());
     }
 
@@ -127,12 +125,12 @@ public abstract class Op implements Comparable<Op> {
         if (r.length > _MAX_RESULT_LENGTH) {
             log.severe("Error : Result too long;");
         }
+
         return r;
     }
 
     @Override
     public int compareTo(Op o) {
-        return this._TAG()-o._TAG();
+        return this._TAG() - o._TAG();
     }
-
 }

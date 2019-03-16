@@ -6,7 +6,6 @@ public class BlockHeader {
     private String blockHash;
     private String time;
 
-
     public void setTime(String time) {
         this.time = time;
     }
@@ -33,15 +32,25 @@ public class BlockHeader {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         BlockHeader that = (BlockHeader) o;
 
-        if (merkleroot != null ? !merkleroot.equals(that.merkleroot) : that.merkleroot != null) return false;
-        if (blockHash != null ? !blockHash.equals(that.blockHash) : that.blockHash != null) return false;
-        return time != null ? time.equals(that.time) : that.time == null;
+        if (merkleroot != null ? !merkleroot.equals(that.merkleroot) : that.merkleroot != null) {
+            return false;
+        }
 
+        if (blockHash != null ? !blockHash.equals(that.blockHash) : that.blockHash != null) {
+            return false;
+        }
+
+        return time != null ? time.equals(that.time) : that.time == null;
     }
 
     @Override
@@ -49,6 +58,7 @@ public class BlockHeader {
         int result = merkleroot != null ? merkleroot.hashCode() : 0;
         result = 31 * result + (blockHash != null ? blockHash.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
+
         return result;
     }
 

@@ -1,12 +1,11 @@
 package com.eternitywall.ots;
 
-import java.util.Arrays;
-import java.util.logging.Logger;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class StreamSerializationContext {
-
 
     private static Logger log = Utils.getLogger(StreamSerializationContext.class.getName());
 
@@ -18,9 +17,11 @@ public class StreamSerializationContext {
 
     public byte[] getOutput() {
         byte[] bytes = new byte[this.buffer.size()];
-        for(int i = 0; i < this.buffer.size(); i++){
+
+        for (int i = 0; i < this.buffer.size(); i++) {
             bytes[i] = this.buffer.get(i);
         }
+
         return bytes;
     }
 
@@ -41,27 +42,30 @@ public class StreamSerializationContext {
             this.writeByte((byte) 0x00);
         } else {
             while (value != 0) {
-                byte b = (byte) ((value&0xff) & 0b01111111);
+                byte b = (byte) ((value & 0xff) & 0b01111111);
+
                 if ((value) > 0b01111111) {
                     b |= 0b10000000;
                 }
+
                 this.writeByte(b);
+
                 if ((value) <= 0b01111111) {
                     break;
                 }
+
                 value = value >> 7;
             }
         }
     }
 
     public void writeByte(byte value) {
-        this.buffer.add( new Byte(value) );
+        this.buffer.add(new Byte(value));
     }
 
     public void writeByte(Byte value) {
-        this.buffer.add( value );
+        this.buffer.add(value);
     }
-
 
     public void writeBytes(byte[] value) {
         for (int i = 0; i < value.length; i++) {
@@ -75,7 +79,6 @@ public class StreamSerializationContext {
     }
 
     public String toString() {
-        return Arrays.toString( this.getOutput() );
+        return Arrays.toString(this.getOutput());
     }
-
 }

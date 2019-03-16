@@ -3,23 +3,24 @@ package com.eternitywall;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Timestamp;
+import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.attestation.PendingAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
-import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestStreamDeserializationContext {
 
     @Test
     public void testVaruint() {
-        int value=0x1;
+        int value = 0x1;
 
-        for(int i=0;i<20;i++) {
+        for (int i = 0; i < 20; i++) {
             value = value << 1;
             StreamSerializationContext ssc = new StreamSerializationContext();
             ssc.writeVaruint(value);
@@ -34,13 +35,13 @@ public class TestStreamDeserializationContext {
     @Test
     public void testReadvaruint() {
         final byte[] uri = "https://finney.calendar.eternitywall.com".getBytes(StandardCharsets.US_ASCII);
-        PendingAttestation pendingAttestation=new PendingAttestation(uri);
+        PendingAttestation pendingAttestation = new PendingAttestation(uri);
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         pendingAttestation.serialize(streamSerializationContext);
         //System.out.println( Utils.bytesToHex(streamSerializationContext.getOutput() ).toLowerCase() );
 
-        StreamDeserializationContext streamDeserializationContext =new StreamDeserializationContext(streamSerializationContext.getOutput());
+        StreamDeserializationContext streamDeserializationContext = new StreamDeserializationContext(streamSerializationContext.getOutput());
         PendingAttestation pendingAttestationCheck = (PendingAttestation) TimeAttestation.deserialize(streamDeserializationContext);
 
         assertTrue(Arrays.equals(uri, pendingAttestationCheck.getUri()));
@@ -58,7 +59,7 @@ public class TestStreamDeserializationContext {
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         timestamp.serialize(streamSerializationContext);
-        byte []otsSerialized = streamSerializationContext.getOutput();
+        byte[] otsSerialized = streamSerializationContext.getOutput();
         //System.out.println("fullOts hex:" + Utils.bytesToHex(otsSerialized));
 
         assertTrue(Arrays.equals(ots, otsSerialized));

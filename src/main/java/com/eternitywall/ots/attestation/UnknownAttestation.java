@@ -4,7 +4,6 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
-import java.sql.Time;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -39,6 +38,7 @@ public class UnknownAttestation extends TimeAttestation {
 
     public static UnknownAttestation deserialize(StreamDeserializationContext ctxPayload, byte[] tag) {
         byte[] payload = ctxPayload.readVarbytes(_MAX_PAYLOAD_SIZE);
+
         return new UnknownAttestation(tag, payload);
     }
 
@@ -46,29 +46,32 @@ public class UnknownAttestation extends TimeAttestation {
         return "UnknownAttestation " + Utils.bytesToHex(this._TAG()) + ' ' + Utils.bytesToHex(this.payload);
     }
 
-
     @Override
     public int compareTo(TimeAttestation o) {
         UnknownAttestation ota = (UnknownAttestation) o;
-        return Utils.compare(this.payload, ota.payload) ;
+
+        return Utils.compare(this.payload, ota.payload);
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(!(obj instanceof UnknownAttestation)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UnknownAttestation)) {
             return false;
         }
-        if(!Arrays.equals(this._TAG(), ((UnknownAttestation)obj)._TAG())){
+
+        if (!Arrays.equals(this._TAG(), ((UnknownAttestation) obj)._TAG())) {
             return false;
         }
-        if(!Arrays.equals(this.payload, ((UnknownAttestation)obj).payload)){
+
+        if (!Arrays.equals(this.payload, ((UnknownAttestation) obj).payload)) {
             return false;
         }
+
         return true;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Arrays.hashCode(this._TAG()) ^ Arrays.hashCode(this.payload);
     }
 }

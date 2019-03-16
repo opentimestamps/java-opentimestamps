@@ -7,20 +7,22 @@ package com.eternitywall.ots;
  * @license LPGL3
  */
 
-
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
-import com.eternitywall.ots.exceptions.*;
+import com.eternitywall.ots.exceptions.CommitmentNotFoundException;
+import com.eternitywall.ots.exceptions.ExceededSizeException;
+import com.eternitywall.ots.exceptions.UrlException;
 import org.bitcoinj.core.ECKey;
 
-import java.net.*;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/** Class representing Remote com.eternitywall.ots.Calendar server interface */
-public class Calendar{
+/**
+ * Class representing Remote com.eternitywall.ots.Calendar server interface
+ */
+public class Calendar {
 
     private String url;
     private ECKey key;
@@ -29,6 +31,7 @@ public class Calendar{
 
     /**
      * Create a RemoteCalendar.
+     *
      * @param url The server url.
      */
     public Calendar(String url) {
@@ -37,6 +40,7 @@ public class Calendar{
 
     /**
      * Set private key.
+     *
      * @param key The private key.
      */
     public void setKey(ECKey key) {
@@ -45,6 +49,7 @@ public class Calendar{
 
     /**
      * Get private key.
+     *
      * @return The private key.
      */
     public ECKey getKey() {
@@ -53,6 +58,7 @@ public class Calendar{
 
     /**
      * Get calendar url.
+     *
      * @return The calendar url.
      */
     public String getUrl() {
@@ -61,20 +67,20 @@ public class Calendar{
 
     /**
      * Submitting a digest to remote calendar. Returns a com.eternitywall.ots.Timestamp committing to that digest.
+     *
      * @param digest The digest hash to send.
      * @return the Timestamp received from the calendar.
      * @throws ExceededSizeException if response is too big.
-     * @throws UrlException if url is not reachable.
+     * @throws UrlException          if url is not reachable.
      */
     public Timestamp submit(byte[] digest) throws ExceededSizeException, UrlException {
         try {
-
             Map<String, String> headers = new HashMap<>();
-            headers.put("Accept","application/vnd.opentimestamps.v1");
-            headers.put("User-Agent","java-opentimestamps");
-            headers.put("Content-Type","application/x-www-form-urlencoded");
+            headers.put("Accept", "application/vnd.opentimestamps.v1");
+            headers.put("User-Agent", "java-opentimestamps");
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
 
-            if (key != null ) {
+            if (key != null) {
                 String signature = key.signMessage(Utils.bytesToHex(digest).toLowerCase());
                 headers.put("x-signature", signature);
             }
@@ -92,28 +98,26 @@ public class Calendar{
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             return Timestamp.deserialize(ctx, digest);
-
         } catch (Exception e) {
             throw new UrlException(e.getMessage());
         }
     }
 
-
     /**
      * Get a timestamp for a given commitment.
+     *
      * @param commitment The digest hash to send.
      * @return the Timestamp from the calendar server (with blockchain information if already written).
-     * @throws ExceededSizeException if response is too big.
-     * @throws UrlException if url is not reachable.
+     * @throws ExceededSizeException       if response is too big.
+     * @throws UrlException                if url is not reachable.
      * @throws CommitmentNotFoundException if commit is not found.
      */
     public Timestamp getTimestamp(byte[] commitment) throws ExceededSizeException, CommitmentNotFoundException, UrlException {
         try {
-
             Map<String, String> headers = new HashMap<>();
-            headers.put("Accept","application/vnd.opentimestamps.v1");
-            headers.put("User-Agent","java-opentimestamps");
-            headers.put("Content-Type","application/x-www-form-urlencoded");
+            headers.put("Accept", "application/vnd.opentimestamps.v1");
+            headers.put("User-Agent", "java-opentimestamps");
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
 
             URL obj = new URL(url + "/timestamp/" + Utils.bytesToHex(commitment).toLowerCase());
             Request task = new Request(obj);
@@ -124,13 +128,14 @@ public class Calendar{
             if (body.length > 10000) {
                 throw new ExceededSizeException("Calendar response exceeded size limit");
             }
-            if(!response.isOk()) {
+
+            if (!response.isOk()) {
                 throw new CommitmentNotFoundException("com.eternitywall.ots.Calendar response a status code != 200 which is: " + response.getStatus());
             }
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
-            return Timestamp.deserialize(ctx, commitment);
 
+            return Timestamp.deserialize(ctx, commitment);
         } catch (Exception e) {
             throw new UrlException(e.getMessage());
         }

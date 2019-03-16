@@ -1,9 +1,9 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
+import com.eternitywall.ots.Utils;
 
 import java.util.logging.Logger;
-import com.eternitywall.ots.Utils;
 
 /**
  * Cryptographic SHA1 operation
@@ -48,7 +48,6 @@ public class OpSHA1 extends OpCrypto {
         super();
     }
 
-
     @Override
     public byte[] call(byte[] msg) {
         return super.call(msg);
@@ -64,7 +63,7 @@ public class OpSHA1 extends OpCrypto {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG;
     }
 }

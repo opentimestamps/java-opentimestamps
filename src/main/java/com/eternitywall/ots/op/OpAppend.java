@@ -4,7 +4,6 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -19,7 +18,6 @@ public class OpAppend extends OpBinary {
     byte[] arg;
 
     public static byte _TAG = (byte) 0xf0;
-
 
     @Override
     public byte _TAG() {
@@ -52,14 +50,15 @@ public class OpAppend extends OpBinary {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof OpAppend)){
+        if (!(obj instanceof OpAppend)) {
             return false;
         }
-        return Arrays.equals(this.arg,((OpAppend)obj).arg);
+
+        return Arrays.equals(this.arg, ((OpAppend) obj).arg);
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _TAG ^ Arrays.hashCode(this.arg);
     }
 }
