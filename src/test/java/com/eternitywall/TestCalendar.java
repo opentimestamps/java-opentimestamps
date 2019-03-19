@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,24 +25,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestCalendar {
     private static Logger log = Utils.getLogger(TestCalendar.class.getName());
 
     @Test
-    public void TestSingle() throws Exception {
+    public void testSingle() throws Exception {
         String calendarUrl = "https://finney.calendar.eternitywall.com";
         byte[] digest = Utils.randBytes(32);
         Calendar calendar = new Calendar(calendarUrl);
         Timestamp timestamp = calendar.submit(digest);
-        assertTrue(timestamp != null);
-        assertTrue(Arrays.equals(timestamp.getDigest(), digest));
+        assertNotNull(timestamp);
+        assertArrayEquals(timestamp.getDigest(), digest);
     }
 
     @Test
-    public void TestPrivate() throws Exception {
+    public void testPrivate() throws Exception {
         byte[] digest = Utils.randBytes(32);
 
         // key.wif it's a file of properties with the format
@@ -53,7 +51,7 @@ public class TestCalendar {
         Path path = Paths.get("key.wif");
 
         if (!Files.exists(path)) {
-            assertTrue(true);
+            // No need to carry on this test
             return;
         }
 
@@ -66,7 +64,7 @@ public class TestCalendar {
             privateUrls.put(key, value);
         }
 
-        assertFalse(privateUrls.size() == 0);
+        assertFalse(privateUrls.isEmpty());
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://" + entry.getKey();
@@ -85,13 +83,13 @@ public class TestCalendar {
 
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);
-            assertTrue(timestamp != null);
-            assertTrue(Arrays.equals(timestamp.getDigest(), digest));
+            assertNotNull(timestamp);
+            assertArrayEquals(timestamp.getDigest(), digest);
         }
     }
 
     @Test
-    public void TestPrivateWif() throws Exception {
+    public void testPrivateWif() throws Exception {
         byte[] digest = Utils.randBytes(32);
         Path path = Paths.get("key.wif");
 
@@ -109,7 +107,7 @@ public class TestCalendar {
             privateUrls.put(key, value);
         }
 
-        assertFalse(privateUrls.size() == 0);
+        assertFalse(privateUrls.isEmpty());
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://" + entry.getKey();
@@ -121,13 +119,13 @@ public class TestCalendar {
             key = dumpedPrivateKey.getKey();
             calendar.setKey(key);
             Timestamp timestamp = calendar.submit(digest);
-            assertTrue(timestamp != null);
-            assertTrue(Arrays.equals(timestamp.getDigest(), digest));
+            assertNotNull(timestamp);
+            assertArrayEquals(timestamp.getDigest(), digest);
         }
     }
 
     @Test
-    public void TestSingleAsync() throws Exception {
+    public void testSingleAsync() throws Exception {
         String calendarUrl = "https://finney.calendar.eternitywall.com";
         byte[] digest = Utils.randBytes(32);
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
@@ -137,12 +135,12 @@ public class TestCalendar {
         task.call();
         Optional<Timestamp> timestamp = queue.take();
         assertTrue(timestamp.isPresent());
-        assertTrue(timestamp.get() != null);
-        assertTrue(Arrays.equals(timestamp.get().getDigest(), digest));
+        assertNotNull(timestamp.get());
+        assertArrayEquals(timestamp.get().getDigest(), digest);
     }
 
     @Test
-    public void TestSingleAsyncPrivate() throws Exception {
+    public void testSingleAsyncPrivate() throws Exception {
         ArrayBlockingQueue<Optional<Timestamp>> queue = new ArrayBlockingQueue<>(1);
         byte[] digest = Utils.randBytes(32);
         Path path = Paths.get("signature.key");
@@ -161,7 +159,7 @@ public class TestCalendar {
             privateUrls.put(key, value);
         }
 
-        assertFalse(privateUrls.size() == 0);
+        assertFalse(privateUrls.isEmpty());
 
         for (Map.Entry<String, String> entry : privateUrls.entrySet()) {
             String calendarUrl = "https://" + entry.getKey();
@@ -176,13 +174,13 @@ public class TestCalendar {
             task.call();
             Optional<Timestamp> timestamp = queue.take();
             assertTrue(timestamp.isPresent());
-            assertTrue(timestamp.get() != null);
-            assertTrue(Arrays.equals(timestamp.get().getDigest(), digest));
+            assertNotNull(timestamp.get());
+            assertArrayEquals(timestamp.get().getDigest(), digest);
         }
     }
 
     @Test
-    public void TestMulti() throws Exception {
+    public void testMulti() throws Exception {
         List<String> calendarsUrl = new ArrayList<String>();
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
@@ -227,12 +225,11 @@ public class TestCalendar {
 
         assertFalse(count < m);
 
-        //shut down the executor service now
         executor.shutdown();
     }
 
     @Test
-    public void TestMultiWithInvalidCalendar() throws Exception {
+    public void testMultiWithInvalidCalendar() throws Exception {
         List<String> calendarsUrl = new ArrayList<String>();
         calendarsUrl.add("https://alice.btc.calendar.opentimestamps.org");
         calendarsUrl.add("https://bob.btc.calendar.opentimestamps.org");
@@ -277,16 +274,14 @@ public class TestCalendar {
 
         assertFalse(count < m);
 
-        //shut down the executor service now
         executor.shutdown();
     }
 
     @Test
     public void rfc6979() {
-        BigInteger privKey = new BigInteger("235236247357325473457345");
-        ECKey ecKey = ECKey.fromPrivate(privKey);
+        BigInteger privateKey = new BigInteger("235236247357325473457345");
+        ECKey ecKey = ECKey.fromPrivate(privateKey);
         String a = ecKey.signMessage("a");
-        System.out.println(a);
-        assertTrue(a.equals("IBY7a75Ygps/o1BqTQ0OpFL+a8WHfd9jNO/8820ST0gyQ0SAuIWKm8/M90aG1G40oJvjrlcoiKngKAYYsJS6I0s="));
+        assertEquals("IBY7a75Ygps/o1BqTQ0OpFL+a8WHfd9jNO/8820ST0gyQ0SAuIWKm8/M90aG1G40oJvjrlcoiKngKAYYsJS6I0s=", a);
     }
 }

@@ -9,12 +9,11 @@ import javax.xml.bind.DatatypeConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestLongReceipt {
     @Test
-    public void testException() throws Exception {
+    public void testException() {
         String digest = "c858838f62f908c922f9cd734e49c8fa6ee9a3b8a77093ac0969cba429249412";
         byte[] digestByte = DatatypeConverter.parseHexBinary(digest);
         Timestamp root = new Timestamp(digestByte);
@@ -38,17 +37,14 @@ public class TestLongReceipt {
             try {
                 root.merge(timestamp);
             } catch (Exception e) {
-                assertTrue(false);
+                fail("Could not merge timestamp: " + e);
             }
         }
 
         StreamSerializationContext streamSerializationContext = new StreamSerializationContext();
         root.serialize(streamSerializationContext);
-        assertTrue(true);
 
         StreamDeserializationContext ctx2 = new StreamDeserializationContext(streamSerializationContext.getOutput());
-        Timestamp timestamp = Timestamp.deserialize(ctx2, digestByte);
-        assertNotNull(timestamp);
-        //System.out.println(timestamp.strTree(2));
+        Timestamp.deserialize(ctx2, digestByte);
     }
 }
