@@ -20,14 +20,14 @@ public class TestOtsCli {
 
         final String logContents = loggerForTest.contents();
         assertTrue("Upgrade with non existent file should log 'No valid file' error",
-                logContents.contains("No valid file"));
+                   logContents.contains("No valid file"));
     }
 
     private class StringLoggerForTest {
         private ByteArrayOutputStream baos;
         private StreamHandler sh;
 
-        public StringLoggerForTest() {
+        StringLoggerForTest() {
             Logger logger = Utils.getLogger(OtsCli.class.getName());
             this.baos = new ByteArrayOutputStream();
             this.sh = new StreamHandler(baos, new SimpleFormatter());
@@ -35,7 +35,7 @@ public class TestOtsCli {
             logger.addHandler(this.sh);
         }
 
-        public String contents() throws Exception {
+        String contents() throws Exception {
             this.sh.flush();
             this.baos.close();
             return this.baos.toString();
