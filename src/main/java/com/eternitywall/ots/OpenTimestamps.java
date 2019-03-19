@@ -30,13 +30,10 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 /**
- * com.eternitywall.ots.OpenTimestamps
+ * The main class for timestamp operations.
  *
- * @author EternityWall
- * com.eternitywall.ots.OpenTimestamps
- * LPGL3
+ * @see OtsCli for how they are most often used
  */
-
 public class OpenTimestamps {
 
     private static Logger log = Utils.getLogger(OpenTimestamps.class.getName());
@@ -391,7 +388,7 @@ public class OpenTimestamps {
      *
      * @param attestation The BitcoinBlockHeaderAttestation attestation.
      * @param msg         The digest to verify.
-     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @return The unix timestamp in seconds from 1 January 1970.
      * @throws VerificationException if it doesn't check the merkle root of the block.
      * @throws Exception             if the verification procedure fails.
      */
@@ -408,7 +405,7 @@ public class OpenTimestamps {
 
             try {
                 MultiInsight insight = new MultiInsight(attestation.chain);
-                String blockHash = blockHash = insight.blockHash(height);
+                String blockHash = insight.blockHash(height);
                 blockInfo = insight.block(blockHash);
                 log.info("Lite-client verification, assuming block " + blockHash + " is valid");
                 insight.getExecutor().shutdown();
@@ -426,7 +423,7 @@ public class OpenTimestamps {
      *
      * @param attestation The LitecoinBlockHeaderAttestation attestation.
      * @param msg         The digest to verify.
-     * @return The unix timestamp in seconds from 1 Jamuary 1970.
+     * @return The unix timestamp in seconds from 1 January 1970.
      * @throws VerificationException if it doesn't check the merkle root of the block.
      * @throws Exception             if the verification procedure fails.
      */

@@ -1,9 +1,9 @@
 package com.eternitywall.ots.crypto;
 
-
 /**
- * implementation of RIPEMD see,
- * http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html
+ * Implementation of RIPEMD
+ *
+ * @see <a href="http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html">ripemd160</a>
  */
 public class RIPEMD160Digest
     extends GeneralDigest

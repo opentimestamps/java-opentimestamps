@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * the size of the result they return is fixed. Additionally, they're the only
  * type of operation that can be applied directly to a stream.
  *
- * @see com.eternitywall.ots.op.OpUnary
+ * @see OpUnary
  */
 public class OpCrypto extends OpUnary {
 
@@ -53,7 +53,7 @@ public class OpCrypto extends OpUnary {
             log.severe("NoSuchAlgorithmException");
             e.printStackTrace();
 
-            return new byte[]{};
+            return new byte[]{};     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
     }
 

@@ -24,6 +24,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+/**
+ * The CLI for OpenTimestamps.
+ *
+ * @see OpenTimestamps
+ */
 public class OtsCli {
 
     private static Logger log = Utils.getLogger(OtsCli.class.getName());

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by casatta on 06/03/17.
+ * Represents a (possibly local) Bitcoin node which we can ask for block hashes and headers
  */
 public class BitcoinNode {
 
@@ -47,10 +47,9 @@ public class BitcoinNode {
             try {
                 input = new FileInputStream(home + dir);
 
-                // load a properties file
                 prop.load(input);
 
-                // get the property value and print it out
+                // If we have a RPC user and password, make sure we set RPCCONNECT and RPCPORT, if missing
                 if (prop.getProperty(RPCUSER) != null && prop.getProperty(RPCPASSWORD) != null) {
                     if (prop.getProperty(RPCCONNECT) == null) {
                         prop.setProperty(RPCCONNECT, "127.0.0.1");
@@ -63,7 +62,7 @@ public class BitcoinNode {
                     return prop;
                 }
             } catch (IOException ex) {
-                //ex.printStackTrace();
+                // This is expected for all the paths to bitcoin.conf that doesn't exist on this particular machine
             } finally {
                 if (input != null) {
                     try {
@@ -75,7 +74,7 @@ public class BitcoinNode {
             }
         }
 
-        throw new Exception();
+        throw new Exception();    // TODO: Add this message: "No bitcoin.conf file found in any of these paths: " + list
     }
 
     public JSONObject getInfo() throws Exception {
@@ -92,7 +91,7 @@ public class BitcoinNode {
 
     public BlockHeader getBlockHeader(String hash) throws Exception {
         if (hash == null) {
-            return null;
+            return null;      // TODO: I think this will result in strange failures later on. Throw instead?
         }
 
         JSONObject json = new JSONObject();
@@ -135,8 +134,7 @@ public class BitcoinNode {
         headers.put("Authorization", "Basic " + authString);
         request.setHeaders(headers);
         request.setData(s.getBytes());
-        Response response = null;  //sync call
-        response = request.call();
+        Response response = request.call();
 
         if (response == null) {
             throw new Exception();

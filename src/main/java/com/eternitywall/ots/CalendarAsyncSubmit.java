@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
+/**
+ * For making async calls to a calendar server
+ */
 public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     private String url;
@@ -46,7 +49,6 @@ public class CalendarAsyncSubmit implements Callable<Optional<Timestamp>> {
 
     @Override
     public Optional<Timestamp> call() throws Exception {
-
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/vnd.opentimestamps.v1");
         headers.put("User-Agent", "java-opentimestamps");

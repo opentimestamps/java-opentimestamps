@@ -1,7 +1,7 @@
 package com.eternitywall.ots.crypto;
 
 /**
- * base implementation of MD4 family style digest as outlined in
+ * Base implementation of MD4 family style digest as outlined in
  * "Handbook of Applied Cryptography", pages 344 - 347.
  */
 public abstract class GeneralDigest implements ExtendedDigest, Memoable {
@@ -21,7 +21,7 @@ public abstract class GeneralDigest implements ExtendedDigest, Memoable {
     }
 
     /**
-     * Copy constructor.  We are using copy constructors in place
+     * Copy constructor. We are using copy constructors in place
      * of the Object.clone() interface as this interface is not
      * supported by J2ME.
      *

@@ -7,6 +7,9 @@ import com.eternitywall.ots.op.OpSHA256;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility functions for merkle trees
+ */
 public class Merkle {
 
     /**
@@ -17,7 +20,6 @@ public class Merkle {
      * @param right the right timestamp parameter
      * @return the concatenation of left and right
      */
-
     public static Timestamp catThenUnaryOp(Timestamp left, Timestamp right) {
         // rightPrependStamp = right.ops.add(OpPrepend(left.msg))
         Timestamp rightPrependStamp = right.add(new OpPrepend(left.msg));
@@ -45,7 +47,7 @@ public class Merkle {
     }
 
     /**
-     * Merkelize a set of timestamps
+     * Merkelize a set of timestamps.
      * A merkle tree of all the timestamps is built in-place using binop() to
      * timestamp each pair of timestamps. The exact algorithm used is structurally
      * identical to a merkle-mountain-range, although leaf sums aren't committed.

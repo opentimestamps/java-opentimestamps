@@ -80,9 +80,9 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
         return Arrays.hashCode(this._TAG()) ^ this.height;
     }
 
-    /*
-     Verify attestation against a block header
-     Returns the block time on success; raises VerificationError on failure.
+    /**
+     * Verify attestation against a block header.
+     * Returns the block time on success; raises VerificationError on failure.
      */
     public Long verifyAgainstBlockheader(byte[] digest, BlockHeader block) throws VerificationException {
         if (digest.length != 32) {

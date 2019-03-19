@@ -1,11 +1,4 @@
 package com.eternitywall.ots;
-/**
- * Detached com.eternitywall.ots.Timestamp File module.
- *
- * @module com.eternitywall.ots.DetachedTimestampFile
- * @author EternityWall
- * @license LPGL3
- */
 
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpCrypto;
@@ -161,16 +154,15 @@ public class DetachedTimestampFile {
      *
      * @param inputStream The InputStream of the file to hash
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
-     * @throws Exception desc
+     * @throws Exception if the input stream is null
      */
     public static DetachedTimestampFile from(InputStream inputStream) throws Exception {
         if (inputStream == null) {
-            throw new Exception();
+            throw new Exception();     // TODO: Add exception string later on
         }
 
-        // Read from file reader stream
         try {
-            DetachedTimestampFile fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);
+            DetachedTimestampFile fileTimestamp = DetachedTimestampFile.from(new OpSHA256(), inputStream);   // Read from file reader stream
             return fileTimestamp;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

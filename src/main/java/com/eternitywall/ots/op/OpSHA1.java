@@ -6,7 +6,7 @@ import com.eternitywall.ots.Utils;
 import java.util.logging.Logger;
 
 /**
- * Cryptographic SHA1 operation
+ * Cryptographic SHA1 operation.
  * Cryptographic operation tag numbers taken from RFC4880, although it's not
  * guaranteed that they'll continue to match that RFC in the future.
  * Remember that for timestamping, hash algorithms with collision attacks
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * Heck, even md5 is still secure enough for timestamping... but that's
  * pushing our luck...
  *
- * @see com.eternitywall.ots.op.OpCrypto
+ * @see OpCrypto
  */
 public class OpSHA1 extends OpCrypto {
 

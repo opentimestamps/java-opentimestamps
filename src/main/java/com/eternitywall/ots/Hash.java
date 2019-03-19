@@ -11,9 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by casatta on 03/03/17.
- */
 public class Hash {
 
     private byte[] value;

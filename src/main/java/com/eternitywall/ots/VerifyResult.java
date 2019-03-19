@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Class that lets us compare, sort, store and print timestamps.
+ */
 public class VerifyResult implements Comparable<VerifyResult> {
     public static enum Chains {
         BITCOIN, LITECOIN, ETHEREUM
@@ -18,6 +21,9 @@ public class VerifyResult implements Comparable<VerifyResult> {
         this.height = height;
     }
 
+    /**
+     * Returns, if existing, a string representation describing the existence of a block attest
+     */
     public String toString() {
         if (height == 0 || timestamp == null) {
             return "";

@@ -1,11 +1,4 @@
 package com.eternitywall.ots;
-/**
- * com.eternitywall.ots.Timestamp module.
- *
- * @module com.eternitywall.ots.Timestamp
- * @author EternityWall
- * @license LPGL3
- */
 
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
@@ -20,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 /**
- * Class representing com.eternitywall.ots.Timestamp interface
  * Proof that one or more attestations commit to a message.
  * The proof is in the form of a tree, with each node being a message, and the
  * edges being operations acting on those messages. The leafs of the tree are
@@ -46,11 +38,11 @@ public class Timestamp {
     }
 
     /**
-     * Deserialize a com.eternitywall.ots.Timestamp.
+     * Deserialize a Timestamp.
      *
      * @param ots        - The serialized byte array.
      * @param initialMsg - The initial message.
-     * @return The generated com.eternitywall.ots.Timestamp.
+     * @return The deserialized Timestamp.
      */
     public static Timestamp deserialize(byte[] ots, byte[] initialMsg) {
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
@@ -59,7 +51,7 @@ public class Timestamp {
     }
 
     /**
-     * Deserialize a com.eternitywall.ots.Timestamp.
+     * Deserialize a Timestamp.
      * Because the serialization format doesn't include the message that the
      * timestamp operates on, you have to provide it so that the correct
      * operation results can be calculated.
@@ -69,7 +61,7 @@ public class Timestamp {
      *
      * @param ctx        - The stream deserialization context.
      * @param initialMsg - The initial message.
-     * @return The generated com.eternitywall.ots.Timestamp.
+     * @return The deserialized Timestamp.
      */
     public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
         Timestamp self = new Timestamp(initialMsg);
@@ -117,8 +109,7 @@ public class Timestamp {
      * @param ctx - The stream serialization context.
      */
     public void serialize(StreamSerializationContext ctx) {
-        // sort
-        List<TimeAttestation> sortedAttestations = this.attestations;
+        List<TimeAttestation> sortedAttestations = this.attestations;   // TODO: Hm, this is just a reference copy...
         Collections.sort(sortedAttestations);
 
         if (sortedAttestations.size() > 1) {
@@ -127,13 +118,14 @@ public class Timestamp {
                 sortedAttestations.get(i).serialize(ctx);
             }
         }
+
         if (this.ops.isEmpty()) {
             ctx.writeByte((byte) 0x00);
 
             if (!sortedAttestations.isEmpty()) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
-        } else if (!this.ops.isEmpty()) {
+        } else if (!this.ops.isEmpty()) {      // TODO: Isn't this always true? Fix later.
             if (!sortedAttestations.isEmpty()) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
@@ -204,7 +196,7 @@ public class Timestamp {
         } else if (allAttestations.size() == 1) {
             return allAttestations.values().iterator().next();
         } else if (this.ops.size() == 0) {
-            throw new Exception();
+            throw new Exception();     // TODO: Need a descriptive exception string here
         }
 
         // Fore >1 attestations :
@@ -242,7 +234,7 @@ public class Timestamp {
         for (Iterator<Entry<Op, Timestamp>> it = this.ops.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Op, Timestamp> entry = it.next();
             Timestamp timestamp = entry.getValue();
-            Op op = entry.getKey();
+            Op op = entry.getKey();    // TODO: Never used...
             Set<TimeAttestation> attestations = timestamp.getAttestations();
 
             if (attestations.size() > 0 && attestations.contains(minAttestation) && shrinked == false) {
@@ -256,8 +248,9 @@ public class Timestamp {
         return minAttestation;
     }
 
-    /*
-     * Print the digest of the timestamp.
+    /**
+     * Return the digest of the timestamp.
+     *
      * @return The byte[] digest string.
      */
     public byte[] getDigest() {
@@ -265,7 +258,7 @@ public class Timestamp {
     }
 
     /**
-     * Print as memory hierarchical object.
+     * Return as memory hierarchical object.
      *
      * @param indent - Initial hierarchical indention.
      * @return The output string.
@@ -359,7 +352,7 @@ public class Timestamp {
     }
 
     /**
-     * Print as tree hierarchical object.
+     * Return as tree hierarchical object.
      *
      * @param indent    - Initial hierarchical indention.
      * @param verbosity - Verbose option.
@@ -433,9 +426,9 @@ public class Timestamp {
     }
 
     /**
-     * Set of al Attestations.
+     * Returns a list of all sub timestamps with attestations.
      *
-     * @return Array of all sub timestamps with attestations.
+     * @return List of all sub timestamps with attestations.
      */
     public List<Timestamp> directlyVerified() {
         if (!this.attestations.isEmpty()) {
@@ -458,7 +451,7 @@ public class Timestamp {
     }
 
     /**
-     * Set of al Attestations.
+     * Returns a set of all Attestations.
      *
      * @return Set of all timestamp attestations.
      */
@@ -547,7 +540,7 @@ public class Timestamp {
     }
 
     /**
-     * Compare timestamps
+     * Compare timestamps.
      *
      * @param timestamp the timestamp to compare with
      * @return Returns true if timestamps are equals
@@ -620,7 +613,7 @@ public class Timestamp {
     }
 
     /**
-     * Retrieve
+     * Retrieve a sorted list of all map entries.
      *
      * @param setEntries - The entries set of ops hashmap
      * @return Returns the sorted list of map entries

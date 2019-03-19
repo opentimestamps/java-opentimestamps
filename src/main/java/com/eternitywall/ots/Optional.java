@@ -3,7 +3,7 @@ package com.eternitywall.ots;
 import java.util.NoSuchElementException;
 
 /**
- * Created by casatta on 05/04/17.
+ * Typical Optional class, should be replaced with java.util.Optional when we migrate to Java 8.
  */
 public class Optional<T> {
     private T value;

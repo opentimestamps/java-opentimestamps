@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Operations that act on a single message.
  *
- * @see com.eternitywall.ots.op.Op
+ * @see Op
  */
 public abstract class OpUnary extends Op {
 
@@ -35,7 +35,7 @@ public abstract class OpUnary extends Op {
         } else {
             log.severe("Unknown operation tag: " + tag);
 
-            return null;
+            return null;     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
     }
 

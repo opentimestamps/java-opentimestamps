@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Operations that act on a message and a single argument.
  *
- * @see com.eternitywall.ots.op.OpUnary
+ * @see OpUnary
  */
 public abstract class OpBinary extends Op implements Comparable<Op> {
 
@@ -42,7 +42,7 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
             return new OpPrepend(arg);
         } else {
             log.severe("Unknown operation tag: " + tag + " 0x" + String.format("%02x", tag));
-            return null;
+            return null;     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
     }
 

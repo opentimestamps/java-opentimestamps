@@ -1,11 +1,4 @@
 package com.eternitywall.ots;
-/**
- * com.eternitywall.ots.Calendar module.
- *
- * @module com.eternitywall.ots.Calendar
- * @author EternityWall
- * @license LPGL3
- */
 
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
@@ -20,7 +13,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Class representing Remote com.eternitywall.ots.Calendar server interface
+ * Class representing remote calendar server interface.
  */
 public class Calendar {
 

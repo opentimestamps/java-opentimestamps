@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Holds the response from an HTTP request.
+ */
 public class Response {
     private InputStream stream;
     private String fromUrl;

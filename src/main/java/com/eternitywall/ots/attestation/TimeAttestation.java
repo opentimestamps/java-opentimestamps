@@ -1,11 +1,4 @@
 package com.eternitywall.ots.attestation;
-/**
- * com.eternitywall.ots.attestation.TimeAttestation module.
- *
- * @module com.eternitywall.ots.attestation.TimeAttestation
- * @author EternityWall
- * @license LPGL3
- */
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
@@ -15,7 +8,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
- * Class representing com.eternitywall.ots.Timestamp signature verification
+ * Class representing {@link com.eternitywall.ots.Timestamp} signature verification
  */
 public abstract class TimeAttestation implements Comparable<TimeAttestation> {
 
@@ -75,7 +68,7 @@ public abstract class TimeAttestation implements Comparable<TimeAttestation> {
     }
 
     public void serializePayload(StreamSerializationContext ctxPayload) {
-
+        // TODO: Is this intentional?
     }
 
     @Override

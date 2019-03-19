@@ -3,7 +3,7 @@ package com.eternitywall.ots.crypto;
 import com.eternitywall.ots.Utils;
 
 /**
- * implementation of Keccak based on following KeccakNISTInterface.c from http://keccak.noekeon.org/
+ * Implementation of Keccak based on following KeccakNISTInterface.c from http://keccak.noekeon.org/
  * <p>
  * Following the naming conventions used in the C source code to enable easy review of the implementation.
  */
