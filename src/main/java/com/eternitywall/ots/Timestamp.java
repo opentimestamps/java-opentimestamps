@@ -125,7 +125,7 @@ public class Timestamp {
             if (!sortedAttestations.isEmpty()) {
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
             }
-        } else if (!this.ops.isEmpty()) {      // TODO: Isn't this always true? Fix later.
+        } else if (!this.ops.isEmpty()) {
             if (!sortedAttestations.isEmpty()) {
                 ctx.writeBytes(new byte[]{(byte) 0xff, (byte) 0x00});
                 sortedAttestations.get(sortedAttestations.size() - 1).serialize(ctx);
@@ -234,7 +234,7 @@ public class Timestamp {
         for (Iterator<Entry<Op, Timestamp>> it = this.ops.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Op, Timestamp> entry = it.next();
             Timestamp timestamp = entry.getValue();
-            Op op = entry.getKey();    // TODO: Never used...
+            Op op = entry.getKey();
             Set<TimeAttestation> attestations = timestamp.getAttestations();
 
             if (attestations.size() > 0 && attestations.contains(minAttestation) && shrinked == false) {
