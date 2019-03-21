@@ -40,7 +40,6 @@ public class Utils {
     }
 
     /**
-     {
      * Returns a copy of the byte array argument, or null if the byte array argument is null.
      */
     public static byte[] arraysCopy(byte[] data) {
