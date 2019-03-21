@@ -26,6 +26,8 @@ public class Utils {
     /**
      * Returns the first value that is not null. If all objects are null, then it returns null.
      *
+     * @param items the array of Ts
+     * @return the first value that is not null. If all objects are null, then it returns null.
      * @deprecated Not used by Java OpenTimestamps itself, and doesn't offer much useful functionality.
      */
     @Deprecated
@@ -41,6 +43,9 @@ public class Utils {
 
     /**
      * Returns a copy of the byte array argument, or null if the byte array argument is null.
+     *
+     * @param data the array of bytes to copy
+     * @return the copied byte array
      */
     public static byte[] arraysCopy(byte[] data) {
         if (data == null) {
@@ -56,6 +61,10 @@ public class Utils {
     /**
      * Returns a byte array which is the result of concatenating the two passed in byte arrays.
      * None of the passed in arrays may be null.
+     *
+     * @param array1 the first array of bytes
+     * @param array2 the second array of bytes
+     * @return a copy of array1 and array2 concatenated together
      */
     public static byte[] arraysConcat(byte[] array1, byte[] array2) {
         byte[] array1and2 = new byte[array1.length + array2.length];
@@ -66,8 +75,10 @@ public class Utils {
     }
 
     /**
-     * Returns a given length array with random bytes.
+     * Returns a given length array of random bytes.
      *
+     * @param length the requested length of the byte array
+     * @return a given length array of random bytes
      * @throws NoSuchAlgorithmException for Java 8 implementations
      */
     public static byte[] randBytes(int length) throws NoSuchAlgorithmException {
@@ -84,6 +95,9 @@ public class Utils {
 
     /**
      * Returns a reversed copy of the passed in byte array.
+     *
+     * @param array the byte array to reverse
+     * @return a copy of the byte array, reversed
      */
     public static byte[] arrayReverse(byte[] array) {
         byte[] reversedArray = new byte[array.length];
@@ -97,6 +111,10 @@ public class Utils {
 
     /**
      * Compares two byte arrays.
+     *
+     * @param left the left byte array to compare with
+     * @param right the right byte array to compare with
+     * @return 0 if the arrays are identical, negative if left &lt; right, positive if left &gt; right
      */
     public static int compare(byte[] left, byte[] right) {
         for (int i = 0, j = 0; i < left.length && j < right.length; i++, j++) {
@@ -113,6 +131,9 @@ public class Utils {
 
     /**
      * Returns a HEX representation of the passed in byte array.
+     *
+     * @param bytes the byte array to convert into a string of HEX
+     * @return a string representation of the byte array
      */
     public static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
@@ -127,6 +148,8 @@ public class Utils {
     /**
      * Converts a HEX representation to its byte array representation. The passed in string must not be null.
      *
+     * @param s a string in HEX format to be converted to a corresponding byte array
+     * @return the byte array representation of the string in HEX format
      * @throws IllegalArgumentException if the passed in HEX string can't be converted to a byte array
      */
     public static byte[] hexToBytes(String s) throws IllegalArgumentException {
@@ -154,6 +177,8 @@ public class Utils {
      * Does exactly the same as {@link org.bitcoinj.core.Utils#toBytes(CharSequence, String) org.bitcoinj.core.Utils#toBytes(CharSequence, String)},
      * i.e. gets the bytes out of the String with the passed in encoding
      *
+     * @param str the string to convert to a byte array
+     * @param encode the encoding to be used when converting the string to a byte array
      * @deprecated Use {@link org.bitcoinj.core.Utils#toBytes(CharSequence, String) org.bitcoinj.core.Utils#toBytes(CharSequence, String)} directly
      */
     @Deprecated
@@ -163,6 +188,9 @@ public class Utils {
 
     /**
      * Returns a string with the first letter uppercase.
+     *
+     * @param string the string to get its first character converted to uppercase
+     * @return the string, with its first character converted to uppercase
      */
     public static String toUpperFirstLetter(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
