@@ -28,7 +28,7 @@ public abstract class Op implements Comparable<Op> {
      * limits required by both are quite large - 1MB and 16MiB respectively - 4KiB
      * is perfectly adequate in both cases for more reasonable usage.
      * <p>
-     * {@see Op} subclasses should set this limit even lower if doing so is appropriate
+     * @see Op subclasses should set this limit even lower if doing so is appropriate
      * for them.
      */
     public static int _MAX_RESULT_LENGTH = 4096;
