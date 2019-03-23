@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * For making an HTTP request.
  */
 public class Request implements Callable<Response> {
-    private static Logger log = Utils.getLogger(MultiInsight.class.getName());
+    private static Logger log = Utils.getLogger(Request.class.getName());
 
     private URL url;
     private byte[] data;
