@@ -5,10 +5,8 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 import org.junit.Test;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestOps {
 
@@ -58,12 +56,12 @@ public class TestOps {
     @Test
     public void test1M() throws Exception {
         String hash = "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58";
-        int size = 1 * 1024 * 1024;
+        int size = 1024 * 1024;
         byte[] buffer = new byte[size];
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
+        assertArrayEquals(Utils.hexToBytes(hash), fileDigest);
     }
 
     @Test
@@ -74,7 +72,7 @@ public class TestOps {
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
+        assertArrayEquals(Utils.hexToBytes(hash), fileDigest);
     }
 
     @Test
@@ -85,6 +83,6 @@ public class TestOps {
         StreamDeserializationContext ctx = new StreamDeserializationContext(buffer);
         DetachedTimestampFile timestampFile = DetachedTimestampFile.from(new OpSHA256(), ctx);
         byte[] fileDigest = timestampFile.fileDigest();
-        assertTrue(Arrays.equals(Utils.hexToBytes(hash), fileDigest));
+        assertArrayEquals(Utils.hexToBytes(hash), fileDigest);
     }
 }
