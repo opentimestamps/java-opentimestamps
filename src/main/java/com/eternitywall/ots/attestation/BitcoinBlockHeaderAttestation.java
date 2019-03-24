@@ -101,8 +101,11 @@ public class BitcoinBlockHeaderAttestation extends TimeAttestation {
     }
 
     /**
-     * Verify attestation against a block header.
-     * Returns the block time on success; raises VerificationError on failure.
+     * Verify attestation against a Bitcoin block header.
+     * @param digest the digest
+     * @param block the Bitcoin block header
+     * @return the block time on success; raises VerificationError on failure.
+     * @throws VerificationException verification exception
      */
     public Long verifyAgainstBlockheader(byte[] digest, BlockHeader block) throws VerificationException {
         if (digest.length != 32) {

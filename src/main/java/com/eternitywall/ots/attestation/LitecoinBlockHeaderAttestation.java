@@ -81,8 +81,11 @@ public class LitecoinBlockHeaderAttestation extends TimeAttestation {
     }
 
     /**
-     * Verify attestation against a block header.
-     * Returns the block time on success; raises VerificationError on failure.
+     * Verify attestation against a Litecoin block header.
+     * @param digest the digest
+     * @param block the Litecoin block header
+     * @return the block time on success; raises VerificationError on failure.
+     * @throws VerificationException verification exception
      */
     public Long verifyAgainstBlockheader(byte[] digest, BlockHeader block) throws VerificationException {
         if (digest.length != 32) {
