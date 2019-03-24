@@ -571,7 +571,7 @@ public class Timestamp {
 
         // Order list of operations
         List<Map.Entry<Op, Timestamp>> list1 = sortToList(this.ops.entrySet());
-        List<Map.Entry<Op, Timestamp>> list2 = sortToList(this.ops.entrySet());
+        List<Map.Entry<Op, Timestamp>> list2 = sortToList(timestamp.ops.entrySet());
 
         for (int i = 0; i < list1.size(); i++) {
             Op op1 = list1.get(i).getKey();

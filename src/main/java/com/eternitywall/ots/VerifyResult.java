@@ -40,7 +40,7 @@ public class VerifyResult implements Comparable<VerifyResult> {
 
     @Override
     public int compareTo(VerifyResult vr) {
-        return vr.height - vr.height;
+        return this.height - vr.height;
     }
 
     @Override
