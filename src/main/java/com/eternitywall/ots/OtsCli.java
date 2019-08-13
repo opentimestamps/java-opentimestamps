@@ -355,8 +355,7 @@ public class OtsCli {
                     System.out.println("Success! " + Utils.toUpperFirstLetter(chain) + " " + entry.getValue().toString());
                 }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-
+                e.printStackTrace();
                 return;
             }
         } catch (Exception e) {
