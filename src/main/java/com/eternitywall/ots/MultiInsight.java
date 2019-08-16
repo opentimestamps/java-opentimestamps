@@ -35,7 +35,7 @@ public class MultiInsight {
         if (chain.equals("bitcoin")) {
             //insightUrls.add("https://search.bitaccess.co/insight-api");
             //insightUrls.add("https://www.localbitcoinschain.com/api");
-            //insightUrls.add("https://insight.bitpay.com/api");
+            insightUrls.add("https://insight.bitpay.com/api");
             //insightUrls.add("https://finney.calendar.eternitywall.com/insight-api");
             insightUrls.add("https://btc-bitcore1.trezor.io/api");
             //insightUrls.add("https://btc-bitcore4.trezor.io/api");
@@ -79,7 +79,7 @@ public class MultiInsight {
                 JSONObject jsonObject = take.getJson();
 
                 try {
-                    String merkleroot = jsonObject.getString("merkleroot");
+                    String merkleroot = jsonObject.has("merkleroot") ? jsonObject.getString("merkleroot") : jsonObject.getString("merkleRoot");
                     String time = String.valueOf(jsonObject.getInt("time"));
                     BlockHeader blockHeader = new BlockHeader();
                     blockHeader.setMerkleroot(merkleroot);
@@ -93,7 +93,7 @@ public class MultiInsight {
 
                     results.add(blockHeader);
                 } catch (JSONException e) {
-                    log.warning("Cannot parse merkleroot from body: " + jsonObject);
+                    log.warning("Cannot parse merkleroot from body: " + jsonObject + ": " + e.getMessage());
                 }
             }
         }
