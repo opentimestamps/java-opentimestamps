@@ -55,7 +55,7 @@ public class Request implements Callable<Response> {
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(10000);
-            httpURLConnection.setRequestProperty("User-Agent", "OpenTimestamps/1.17");
+            httpURLConnection.setRequestProperty("User-Agent", "OpenTimestamps Java");
             httpURLConnection.setRequestProperty("Accept", "application/json");
 
             if (headers != null) {
