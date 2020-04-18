@@ -404,11 +404,9 @@ public class OpenTimestamps {
             log.fine("There is no local node available");
 
             try {
-                MultiInsight insight = new MultiInsight(attestation.chain);
-                String blockHash = insight.blockHash(height);
-                blockInfo = insight.block(blockHash);
+                String blockHash = Esplora.blockHash(height);
+                blockInfo = Esplora.block(blockHash);
                 log.info("Lite-client verification, assuming block " + blockHash + " is valid");
-                insight.getExecutor().shutdown();
             } catch (Exception e2) {
                 e2.printStackTrace();
                 throw e2;
@@ -432,11 +430,9 @@ public class OpenTimestamps {
         BlockHeader blockInfo;
 
         try {
-            MultiInsight insight = new MultiInsight(attestation.chain);
-            String blockHash = blockHash = insight.blockHash(height);
-            blockInfo = insight.block(blockHash);
+            String blockHash = blockHash = Esplora.blockHash(height);
+            blockInfo = Esplora.block(blockHash);
             log.info("Lite-client verification, assuming block " + blockHash + " is valid");
-            insight.getExecutor().shutdown();
         } catch (Exception e2) {
             e2.printStackTrace();
             throw e2;
