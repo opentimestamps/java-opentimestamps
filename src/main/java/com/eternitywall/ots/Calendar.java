@@ -84,7 +84,6 @@ public class Calendar {
             task.setHeaders(headers);
             Response response = task.call();
             byte[] body = response.getBytes();
-
             if (body.length > 10000) {
                 throw new ExceededSizeException("Calendar response exceeded size limit");
             }
@@ -117,7 +116,6 @@ public class Calendar {
             task.setHeaders(headers);
             Response response = task.call();
             byte[] body = response.getBytes();
-
             if (body.length > 10000) {
                 throw new ExceededSizeException("Calendar response exceeded size limit");
             }

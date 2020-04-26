@@ -1,6 +1,5 @@
 package com.eternitywall.http;
 
-import com.eternitywall.ots.MultiInsight;
 import com.eternitywall.ots.Utils;
 
 import java.io.DataOutputStream;
@@ -13,6 +12,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
 
 /**
  * For making an HTTP request.
@@ -57,6 +58,7 @@ public class Request implements Callable<Response> {
             httpURLConnection.setConnectTimeout(10000);
             httpURLConnection.setRequestProperty("User-Agent", "OpenTimestamps Java");
             httpURLConnection.setRequestProperty("Accept", "application/json");
+            httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
 
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -82,6 +84,9 @@ public class Request implements Callable<Response> {
             response.setStatus(responseCode);
             response.setFromUrl(url.toString());
             InputStream is = httpURLConnection.getInputStream();
+            if ("gzip".equals(httpURLConnection.getContentEncoding())) {
+                is = new GZIPInputStream(is);
+            }
             response.setStream(is);
         } catch (Exception e) {
             log.warning(url.toString() + " exception " + e);
