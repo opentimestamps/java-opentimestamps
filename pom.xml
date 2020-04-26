@@ -20,15 +20,15 @@
     <developers>
         <developer>
             <name>Riccardo Casatta</name>
-            <email>riccardo@eternitywall.com</email>
-            <organization>Eternity Wall</organization>
-            <organizationUrl>https://www.eternitywall.com</organizationUrl>
+            <email>riccardo@casatta.it</email>
+            <organization>OpenTimestamps</organization>
+            <organizationUrl>https://opentimestamps.org</organizationUrl>
         </developer>
         <developer>
             <name>Luca Vaccaro</name>
-            <email>luca@eternitywall.com</email>
-            <organization>Eternity Wall</organization>
-            <organizationUrl>https://www.eternitywall.com</organizationUrl>
+            <email>luck87@gmail.com</email>
+            <organization>OpenTimestamps</organization>
+            <organizationUrl>https://opentimestamps.org</organizationUrl>
         </developer>
     </developers>
     <scm>
