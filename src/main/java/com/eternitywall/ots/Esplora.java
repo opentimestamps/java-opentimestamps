@@ -23,8 +23,10 @@ public class Esplora {
     public static BlockHeader block(final String hash) throws Exception {
         final URL url = new URL(esploraUrl + "/block/" + hash);
         final Request task = new Request(url);
-        final Future<Response> future = Executors.newSingleThreadExecutor().submit(task);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final Future<Response> future = executor.submit(task);
         final Response take = future.get();
+        executor.shutdown();
         if (!take.isOk())
             throw new Exception();
 
@@ -50,8 +52,10 @@ public class Esplora {
     public static String blockHash(final Integer height) throws Exception {
         final URL url = new URL(esploraUrl + "/block-height/" + height);
         final Request task = new Request(url);
-        final Future<Response> future = Executors.newSingleThreadExecutor().submit(task);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final Future<Response> future = executor.submit(task);
         final Response take = future.get();
+        executor.shutdown();
         if (!take.isOk())
             throw new Exception();
         final String blockHash = take.getString();
