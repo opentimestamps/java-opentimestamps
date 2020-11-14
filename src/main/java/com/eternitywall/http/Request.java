@@ -1,6 +1,7 @@
 package com.eternitywall.http;
 
-import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -11,15 +12,13 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipException;
 
 /**
  * For making an HTTP request.
  */
 public class Request implements Callable<Response> {
-    private static Logger log = Utils.getLogger(Request.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Request.class);
 
     private URL url;
     private byte[] data;
@@ -89,7 +88,7 @@ public class Request implements Callable<Response> {
             }
             response.setStream(is);
         } catch (Exception e) {
-            log.warning(url.toString() + " exception " + e);
+            log.warn("{} exception {}", url, e);
         } finally {
             if (queue != null) {
                 queue.offer(response);

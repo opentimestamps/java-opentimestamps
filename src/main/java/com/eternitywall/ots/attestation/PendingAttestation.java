@@ -3,10 +3,11 @@ package com.eternitywall.ots.attestation;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Pending attestations.
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class PendingAttestation extends TimeAttestation {
 
-    private static Logger log = Utils.getLogger(PendingAttestation.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(PendingAttestation.class);
 
     public static byte[] _TAG = {(byte) 0x83, (byte) 0xdf, (byte) 0xe3, (byte) 0x0d, (byte) 0x2e, (byte) 0xf9, (byte) 0x0c, (byte) 0x8e};
 
@@ -65,7 +66,7 @@ public class PendingAttestation extends TimeAttestation {
             Character c = String.format("%c", uri[i]).charAt(0);
 
             if (PendingAttestation._ALLOWED_URI_CHARS.indexOf(c) < 0) {
-                log.severe("URI contains invalid character ");
+                log.warn("URI contains invalid character: {}", c);
 
                 return false;
             }
@@ -78,7 +79,7 @@ public class PendingAttestation extends TimeAttestation {
         byte[] utf8Uri = ctxPayload.readVarbytes(PendingAttestation._MAX_URI_LENGTH);
 
         if (PendingAttestation.checkUri(utf8Uri) == false) {
-            log.severe("Invalid URI: ");
+            log.warn("Invalid URI: ");
 
             return null;
         }

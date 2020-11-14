@@ -6,7 +6,7 @@
 
     <groupId>com.eternitywall</groupId>
     <artifactId>java-opentimestamps</artifactId>
-    <version>1.19</version>
+    <version>1.19.1-SNAPSHOT</version>
 
     <name>java-opentimestamps</name>
     <description>The java implementation of the OpenTimestamps protocol</description>
@@ -79,8 +79,14 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-api</artifactId>
             <version>1.7.29</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -198,6 +204,23 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>cli</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${project.basedir}/src/cli/resources</directory>
+                    </resource>
+                </resources>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>1.2.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <id>release-sign-artifacts</id>
             <activation>

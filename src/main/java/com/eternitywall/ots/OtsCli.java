@@ -8,6 +8,8 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * The CLI for OpenTimestamps.
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class OtsCli {
 
-    private static Logger log = Utils.getLogger(OtsCli.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OtsCli.class);
     private static String title = "OtsCli";
     private static String version = "1.0";
     private static List<String> calendarsUrl = new ArrayList<>();
@@ -215,7 +216,7 @@ public class OtsCli {
             String infoResult = OpenTimestamps.info(detached, verbose);
             System.out.println(infoResult);
         } catch (IOException e) {
-            log.severe("No valid file");
+            log.warn("No valid file");
         }
     }
 
@@ -227,7 +228,7 @@ public class OtsCli {
             try {
                 privateUrls = readSignature(signatureFile);
             } catch (Exception e) {
-                log.severe("No valid signature file");
+                log.warn("No valid signature file");
                 return;
             }
         }
@@ -241,12 +242,10 @@ public class OtsCli {
                 Hash hash = Hash.from(file, Hash.getOp(algorithm)._TAG());
                 mapFiles.put(argsFile, DetachedTimestampFile.from(hash));
             } catch (IOException e) {
-                e.printStackTrace();
-                log.severe("File read error");
+                log.warn("File read error", e);
                 return;
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                log.severe("Crypto error");
+                log.warn("Crypto error", e);
                 return;
             }
         }
@@ -262,8 +261,7 @@ public class OtsCli {
                 throw new IOException();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            log.severe("Stamp error");
+            log.warn("Stamp error", e);
 
             return;
         }
@@ -284,8 +282,7 @@ public class OtsCli {
                     System.out.println("The timestamp proof '" + argsOts + "' has been created!");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                log.severe("File '" + argsOts + "' writing error");
+                log.warn("File '{}' writing error: {}", argsOts, e);
             }
         }
     }
@@ -297,7 +294,7 @@ public class OtsCli {
             try {
                 privateUrls = readSignature(signatureFile);
             } catch (Exception e) {
-                log.severe("No valid signature file");
+                log.warn("No valid signature file");
             }
         }
 
@@ -315,7 +312,7 @@ public class OtsCli {
             Files.write(path, stampResult.serialize());
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (Exception e) {
-            log.severe("Invalid shasum");
+            log.warn("Invalid shasum");
         }
     }
 
@@ -359,7 +356,7 @@ public class OtsCli {
                 return;
             }
         } catch (Exception e) {
-            log.severe("No valid file");
+            log.warn("No valid file");
         }
     }
 
@@ -391,10 +388,9 @@ public class OtsCli {
                 Files.write(pathOts, detachedOts.serialize());
             }
         } catch (IOException e) {
-            log.severe("No valid file");
+            log.warn("No valid file");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe("Shrink error");
+            log.warn("Shrink error", e);
         }
     }
 

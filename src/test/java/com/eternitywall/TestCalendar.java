@@ -9,6 +9,8 @@ import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.math.BigInteger;
@@ -23,12 +25,11 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
 public class TestCalendar {
-    private static Logger log = Utils.getLogger(TestCalendar.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TestCalendar.class);
 
     @Test
     public void testSingle() throws Exception {
@@ -220,7 +221,7 @@ public class TestCalendar {
         }
 
         if (count < m) {
-            log.severe("Failed to create timestamp: requested " + String.valueOf(m) + " attestation" + ((m > 1) ? "s" : "") + " but received only " + String.valueOf(count));
+            log.warn("Failed to create timestamp: requested {} attestation{} but received only {}", m, (m > 1) ? "s" : "", count);
         }
 
         assertFalse(count < m);
@@ -269,7 +270,7 @@ public class TestCalendar {
         }
 
         if (count < m) {
-            log.severe("Failed to create timestamp: requested " + String.valueOf(m) + " attestation" + ((m > 1) ? "s" : "") + " but received only " + String.valueOf(count));
+            log.warn("Failed to create timestamp: requested {} attestations but received only {}", m, count);
         }
 
         assertFalse(count < m);

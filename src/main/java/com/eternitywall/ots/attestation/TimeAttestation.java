@@ -3,16 +3,15 @@ package com.eternitywall.ots.attestation;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Class representing {@link com.eternitywall.ots.Timestamp} signature verification
  */
 public abstract class TimeAttestation implements Comparable<TimeAttestation> {
-
-    private static Logger log = Utils.getLogger(TimeAttestation.class.getName());
 
     public static int _TAG_SIZE = 8;
 

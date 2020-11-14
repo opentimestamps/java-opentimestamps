@@ -1,10 +1,7 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.crypto.RIPEMD160Digest;
-
-import java.util.logging.Logger;
 
 /**
  * Cryptographic RIPEMD160 operation.
@@ -14,8 +11,6 @@ import java.util.logging.Logger;
  * @see OpCrypto
  */
 public class OpRIPEMD160 extends OpCrypto {
-
-    private static Logger log = Utils.getLogger(OpRIPEMD160.class.getName());
 
     public static byte _TAG = 0x03;
 

@@ -7,10 +7,11 @@ import com.eternitywall.ots.op.OpBinary;
 import com.eternitywall.ots.op.OpSHA256;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 /**
  * Proof that one or more attestations commit to a message.
@@ -19,8 +20,6 @@ import java.util.logging.Logger;
  * attestations that attest to the time that messages in the tree existed prior.
  */
 public class Timestamp {
-
-    private static Logger log = Utils.getLogger(Timestamp.class.getName());
 
     public byte[] msg;
     public List<TimeAttestation> attestations;

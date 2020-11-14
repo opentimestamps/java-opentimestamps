@@ -7,7 +7,6 @@ import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.exceptions.VerificationException;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Bitcoin Block Header Attestation.
@@ -37,7 +36,6 @@ import java.util.logging.Logger;
 public class BitcoinBlockHeaderAttestation extends TimeAttestation {
 
     public static byte[] _TAG = {(byte) 0x05, (byte) 0x88, (byte) 0x96, (byte) 0x0d, (byte) 0x73, (byte) 0xd7, (byte) 0x19, (byte) 0x01};
-    private static Logger log = Utils.getLogger(BitcoinBlockHeaderAttestation.class.getName());
     public static String chain = "bitcoin";
 
     @Override

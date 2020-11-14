@@ -1,9 +1,9 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.logging.Logger;
 
 /**
  * Operations that act on a single message.
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public abstract class OpUnary extends Op {
 
-    private static Logger log = Utils.getLogger(OpUnary.class.getName());
+    private static Logger log = LoggerFactory.getLogger(OpUnary.class);
 
     @Override
     public String _TAG_NAME() {
@@ -33,7 +33,7 @@ public abstract class OpUnary extends Op {
         } else if (tag == OpKECCAK256._TAG) {
             return new OpKECCAK256();
         } else {
-            log.severe("Unknown operation tag: " + tag);
+            log.warn("Unknown operation tag: {}", tag);
 
             return null;     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }

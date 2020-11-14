@@ -1,44 +1,60 @@
 package com.eternitywall.ots;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
+import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 public class TestOtsCli {
 
     @Test
-    public void testCommandLineHandlesUpgradeCommandWithWrongFileName() throws Exception {
-        StringLoggerForTest loggerForTest = new StringLoggerForTest();
+    public void testCommandLineHandlesUpgradeCommandWithWrongFileName() {
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        Logger logger = (Logger) LoggerFactory.getLogger(OtsCli.class);
+        logger.addAppender(listAppender);
 
         OtsCli.main(new String[]{"upgrade", "some_non_existent_file.name"});
 
-        final String logContents = loggerForTest.contents();
-        assertTrue("Upgrade with non existent file should log 'No valid file' error",
-                   logContents.contains("No valid file"));
+        assertThat("Upgrade with non existing file should log 'No valid file' error",
+                listAppender.list, hasLogMessage("No valid file"));
     }
 
-    private class StringLoggerForTest {
-        private ByteArrayOutputStream baos;
-        private StreamHandler sh;
+    private static HasLoggingEventMessage hasLogMessage(String message) {
+        return new HasLoggingEventMessage(message);
+    }
 
-        StringLoggerForTest() {
-            Logger logger = Utils.getLogger(OtsCli.class.getName());
-            this.baos = new ByteArrayOutputStream();
-            this.sh = new StreamHandler(baos, new SimpleFormatter());
-            this.sh.setLevel(Level.ALL);
-            logger.addHandler(this.sh);
+    private static class HasLoggingEventMessage extends BaseMatcher<List<ILoggingEvent>> {
+
+        private final String message;
+
+        private HasLoggingEventMessage(String message) {
+            this.message = message;
         }
 
-        String contents() throws Exception {
-            this.sh.flush();
-            this.baos.close();
-            return this.baos.toString();
+        @Override
+        public boolean matches(Object o) {
+            if (o instanceof List) {
+                for (Object event : (List<?>) o) {
+                    if (event instanceof ILoggingEvent
+                            && ((ILoggingEvent) event).getFormattedMessage().equals(message)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("to have log message '" + message + "'");
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.eternitywall.ots;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 public class StreamDeserializationContext {
 
-    private static Logger log = Utils.getLogger(StreamDeserializationContext.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(StreamDeserializationContext.class);
 
     byte[] buffer;
     int counter = 0;
@@ -81,10 +83,10 @@ public class StreamDeserializationContext {
         int l = this.readVaruint();
 
         if ((l & 0xff) > maxLen) {
-            log.severe("varbytes max length exceeded;");
+            log.warn("varbytes max length exceeded;");
             return null;
         } else if ((l & 0xff) < minLen) {
-            log.severe("varbytes min length not met;");
+            log.warn("varbytes min length not met;");
             return null;
         }
 
