@@ -30,7 +30,7 @@ Java 1.7+
 ```
 git clone https://github.com/opentimestamps/java-opentimestamps
 cd java-opentimestamps
-mvn install
+mvn install -P cli
 ```
 
 #### SSL errors
