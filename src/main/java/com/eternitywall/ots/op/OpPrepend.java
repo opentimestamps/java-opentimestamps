@@ -4,7 +4,6 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Prepend a prefix to a message.
@@ -12,8 +11,6 @@ import java.util.logging.Logger;
  * @see OpBinary
  */
 public class OpPrepend extends OpBinary {
-
-    private static Logger log = Utils.getLogger(OpPrepend.class.getName());
 
     byte[] arg;
 

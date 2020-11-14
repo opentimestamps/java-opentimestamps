@@ -3,9 +3,10 @@ package com.eternitywall.ots.op;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * Operations that act on a message and a single argument.
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  */
 public abstract class OpBinary extends Op implements Comparable<Op> {
 
-    private static Logger log = Utils.getLogger(OpBinary.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OpBinary.class);
 
     public byte[] arg;
 
@@ -41,7 +42,7 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         } else if (tag == OpPrepend._TAG) {
             return new OpPrepend(arg);
         } else {
-            log.severe("Unknown operation tag: " + tag + " 0x" + String.format("%02x", tag));
+            log.warn("Unknown operation tag: {} 0x{}", tag, String.format("%02x", tag));
             return null;     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
     }

@@ -13,8 +13,6 @@ import java.util.logging.Logger;
  */
 public class OpAppend extends OpBinary {
 
-    private static Logger log = Utils.getLogger(OpAppend.class.getName());
-
     byte[] arg;
 
     public static byte _TAG = (byte) 0xf0;

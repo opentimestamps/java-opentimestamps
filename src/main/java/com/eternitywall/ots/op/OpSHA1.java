@@ -1,9 +1,6 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
-
-import java.util.logging.Logger;
 
 /**
  * Cryptographic SHA1 operation.
@@ -19,8 +16,6 @@ import java.util.logging.Logger;
  * @see OpCrypto
  */
 public class OpSHA1 extends OpCrypto {
-
-    private static Logger log = Utils.getLogger(OpSHA1.class.getName());
 
     public static byte _TAG = 0x02;
 

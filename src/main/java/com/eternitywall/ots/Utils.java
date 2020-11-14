@@ -197,22 +197,4 @@ public class Utils {
     public static String toUpperFirstLetter(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
     }
-
-    // TODO: This is not the way to do logging. Fix later, possibly with slf4j annotation. Need to read up on the subject.
-    public static Logger getLogger(String name) {
-        Logger log = Logger.getLogger(name);
-        ConsoleHandler handler = new ConsoleHandler();
-
-        handler.setFormatter(new SimpleFormatter() {
-            @Override
-            public synchronized String format(LogRecord lr) {
-                return lr.getMessage() + "\r\n";
-            }
-        });
-
-        log.setUseParentHandlers(false);
-        log.addHandler(handler);
-
-        return log;
-    }
 }

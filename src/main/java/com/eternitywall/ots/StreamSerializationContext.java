@@ -3,11 +3,8 @@ package com.eternitywall.ots;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class StreamSerializationContext {
-
-    private static Logger log = Utils.getLogger(StreamSerializationContext.class.getName());
 
     List<Byte> buffer = new ArrayList<>();
 

@@ -2,16 +2,15 @@ package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
-import com.eternitywall.ots.Utils;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Operations are the edges in the timestamp tree, with each operation taking a message and zero or more arguments to produce a result.
  */
 public abstract class Op implements Comparable<Op> {
 
-    private static Logger log = Utils.getLogger(Op.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Op.class);
 
     /**
      * Maximum length of an com.eternitywall.ots.op.Op result
@@ -88,7 +87,7 @@ public abstract class Op implements Comparable<Op> {
         } else if (tag == OpKECCAK256._TAG) {
             return OpKECCAK256.deserializeFromTag(ctx, tag);
         } else {
-            log.severe("Unknown operation tag: " + tag + " 0x" + String.format("%02x", tag));
+            log.warn("Unknown operation tag: {} 0x{}", tag, String.format("%02x", tag));
             return null;     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
     }
@@ -100,7 +99,7 @@ public abstract class Op implements Comparable<Op> {
      */
     public void serialize(StreamSerializationContext ctx) {
         if (this._TAG() == 0x00) {
-            log.severe("No valid serialized Op");
+            log.warn("No valid serialized Op");
             // TODO: Is it OK to just log and carry on? Won't it blow up later? Better to throw?
         }
 
@@ -117,14 +116,14 @@ public abstract class Op implements Comparable<Op> {
      */
     public byte[] call(byte[] msg) {
         if (msg.length > _MAX_MSG_LENGTH) {
-            log.severe("Error : Message too long;");
+            log.warn("Error : Message too long;");
             return new byte[]{};     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }
 
         byte[] r = this.call(msg);
 
         if (r.length > _MAX_RESULT_LENGTH) {
-            log.severe("Error : Result too long;");
+            log.warn("Error : Result too long;");
             // TODO: Is it OK to just log and carry on? Won't it blow up later? Better to throw?
         }
 

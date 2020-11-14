@@ -1,10 +1,7 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.crypto.KeccakDigest;
-
-import java.util.logging.Logger;
 
 /**
  * Cryptographic Keccak256 operation.
@@ -15,7 +12,6 @@ import java.util.logging.Logger;
  */
 public class OpKECCAK256 extends OpCrypto {
 
-    private static Logger log = Utils.getLogger(OpKECCAK256.class.getName());
     private KeccakDigest digest = new KeccakDigest(256);
 
     public static byte _TAG = (byte) 103;

@@ -1,7 +1,8 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.StreamDeserializationContext;
-import com.eternitywall.ots.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Logger;
 
 /**
  * Cryptographic transformations.
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class OpCrypto extends OpUnary {
 
-    private static Logger log = Utils.getLogger(OpCrypto.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OpCrypto.class);
 
     public String _TAG_NAME = "";
 
@@ -50,8 +50,7 @@ public class OpCrypto extends OpUnary {
 
             return hash;
         } catch (NoSuchAlgorithmException e) {
-            log.severe("NoSuchAlgorithmException");
-            e.printStackTrace();
+            log.error("No such algorithm", e);
 
             return new byte[]{};     // TODO: Is this OK? Won't it blow up later? Better to throw?
         }

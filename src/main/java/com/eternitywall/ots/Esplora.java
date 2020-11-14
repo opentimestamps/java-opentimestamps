@@ -3,14 +3,15 @@ package com.eternitywall.ots;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
 
 public class Esplora {
 
-    private static final Logger log = Utils.getLogger(Esplora.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Esplora.class);
     private static final String esploraUrl = "https://blockstream.info/api";
 
     /**
@@ -37,7 +38,7 @@ public class Esplora {
         blockHeader.setMerkleroot(merkleroot);
         blockHeader.setTime(time);
         blockHeader.setBlockHash(hash);
-        log.info(take.getFromUrl() + " " + blockHeader);
+        log.debug("{} {}", take.getFromUrl(), blockHeader);
         return blockHeader;
         //log.warning("Cannot parse merkleroot from body: " + jsonObject + ": " + e.getMessage());
     }

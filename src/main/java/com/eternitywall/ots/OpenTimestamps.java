@@ -12,6 +12,8 @@ import com.eternitywall.ots.op.OpSHA256;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -27,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 /**
  * The main class for timestamp operations.
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
  */
 public class OpenTimestamps {
 
-    private static Logger log = Utils.getLogger(OpenTimestamps.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OpenTimestamps.class);
 
     /**
      * Show information on a detached timestamp.
@@ -164,7 +165,7 @@ public class OpenTimestamps {
         }
 
         if (m < 0 || m > calendarsUrl.size() + privateCalendarsUrl.size()) {
-            log.severe("m cannot be greater than available calendar neither less or equal 0");
+            log.warn("m must be greater than 0 and cannot be greater than the number of available calender urls");
             throw new IOException();
         }
 
@@ -221,7 +222,7 @@ public class OpenTimestamps {
                         DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(NetworkParameters.prodNet(), signature);
                         key = dumpedPrivateKey.getKey();
                     } catch (Exception err) {
-                        log.severe("Invalid private key");
+                        log.warn("Invalid private key");
                     }
                 }
 
@@ -265,7 +266,7 @@ public class OpenTimestamps {
         }
 
         if (count < m) {
-            log.severe("Failed to create timestamp: requested " + String.valueOf(m) + " attestation" + ((m > 1) ? "s" : "") + " but received only " + String.valueOf(count));
+            log.warn("Failed to create timestamp: requested {} attestation{} but received only {}", m, (m > 1) ? "s" : "", count);
         }
 
         //shut down the executor service now
@@ -314,8 +315,7 @@ public class OpenTimestamps {
 
     public static HashMap<VerifyResult.Chains, VerifyResult> verify(DetachedTimestampFile ots, DetachedTimestampFile stamped) throws Exception {
         if (!Arrays.equals(ots.fileDigest(), stamped.fileDigest())) {
-            log.severe("Expected digest " + Utils.bytesToHex(ots.fileDigest()).toLowerCase());
-            log.severe("File does not match original!");
+            log.warn("Expected digest {}. File does not match original!", Utils.bytesToHex(ots.fileDigest()).toLowerCase());
             throw new Exception("File does not match original!");
         }
 
@@ -375,7 +375,7 @@ public class OpenTimestamps {
                     throw e;
                 }
 
-                log.severe(Utils.toUpperFirstLetter(text) + " verification failed: " + e.getMessage());
+                log.warn("{} verification failed: {}", Utils.toUpperFirstLetter(text), e.getMessage());
                 throw e;
             }
         }
@@ -401,7 +401,7 @@ public class OpenTimestamps {
             BitcoinNode bitcoin = new BitcoinNode(properties);
             blockInfo = bitcoin.getBlockHeader(height);
         } catch (Exception e1) {
-            log.fine("There is no local node available");
+            log.info("This is no local node available");
 
             try {
                 String blockHash = Esplora.blockHash(height);
@@ -430,9 +430,9 @@ public class OpenTimestamps {
         BlockHeader blockInfo;
 
         try {
-            String blockHash = blockHash = Esplora.blockHash(height);
+            String blockHash = Esplora.blockHash(height);
             blockInfo = Esplora.block(blockHash);
-            log.info("Lite-client verification, assuming block " + blockHash + " is valid");
+            log.info("Lite-client verification, assuming block {} is valid", blockHash);
         } catch (Exception e2) {
             e2.printStackTrace();
             throw e2;

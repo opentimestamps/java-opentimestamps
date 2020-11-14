@@ -10,7 +10,6 @@ import org.bitcoinj.core.ECKey;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Class representing remote calendar server interface.
@@ -19,8 +18,6 @@ public class Calendar {
 
     private String url;
     private ECKey key;
-
-    private static Logger log = Utils.getLogger(Calendar.class.getName());
 
     /**
      * Create a RemoteCalendar.
