@@ -206,6 +206,13 @@
     <profiles>
         <profile>
             <id>cli</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${project.basedir}/src/cli/resources</directory>
+                    </resource>
+                </resources>
+            </build>
             <dependencies>
                 <dependency>
                     <groupId>ch.qos.logback</groupId>
