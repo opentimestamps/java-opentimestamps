@@ -1,8 +1,11 @@
 package com.eternitywall.ots.op;
 
 import com.eternitywall.ots.DetachedTimestampFile;
+import com.eternitywall.ots.Hash;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -85,4 +88,36 @@ public class TestOps {
         byte[] fileDigest = timestampFile.fileDigest();
         assertArrayEquals(Utils.hexToBytes(hash), fileDigest);
     }
+
+    // Test "Hash.from" below chunk size
+    @Test
+    public void hashFd1() throws Exception {
+        String hash = "CA7ED0C4A8E67CBDC461C4CB0D286D2FABBD9F0C41A7F42B665F72EBAA8AEC56";
+        int size = 1048576-1;
+        byte[] buffer = new byte[size];
+        Hash myHash=Hash.from(buffer, OpSHA256._TAG);
+        assertArrayEquals(Utils.hexToBytes(hash), myHash.getValue());
+    }
+
+    // Test "Hash.from" at edge case of being equal to chunk size
+    @Test
+    public void hashFd2() throws Exception {
+        String hash = "30E14955EBF1352266DC2FF8067E68104607E750ABB9D3B36582B8AF909FCB58";
+        int size = 1048576;
+        byte[] buffer = new byte[size];
+        Hash myHash=Hash.from(buffer, OpSHA256._TAG);
+        assertArrayEquals(Utils.hexToBytes(hash), myHash.getValue());
+    }
+
+    // Test "Hash.from" above chunk size
+    @Test
+    public void hashFd3() throws Exception {
+        String hash = "2CB74EDBA754A81D121C9DB6833704A8E7D417E5B13D1A19F4A52F007D644264";
+        int size = 1048576+1;
+        byte[] buffer = new byte[size];
+        Hash myHash=Hash.from(buffer, OpSHA256._TAG);
+        assertArrayEquals(Utils.hexToBytes(hash), myHash.getValue());
+    }
+
+
 }

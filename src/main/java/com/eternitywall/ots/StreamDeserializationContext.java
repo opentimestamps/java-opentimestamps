@@ -28,8 +28,8 @@ public class StreamDeserializationContext {
             return null;
         }
 
-        if (l > this.buffer.length) {
-            l = this.buffer.length;
+        if (l+this.counter > this.buffer.length) {
+            l = this.buffer.length-this.counter;
         }
 
         // const uint8Array = new Uint8Array(this.buffer,this.counter,l);
