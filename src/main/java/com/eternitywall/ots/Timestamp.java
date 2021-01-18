@@ -2,6 +2,7 @@ package com.eternitywall.ots;
 
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpBinary;
 import com.eternitywall.ots.op.OpSHA256;
@@ -44,7 +45,7 @@ public class Timestamp {
      * @param initialMsg - The initial message.
      * @return The deserialized Timestamp.
      */
-    public static Timestamp deserialize(byte[] ots, byte[] initialMsg) {
+    public static Timestamp deserialize(byte[] ots, byte[] initialMsg) throws DeserializationException {
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
 
         return Timestamp.deserialize(ctx, initialMsg);
@@ -63,7 +64,8 @@ public class Timestamp {
      * @param initialMsg - The initial message.
      * @return The deserialized Timestamp.
      */
-    public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg) {
+    public static Timestamp deserialize(StreamDeserializationContext ctx, byte[] initialMsg)
+        throws DeserializationException {
         Timestamp self = new Timestamp(initialMsg);
         byte tag = ctx.readBytes(1)[0];
 
@@ -78,7 +80,8 @@ public class Timestamp {
         return self;
     }
 
-    private static void doTagOrAttestation(Timestamp self, StreamDeserializationContext ctx, byte tag, byte[] initialMsg) {
+    private static void doTagOrAttestation(Timestamp self, StreamDeserializationContext ctx, byte tag, byte[] initialMsg)
+        throws DeserializationException {
         if ((tag & 0xff) == 0x00) {
             TimeAttestation attestation = TimeAttestation.deserialize(ctx);
             self.attestations.add(attestation);

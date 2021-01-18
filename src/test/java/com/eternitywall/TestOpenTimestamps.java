@@ -11,6 +11,7 @@ import com.eternitywall.ots.Timestamp;
 import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.VerifyResult;
 import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.exceptions.VerificationException;
 import com.eternitywall.ots.op.OpSHA256;
 import org.junit.After;
@@ -79,7 +80,7 @@ public class TestOpenTimestamps {
     }
 
     @Test
-    public void info() {
+    public void info() throws DeserializationException {
         String result1 = OpenTimestamps.info(DetachedTimestampFile.deserialize(incompleteOts));
         assertNotNull(result1);
         assertNotNull(incompleteOtsInfo);
@@ -157,7 +158,7 @@ public class TestOpenTimestamps {
     }
 
     @Test
-    public void verify() throws NoSuchAlgorithmException, IOException {
+    public void verify() throws NoSuchAlgorithmException, IOException, DeserializationException {
         {
             DetachedTimestampFile detachedOts = DetachedTimestampFile.deserialize(helloWorldOts);
             DetachedTimestampFile detached = DetachedTimestampFile.from(Hash.from(helloWorld, OpSHA256._TAG));
@@ -226,7 +227,7 @@ public class TestOpenTimestamps {
     }
 
     @Test
-    public void test() {
+    public void test() throws DeserializationException {
         byte[] ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
         byte[] digest = Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
 

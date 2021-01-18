@@ -3,6 +3,7 @@ package com.eternitywall;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Timestamp;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
@@ -13,7 +14,7 @@ import static org.junit.Assert.fail;
 
 public class TestLongReceipt {
     @Test
-    public void testException() {
+    public void testException() throws DeserializationException {
         String digest = "c858838f62f908c922f9cd734e49c8fa6ee9a3b8a77093ac0969cba429249412";
         byte[] digestByte = DatatypeConverter.parseHexBinary(digest);
         Timestamp root = new Timestamp(digestByte);

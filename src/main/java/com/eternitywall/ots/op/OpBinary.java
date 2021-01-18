@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -33,7 +34,8 @@ public abstract class OpBinary extends Op implements Comparable<Op> {
         this.arg = arg_;
     }
 
-    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
+    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag)
+        throws DeserializationException {
         byte[] arg = ctx.readVarbytes(_MAX_RESULT_LENGTH, 1);
 
         if (tag == OpAppend._TAG) {

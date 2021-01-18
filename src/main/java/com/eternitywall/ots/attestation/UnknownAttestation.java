@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -36,7 +37,7 @@ public class UnknownAttestation extends TimeAttestation {
         ctx.writeBytes(this.payload);
     }
 
-    public static UnknownAttestation deserialize(StreamDeserializationContext ctxPayload, byte[] tag) {
+    public static UnknownAttestation deserialize(StreamDeserializationContext ctxPayload, byte[] tag) throws DeserializationException {
         byte[] payload = ctxPayload.readVarbytes(_MAX_PAYLOAD_SIZE);
 
         return new UnknownAttestation(tag, payload);

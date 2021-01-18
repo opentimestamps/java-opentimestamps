@@ -1,5 +1,6 @@
 package com.eternitywall.ots;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -65,7 +66,9 @@ public class StreamDeserializationContext {
         return value;
     }
 
-    public byte[] readBytes(int expectedLength) {
+    public byte[] readBytes(int expectedLength) throws DeserializationException {
+
+
         if (expectedLength == 0) {
             return this.readVarbytes(1024, 0);
         }
@@ -73,19 +76,19 @@ public class StreamDeserializationContext {
         return this.read(expectedLength);
     }
 
-    public byte[] readVarbytes(int maxLen) {
+    public byte[] readVarbytes(int maxLen) throws DeserializationException {
         return readVarbytes(maxLen, 0);
     }
 
-    public byte[] readVarbytes(int maxLen, int minLen) {
+    public byte[] readVarbytes(int maxLen, int minLen) throws DeserializationException {
         int l = this.readVaruint();
 
-        if ((l & 0xff) > maxLen) {
+        if (l  > maxLen) {
             log.severe("varbytes max length exceeded;");
-            return null;
-        } else if ((l & 0xff) < minLen) {
+            throw new DeserializationException("varbytes max length exceeded;");
+        } else if (l < minLen) {
             log.severe("varbytes min length not met;");
-            return null;
+            throw new DeserializationException("varbytes min length not met;");
         }
 
         return this.read(l);

@@ -2,6 +2,7 @@ package com.eternitywall.ots.attestation;
 
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -10,7 +11,7 @@ import java.io.IOException;
 public class TestBitcoinBlockHeaderAttestation {
 
     @Test
-    public void deserializationTrailingGarbage() throws IOException {
+    public void deserializationTrailingGarbage() throws IOException, DeserializationException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(Utils.hexToBytes("0588960d73d71901" +
                 "02" + // two bytes of payload

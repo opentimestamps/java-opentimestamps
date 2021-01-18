@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -74,13 +75,20 @@ public class PendingAttestation extends TimeAttestation {
         return true;
     }
 
-    public static PendingAttestation deserialize(StreamDeserializationContext ctxPayload) {
-        byte[] utf8Uri = ctxPayload.readVarbytes(PendingAttestation._MAX_URI_LENGTH);
+    public static PendingAttestation deserialize(StreamDeserializationContext ctxPayload)
+        throws DeserializationException {
+
+        byte[] utf8Uri;
+        try {
+            utf8Uri = ctxPayload.readVarbytes(PendingAttestation._MAX_URI_LENGTH);
+        } catch (DeserializationException e) {
+            log.severe("URI too long and thus invalid: ");
+            throw new DeserializationException("Invalid URI: ");
+        }
 
         if (PendingAttestation.checkUri(utf8Uri) == false) {
             log.severe("Invalid URI: ");
-
-            return null;
+            throw new DeserializationException("Invalid URI: ");
         }
 
         return new PendingAttestation(utf8Uri);

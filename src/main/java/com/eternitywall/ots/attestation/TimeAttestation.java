@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ public abstract class TimeAttestation implements Comparable<TimeAttestation> {
      * @param ctx The stream deserialization context.
      * @return The specific subclass Attestation.
      */
-    public static TimeAttestation deserialize(StreamDeserializationContext ctx) {
+    public static TimeAttestation deserialize(StreamDeserializationContext ctx) throws DeserializationException {
         // console.log('attestation deserialize');
 
         byte[] tag = ctx.readBytes(_TAG_SIZE);

@@ -1,5 +1,6 @@
 package com.eternitywall.ots;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpCrypto;
 import com.eternitywall.ots.op.OpSHA256;
@@ -96,7 +97,7 @@ public class DetachedTimestampFile {
      * @param ctx The stream deserialization context.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile deserialize(StreamDeserializationContext ctx) {
+    public static DetachedTimestampFile deserialize(StreamDeserializationContext ctx) throws DeserializationException {
         ctx.assertMagic(HEADER_MAGIC);
         ctx.readVaruint();
 
@@ -115,7 +116,7 @@ public class DetachedTimestampFile {
      * @param ots The byte array of deserialization DetachedFileTimestamped.
      * @return The generated com.eternitywall.ots.DetachedTimestampFile object.
      */
-    public static DetachedTimestampFile deserialize(byte[] ots) {
+    public static DetachedTimestampFile deserialize(byte[] ots) throws DeserializationException {
         StreamDeserializationContext ctx = new StreamDeserializationContext(ots);
 
         return DetachedTimestampFile.deserialize(ctx);

@@ -3,6 +3,7 @@ package com.eternitywall.ots;
 import com.eternitywall.http.Request;
 import com.eternitywall.http.Response;
 import com.eternitywall.ots.exceptions.CommitmentNotFoundException;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.exceptions.ExceededSizeException;
 import com.eternitywall.ots.exceptions.UrlException;
 import org.bitcoinj.core.ECKey;
@@ -63,7 +64,7 @@ public class Calendar {
      *
      * @param digest The digest hash to send.
      * @return the Timestamp received from the calendar.
-     * @throws ExceededSizeException if response is too big.
+     * @throws DeserializationException if response is too big.
      * @throws UrlException          if url is not reachable.
      */
     public Timestamp submit(byte[] digest) throws ExceededSizeException, UrlException {
@@ -100,11 +101,11 @@ public class Calendar {
      *
      * @param commitment The digest hash to send.
      * @return the Timestamp from the calendar server (with blockchain information if already written).
-     * @throws ExceededSizeException       if response is too big.
+     * @throws DeserializationException       if response is too big.
      * @throws UrlException                if url is not reachable.
      * @throws CommitmentNotFoundException if commit is not found.
      */
-    public Timestamp getTimestamp(byte[] commitment) throws ExceededSizeException, CommitmentNotFoundException, UrlException {
+    public Timestamp getTimestamp(byte[] commitment) throws DeserializationException, CommitmentNotFoundException, UrlException {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put("Accept", "application/vnd.opentimestamps.v1");
@@ -117,7 +118,7 @@ public class Calendar {
             Response response = task.call();
             byte[] body = response.getBytes();
             if (body.length > 10000) {
-                throw new ExceededSizeException("Calendar response exceeded size limit");
+                throw new DeserializationException("Calendar response exceeded size limit");
             }
 
             if (!response.isOk()) {

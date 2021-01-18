@@ -6,6 +6,7 @@ import com.eternitywall.ots.Timestamp;
 import com.eternitywall.ots.Utils;
 import com.eternitywall.ots.attestation.PendingAttestation;
 import com.eternitywall.ots.attestation.TimeAttestation;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -31,7 +32,7 @@ public class TestStreamDeserializationContext {
     }
 
     @Test
-    public void testReadvaruint() {
+    public void testReadvaruint() throws DeserializationException {
         final byte[] uri = "https://finney.calendar.eternitywall.com".getBytes(StandardCharsets.US_ASCII);
         PendingAttestation pendingAttestation = new PendingAttestation(uri);
 
@@ -45,7 +46,7 @@ public class TestStreamDeserializationContext {
     }
 
     @Test
-    public void testTimestamp() {
+    public void testTimestamp() throws DeserializationException {
         byte[] ots = Utils.hexToBytes("F0105C3F2B3F8524A32854E07AD8ADDE9C1908F10458D95A36F008088D287213A8B9880083DFE30D2EF90C8E2C2B68747470733A2F2F626F622E6274632E63616C656E6461722E6F70656E74696D657374616D70732E6F7267");
         byte[] digest = Utils.hexToBytes("7aa9273d2a50dbe0cc5a6ccc444a5ca90c9491dd2ac91849e45195ae46f64fe352c3a63ba02775642c96131df39b5b85");
 

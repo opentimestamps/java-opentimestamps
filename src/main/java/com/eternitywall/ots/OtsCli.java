@@ -3,6 +3,7 @@ package com.eternitywall.ots;
 import com.eternitywall.ots.attestation.BitcoinBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.EthereumBlockHeaderAttestation;
 import com.eternitywall.ots.attestation.LitecoinBlockHeaderAttestation;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.op.OpSHA256;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -216,6 +217,8 @@ public class OtsCli {
             System.out.println(infoResult);
         } catch (IOException e) {
             log.severe("No valid file");
+        } catch (DeserializationException e) {
+            log.severe("Deserialization error: size was either too long or short");
         }
     }
 

@@ -3,6 +3,7 @@ package com.eternitywall.ots.op;
 import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -44,7 +45,8 @@ public class OpAppend extends OpBinary {
         return Utils.arraysConcat(msg, this.arg);
     }
 
-    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
+    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag)
+        throws DeserializationException {
         return OpBinary.deserializeFromTag(ctx, tag);
     }
 

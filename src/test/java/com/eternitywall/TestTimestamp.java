@@ -6,6 +6,7 @@ import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Timestamp;
 import static com.eternitywall.ots.Utils.hexToBytes;
 import com.eternitywall.ots.attestation.PendingAttestation;
+import com.eternitywall.ots.exceptions.DeserializationException;
 import com.eternitywall.ots.op.Op;
 import com.eternitywall.ots.op.OpAppend;
 import com.eternitywall.ots.op.OpSHA256;
@@ -54,7 +55,8 @@ public class TestTimestamp {
         }
     }
 
-    private void tSerialize(Timestamp expectedInstance, byte[] expectedSerialized) {
+    private void tSerialize(Timestamp expectedInstance, byte[] expectedSerialized)
+        throws DeserializationException {
         StreamSerializationContext ssc = new StreamSerializationContext();
         expectedInstance.serialize(ssc);
         byte[] actualSerialized = ssc.getOutput();
@@ -67,7 +69,8 @@ public class TestTimestamp {
     }
 
     @Test
-    public void testTimestampSerializationDeserialization() throws IOException {
+    public void testTimestampSerializationDeserialization()
+        throws IOException, DeserializationException {
         Timestamp stamp = new Timestamp(toBytes("foo", "UTF-8"));
         stamp.attestations.add(new PendingAttestation(toBytes("foobar", "UTF-8")));
 

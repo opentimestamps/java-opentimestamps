@@ -4,6 +4,7 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import com.eternitywall.ots.Utils;
 
+import com.eternitywall.ots.exceptions.DeserializationException;
 import java.util.logging.Logger;
 
 /**
@@ -61,7 +62,7 @@ public abstract class Op implements Comparable<Op> {
      * @param ctx The stream deserialization context.
      * @return The subclass Operation.
      */
-    public static Op deserialize(StreamDeserializationContext ctx) {
+    public static Op deserialize(StreamDeserializationContext ctx) throws DeserializationException {
         byte tag = ctx.readBytes(1)[0];
 
         return Op.deserializeFromTag(ctx, tag);
@@ -74,7 +75,8 @@ public abstract class Op implements Comparable<Op> {
      * @param tag The tag of the operation.
      * @return The subclass Operation.
      */
-    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag) {
+    public static Op deserializeFromTag(StreamDeserializationContext ctx, byte tag)
+        throws DeserializationException {
         if (tag == OpAppend._TAG) {
             return OpAppend.deserializeFromTag(ctx, tag);
         } else if (tag == OpPrepend._TAG) {

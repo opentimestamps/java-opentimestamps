@@ -4,6 +4,8 @@ import com.eternitywall.ots.StreamDeserializationContext;
 import com.eternitywall.ots.StreamSerializationContext;
 import static com.eternitywall.ots.Utils.hexToBytes;
 import static com.eternitywall.ots.Utils.bytesToHex;
+
+import com.eternitywall.ots.exceptions.DeserializationException;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +27,8 @@ public class TestUnknownAttestation {
     }
 
     @Test
-    public void testSerializationDeserializationOfUnknownAttestations() throws IOException {
+    public void testSerializationDeserializationOfUnknownAttestations()
+        throws IOException, DeserializationException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(hexToBytes("0102030405060708"));
         baos.write(0x0c);
@@ -42,26 +45,29 @@ public class TestUnknownAttestation {
         assertArrayEquals(expectedSerialized, ctx1.getOutput());
     }
 
-    @Test
-    public void deserializationTooLong() throws IOException {
+    @Test(expected = DeserializationException.class )
+    public void deserializationTooLong1() throws IOException, DeserializationException {
         // Deserialization of attestations with oversized payloads
         ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         baos1.write(hexToBytes("0102030405060708"));
         baos1.write(0x81);
         baos1.write(0x40);
-        baos1.write('x' * 8193);
+        for(int i=0;i<8193;i++)
+            baos1.write('x');
         StreamDeserializationContext ctx = new StreamDeserializationContext(baos1.toByteArray());
         UnknownAttestation a = (UnknownAttestation) TimeAttestation.deserialize(ctx);
-        // TODO: exception
+    }
 
+    @Test(expected = DeserializationException.class )
+    public void deserializationTooLong2() throws IOException, DeserializationException {
         // Pending attestation
         ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
         baos2.write(hexToBytes("83dfe30d2ef90c8e"));
         baos2.write(0x81);
         baos2.write(0x40);
-        baos2.write('x' * 8193);
+        for(int i=0;i<8193;i++)
+            baos2.write('x');
         StreamDeserializationContext ctx1 = new StreamDeserializationContext(baos2.toByteArray());
-        UnknownAttestation a1 = (UnknownAttestation) TimeAttestation.deserialize(ctx1);
-        // TODO: exception
+        PendingAttestation a1 = (PendingAttestation) TimeAttestation.deserialize(ctx1);
     }
 }
