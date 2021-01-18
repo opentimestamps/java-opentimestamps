@@ -64,10 +64,12 @@ public class Calendar {
      *
      * @param digest The digest hash to send.
      * @return the Timestamp received from the calendar.
-     * @throws DeserializationException if response is too big.
+     * @throws ExceededSizeException if response is too big.
      * @throws UrlException          if url is not reachable.
+     * @throws DeserializationException    if the data is corrupt
      */
-    public Timestamp submit(byte[] digest) throws ExceededSizeException, UrlException {
+    public Timestamp submit(byte[] digest)
+        throws ExceededSizeException, UrlException, DeserializationException {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put("Accept", "application/vnd.opentimestamps.v1");
@@ -91,7 +93,7 @@ public class Calendar {
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             return Timestamp.deserialize(ctx, digest);
-        } catch (ExceededSizeException e)
+        } catch (ExceededSizeException | DeserializationException e)
         {
             throw e;
         }
