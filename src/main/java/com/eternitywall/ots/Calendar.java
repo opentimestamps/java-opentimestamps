@@ -91,7 +91,11 @@ public class Calendar {
 
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
             return Timestamp.deserialize(ctx, digest);
-        } catch (Exception e) {
+        } catch (ExceededSizeException e)
+        {
+            throw e;
+        }
+        catch (Exception e) {
             throw new UrlException(e.getMessage());
         }
     }
@@ -101,11 +105,12 @@ public class Calendar {
      *
      * @param commitment The digest hash to send.
      * @return the Timestamp from the calendar server (with blockchain information if already written).
-     * @throws DeserializationException       if response is too big.
+     * @throws ExceededSizeException       if response is too big.
      * @throws UrlException                if url is not reachable.
      * @throws CommitmentNotFoundException if commit is not found.
+     * @throws DeserializationException    if the data is corrupt
      */
-    public Timestamp getTimestamp(byte[] commitment) throws DeserializationException, CommitmentNotFoundException, UrlException {
+    public Timestamp getTimestamp(byte[] commitment) throws DeserializationException, ExceededSizeException, CommitmentNotFoundException, UrlException {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put("Accept", "application/vnd.opentimestamps.v1");
@@ -118,7 +123,7 @@ public class Calendar {
             Response response = task.call();
             byte[] body = response.getBytes();
             if (body.length > 10000) {
-                throw new DeserializationException("Calendar response exceeded size limit");
+                throw new ExceededSizeException("Calendar response exceeded size limit");
             }
 
             if (!response.isOk()) {
@@ -128,7 +133,12 @@ public class Calendar {
             StreamDeserializationContext ctx = new StreamDeserializationContext(body);
 
             return Timestamp.deserialize(ctx, commitment);
-        } catch (Exception e) {
+        }
+        catch (DeserializationException | ExceededSizeException | CommitmentNotFoundException e)
+        {
+            throw e;
+        }
+        catch (Exception e) {
             throw new UrlException(e.getMessage());
         }
     }
