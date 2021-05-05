@@ -315,7 +315,8 @@ public class OtsCli {
         try {
             DetachedTimestampFile detached = DetachedTimestampFile.from(hash);
             Timestamp stampResult = OpenTimestamps.stamp(detached, calendarsUrl, m, privateUrls);
-            Files.write(path, stampResult.serialize());
+            DetachedTimestampFile detachedToSerialize = new DetachedTimestampFile(hash.getOp(), stampResult);
+            Files.write(path, detachedToSerialize.serialize());
             System.out.println("The timestamp proof '" + argsOts + "' has been created!");
         } catch (Exception e) {
             log.severe("Invalid shasum");
