@@ -56,7 +56,7 @@ The timestamp proof 'README.md.ots' has been created!
 Create timestamp proof file from the `sha256` hash, equals to `03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340`, with the aid of a remote calendar.
 
  ```shell
-$ java -jar target/OtsCli.jar -H 03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340 -a sha256 stamp
+$ java -jar target/OtsCli.jar -d 03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340 -a sha256 stamp
 INFO: Submitting to remote calendar https://alice.btc.calendar.opentimestamps.org
 INFO: Submitting to remote calendar https://bob.btc.calendar.opentimestamps.org
 INFO: Submitting to remote calendar https://finney.calendar.eternitywall.com
